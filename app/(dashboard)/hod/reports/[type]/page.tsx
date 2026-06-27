@@ -1,4 +1,7 @@
-export default function HodReportTypePage() {
-  return <div>HOD - Reports - Type</div>;
+export default function Page() {
+  return (
+    <main className="p-6">
+      <h1 className="text-xl font-semibold">Coming soon</h1>
+    </main>
+  );
 }
-

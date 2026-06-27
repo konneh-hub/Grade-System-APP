@@ -1,4 +1,7 @@
-export default function LecturerCourseSubmitPage() {
-  return <div>Lecturer - Submit Scores</div>;
+export default function Page() {
+  return (
+    <main className="p-6">
+      <h1 className="text-xl font-semibold">Coming soon</h1>
+    </main>
+  );
 }
-

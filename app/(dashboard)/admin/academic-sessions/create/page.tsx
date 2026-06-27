@@ -1,4 +1,3 @@
-export default function AdminAcademicSessionsCreatePage() {
-  return <div>Admin - Academic Sessions - Create</div>;
+export default function AcademicSessionCreatePage() {
+  return null;
 }
-
