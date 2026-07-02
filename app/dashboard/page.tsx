@@ -3,8 +3,9 @@ import { redirect } from 'next/navigation';
 import { verifyToken } from '@/lib/utils/crypto';
 import { config } from '@/lib/config/env';
 
-export default function DashboardRedirectPage() {
-  const token = cookies().get(config.COOKIE_NAME)?.value;
+export default async function DashboardRedirectPage() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(config.COOKIE_NAME)?.value;
   if (!token) redirect('/login');
 
   const payload = verifyToken(token);

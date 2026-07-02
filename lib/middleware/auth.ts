@@ -1,6 +1,13 @@
 import { verifyToken } from '@/lib/utils/crypto';
 import { config } from '@/lib/config/env';
-import { getUserById, getUserRoles } from '@/lib/services/user.service';
+
+interface TokenPayload {
+  userId: number | string;
+  email: string;
+  first_name?: string;
+  last_name?: string;
+  roles: string[];
+}
 
 export function parseCookies(cookieHeader: string | null) {
   if (!cookieHeader) return {};
@@ -11,14 +18,17 @@ export function parseCookies(cookieHeader: string | null) {
 }
 
 export function getUserFromRequest(req: Request) {
-  const cookieHeader = (req.headers && (req.headers as any).get('cookie')) || null;
+  const cookieHeader = typeof req.headers?.get === 'function' ? req.headers.get('cookie') : null;
   const cookies = parseCookies(cookieHeader);
   const token = cookies[config.COOKIE_NAME];
   if (!token) return null;
-  const payload = verifyToken(token as string) as any;
-  if (!payload) return null;
-  const user = getUserById(Number(payload.userId));
-  if (!user) return null;
-  const roles = getUserRoles(user.id);
-  return { user, roles };
+  const payload = verifyToken(token as string) as TokenPayload | null;
+  if (!payload || !payload.userId || !payload.roles) return null;
+  const user = {
+    id: Number(payload.userId),
+    email: payload.email,
+    first_name: payload.first_name || '',
+    last_name: payload.last_name || '',
+  };
+  return { user, roles: payload.roles };
 }

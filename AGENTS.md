@@ -1,5 +1,5 @@
-<!-- BEGIN:nextjs-agent-rules -->
-# This is NOT the Next.js you know
+<!-- BEGIN:project-agent-rules -->
+# Slughub project agent guidance
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
-<!-- END:nextjs-agent-rules -->
+This workspace uses Slughub-specific application conventions. Follow the current repository structure and app metadata rather than default framework boilerplate.
+<!-- END:project-agent-rules -->

@@ -1,6 +1,6 @@
 # TODO - Slughub route tree restructuring
 
-## Step 1: Inspect existing Next.js entry files
+## Step 1: Inspect existing entry files
 - [x] Read `app/layout.tsx`
 - [x] Read `app/page.tsx`
 - [x] Read `package.json`

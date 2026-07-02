@@ -10,7 +10,8 @@ export async function POST(req: Request) {
     const { oldPassword, newPassword } = body;
     await changePassword(info.user.id, oldPassword, newPassword);
     return NextResponse.json({ ok: true });
-  } catch (err: any) {
-    return NextResponse.json({ error: err?.message || 'Server error' }, { status: 400 });
+  } catch (err: unknown) {
+    const error = err instanceof Error ? err.message : 'Server error';
+    return NextResponse.json({ error }, { status: 400 });
   }
 }

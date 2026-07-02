@@ -1,8 +1,15 @@
 "use client";
 import { useState, useEffect } from 'react';
 
+type AuthUser = {
+  id: number;
+  email: string;
+  first_name: string;
+  last_name: string;
+};
+
 export function useAuth() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -13,7 +20,9 @@ export function useAuth() {
           const json = await res.json();
           setUser(json.user || null);
         }
-      } catch (e) {}
+      } catch {
+        // Ignore fetch errors for unauthenticated state
+      }
       setLoading(false);
     }
     fetchUser();

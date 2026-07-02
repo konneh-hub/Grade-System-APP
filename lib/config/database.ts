@@ -1,6 +1,22 @@
 import { mkdirSync } from 'node:fs';
 import path from 'node:path';
-import { DatabaseSync } from 'node:sqlite';
+import sqlite from 'node:sqlite';
+
+type SqliteStatement = {
+  run(...params: readonly unknown[]): unknown;
+  get(...params: readonly unknown[]): unknown;
+  all(...params: readonly unknown[]): unknown[];
+};
+
+type SqliteDatabase = {
+  exec(sql: string): void;
+  prepare(sql: string): SqliteStatement;
+  close(): void;
+};
+
+type SqliteModule = {
+  DatabaseSync: new (filename: string, mode?: number) => SqliteDatabase;
+};
 
 const rootDir = process.cwd();
 const dbDir = path.join(rootDir, 'db');
@@ -8,11 +24,12 @@ const dbPath = path.join(dbDir, 'slughub.db');
 
 mkdirSync(dbDir, { recursive: true });
 
-let dbInstance: DatabaseSync | null = null;
+let dbInstance: SqliteDatabase | null = null;
 
-export function getDatabase(): DatabaseSync {
+export function getDatabase(): SqliteDatabase {
   if (!dbInstance) {
-    dbInstance = new DatabaseSync(dbPath, 2); // Open read-write
+    const sqliteModule = sqlite as unknown as SqliteModule;
+    dbInstance = new sqliteModule.DatabaseSync(dbPath);
   }
   return dbInstance;
 }

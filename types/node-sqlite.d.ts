@@ -1,8 +1,8 @@
 declare module 'node:sqlite' {
   export interface StatementSync {
-    run(...params: any[]): any;
-    get(...params: any[]): any;
-    all(...params: any[]): any;
+    run(...params: readonly unknown[]): unknown;
+    get(...params: readonly unknown[]): unknown;
+    all(...params: readonly unknown[]): unknown[];
   }
 
   export class DatabaseSync {

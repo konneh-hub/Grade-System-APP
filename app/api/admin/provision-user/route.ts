@@ -29,10 +29,16 @@ export async function POST(req: Request) {
       registration_token,
       provisioned_by: auth.user.id,
     });
+
+    if (!user) {
+      return NextResponse.json({ error: 'Failed to provision user' }, { status: 500 });
+    }
+
     const roleId = getRoleIdByName(role);
     if (roleId) assignRoleToUser(user.id, roleId);
     return NextResponse.json({ ok: true, registration_token });
-  } catch (err: any) {
-    return NextResponse.json({ error: err?.message || 'Server error' }, { status: 500 });
+  } catch (err: unknown) {
+    const error = err instanceof Error ? err.message : 'Server error';
+    return NextResponse.json({ error }, { status: 500 });
   }
 }

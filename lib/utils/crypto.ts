@@ -19,9 +19,10 @@ export function signToken(payload: object, expiresIn = '7d') {
 export function verifyToken(token: string) {
   try {
     return jwt.verify(token, config.JWT_SECRET);
-  } catch (e) {
+  } catch {
     return null;
   }
 }
 
-export default { hashPassword, verifyPassword, signToken, verifyToken };
+const cryptoUtils = { hashPassword, verifyPassword, signToken, verifyToken };
+export default cryptoUtils;

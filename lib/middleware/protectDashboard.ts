@@ -7,9 +7,9 @@ export function middleware(req: NextRequest) {
 
   // Protect any /dashboard routes
   if (url.pathname.startsWith('/dashboard')) {
-    const info = getUserFromRequest(req as any as Request);
+    const info = getUserFromRequest(req as Request);
     if (!info) {
-      url.pathname = '/(auth)/login';
+      url.pathname = '/login';
       return NextResponse.redirect(url);
     }
 
@@ -48,5 +48,3 @@ export function middleware(req: NextRequest) {
 
   return NextResponse.next();
 }
-
-export default { middleware };

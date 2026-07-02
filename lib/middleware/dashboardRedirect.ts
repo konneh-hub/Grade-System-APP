@@ -6,7 +6,7 @@ export function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
   // If user is requesting the root, redirect to appropriate dashboard
   if (url.pathname === '/') {
-    const info = getUserFromRequest(req as any as Request);
+    const info = getUserFromRequest(req as Request);
     if (!info) {
       url.pathname = '/login';
       return NextResponse.redirect(url);

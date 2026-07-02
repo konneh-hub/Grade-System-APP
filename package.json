@@ -2,6 +2,7 @@
   "name": "slughub",
   "version": "0.1.0",
   "private": true,
+  "description": "Slughub academic portal for results, assignments, and student administration.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

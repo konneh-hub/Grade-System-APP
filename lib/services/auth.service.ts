@@ -1,8 +1,20 @@
-import { getUserByEmail, getUserById, getUserRoles, updateUserPassword } from '@/lib/services/user.service';
+import { getUserByEmail, getUserById, getUserRoles } from '@/lib/services/user.service';
 import { verifyPassword, signToken, hashPassword } from '@/lib/utils/crypto';
 import { getDatabase } from '@/lib/config/database';
 
-export async function registerUser(payload: any) {
+export interface RegisterPayload {
+  email: string;
+  password: string;
+  registration_token: string;
+}
+
+export interface TokenPayload {
+  userId: number;
+  email: string;
+  roles: string[];
+}
+
+export async function registerUser(payload: RegisterPayload) {
   const existing = getUserByEmail(payload.email);
   if (!existing) throw new Error('Account is not provisioned or already registered');
   if (existing.status !== 'pending') throw new Error('Account already registered');
@@ -17,8 +29,18 @@ export async function registerUser(payload: any) {
   ).run(password_hash, 'active', existing.id);
 
   const user = getUserById(existing.id);
+  if (!user) {
+    throw new Error('Failed to load registered user');
+  }
+
   const roles = getUserRoles(existing.id);
-  const token = signToken({ userId: user.id, email: user.email, roles });
+  const token = signToken({
+    userId: user.id,
+    email: user.email,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    roles,
+  });
   return { user, roles, token };
 }
 
@@ -29,13 +51,21 @@ export async function loginUser(email: string, password: string) {
   const ok = await verifyPassword(password, user.password_hash);
   if (!ok) return null;
   const roles = getUserRoles(user.id);
-  const token = signToken({ userId: user.id, email: user.email, roles });
+  const token = signToken({
+    userId: user.id,
+    email: user.email,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    roles,
+  });
   return { user, roles, token };
 }
 
-export function getUserFromTokenPayload(payload: any) {
-  if (!payload || !payload.userId) return null;
-  const user = getUserById(Number(payload.userId));
+export function getUserFromTokenPayload(payload: unknown) {
+  if (!payload || typeof payload !== 'object' || !('userId' in payload)) return null;
+  const payloadObj = payload as { userId?: string | number };
+  if (!payloadObj.userId) return null;
+  const user = getUserById(Number(payloadObj.userId));
   if (!user) return null;
   const roles = getUserRoles(user.id);
   return { user, roles };
@@ -52,4 +82,5 @@ export async function changePassword(userId: number, oldPassword: string, newPas
   return true;
 }
 
-export default { registerUser, loginUser, getUserFromTokenPayload };
+const authService = { registerUser, loginUser, getUserFromTokenPayload };
+export default authService;

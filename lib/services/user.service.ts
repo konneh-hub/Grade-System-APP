@@ -9,15 +9,29 @@ export interface CreateUserPayload {
   phone?: string | null;
 }
 
-export function getUserByEmail(email: string) {
+export interface UserRow {
+  id: number;
+  email: string;
+  first_name: string;
+  last_name: string;
+  phone: string | null;
+  password_hash: string;
+  status: string;
+  registration_token: string | null;
+  provisioned_by: number | null;
+  registered_at: string | null;
+  updated_at: string | null;
+}
+
+export function getUserByEmail(email: string): UserRow | null {
   const db = getDatabase();
-  const row = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+  const row = db.prepare('SELECT * FROM users WHERE email = ?').get(email) as UserRow | null;
   return row || null;
 }
 
-export function getUserById(id: number) {
+export function getUserById(id: number): UserRow | null {
   const db = getDatabase();
-  const row = db.prepare('SELECT * FROM users WHERE id = ?').get(id);
+  const row = db.prepare('SELECT * FROM users WHERE id = ?').get(id) as UserRow | null;
   return row || null;
 }
 
@@ -40,9 +54,9 @@ export async function provisionUser(payload: CreateUserPayload & { registration_
   return getUserByEmail(payload.email);
 }
 
-export function getRoleIdByName(name: string) {
+export function getRoleIdByName(name: string): number | null {
   const db = getDatabase();
-  const row = db.prepare('SELECT id FROM roles WHERE name = ?').get(name);
+  const row = db.prepare('SELECT id FROM roles WHERE name = ?').get(name) as { id: number } | null;
   return row ? row.id : null;
 }
 
@@ -67,8 +81,8 @@ export function getUserRoles(userId: number) {
     .prepare(
       `SELECT r.name FROM roles r JOIN user_roles ur ON ur.role_id = r.id WHERE ur.user_id = ?`
     )
-    .all(userId);
-  return rows.map((r: any) => r.name);
+    .all(userId) as Array<{ name: string }>;
+  return rows.map((r) => r.name);
 }
 
 export function updateUserPassword(userId: number, password_hash: string) {
@@ -76,4 +90,5 @@ export function updateUserPassword(userId: number, password_hash: string) {
   db.prepare('UPDATE users SET password_hash = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(password_hash, userId);
 }
 
-export default { getUserByEmail, createUser, getUserRoles, getUserById, provisionUser, getRoleIdByName, assignRoleToUser };
+const userService = { getUserByEmail, createUser, getUserRoles, getUserById, provisionUser, getRoleIdByName, assignRoleToUser };
+export default userService;
