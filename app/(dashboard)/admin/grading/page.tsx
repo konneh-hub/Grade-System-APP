@@ -1,16 +1,74 @@
 'use client';
 
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 
 type GradeRow = { min: string; max: string; grade: string; point: string; remark: string };
 
 export default function Page() {
   const [rows, setRows] = useState<GradeRow[]>([{ min: '70', max: '100', grade: 'A', point: '5.0', remark: 'Excellent' }]);
   const [formula, setFormula] = useState({ type: 'fixed', rounding: 'nearest', weighting: 'credit-based' });
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    void loadConfig();
+  }, []);
+
+  async function loadConfig() {
+    try {
+      const response = await fetch('/api/grading', { cache: 'no-store' });
+      const payload = (await response.json()) as { items?: Array<Record<string, unknown>>; error?: string };
+      if (!response.ok) throw new Error(payload.error || 'Failed to load grading config');
+      const mapped = (payload.items || []).map((item) => ({
+        min: String(item.min_score ?? ''),
+        max: String(item.max_score ?? ''),
+        grade: String(item.letter_grade ?? ''),
+        point: String(item.grade_point ?? ''),
+        remark: String(item.remark ?? ''),
+      }));
+      if (mapped.length > 0) setRows(mapped);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load grading config');
+    }
+  }
 
   function addRow(event: FormEvent) {
     event.preventDefault();
     setRows((prev) => [...prev, { min: '', max: '', grade: '', point: '', remark: '' }]);
+  }
+
+  async function saveConfig() {
+    setLoading(true);
+    setMessage('');
+    setError('');
+    try {
+      for (const row of rows) {
+        if (!row.grade || !row.min || !row.max || !row.point) continue;
+        const response = await fetch('/api/grading', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            min_score: Number(row.min),
+            max_score: Number(row.max),
+            letter_grade: row.grade,
+            grade_point: Number(row.point),
+            remark: row.remark,
+            formula_type: formula.type,
+            weighting: formula.weighting,
+            rounding: formula.rounding,
+          }),
+        });
+        const payload = (await response.json()) as { error?: string };
+        if (!response.ok) throw new Error(payload.error || 'Failed to save grading config');
+      }
+      setMessage('Grading configuration saved successfully.');
+      await loadConfig();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to save grading config');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -43,6 +101,9 @@ export default function Page() {
           <label className="text-sm">Credit Weighting<select className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" value={formula.weighting} onChange={(e) => setFormula((prev) => ({ ...prev, weighting: e.target.value }))}><option value="credit-based">Credit-based</option><option value="equal">Equal</option></select></label>
           <label className="text-sm">Rounding<select className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" value={formula.rounding} onChange={(e) => setFormula((prev) => ({ ...prev, rounding: e.target.value }))}><option value="nearest">Nearest</option><option value="up">Up</option><option value="down">Down</option></select></label>
         </div>
+        <button onClick={saveConfig} disabled={loading} type="button" className="mt-4 rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-70">{loading ? 'Saving...' : 'Save Configuration'}</button>
+        {message ? <p className="mt-3 text-sm text-emerald-700">{message}</p> : null}
+        {error ? <p className="mt-3 text-sm text-rose-700">{error}</p> : null}
       </section>
     </div>
   );

@@ -15,9 +15,11 @@ export interface UserRow {
   first_name: string;
   last_name: string;
   phone: string | null;
+  avatar_url: string | null;
   password_hash: string;
   status: string;
   registration_token: string | null;
+  registration_requested_at: string | null;
   provisioned_by: number | null;
   registered_at: string | null;
   updated_at: string | null;
