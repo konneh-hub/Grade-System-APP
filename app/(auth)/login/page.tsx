@@ -9,7 +9,7 @@ export default function LoginPage() {
   function handleSuccess(data: { roles?: string[] }) {
     const roles = data.roles || [];
     if (roles.includes('admin')) {
-      router.push('/dashboard/admin');
+      router.push('/admin');
       return;
     }
     if (roles.includes('dean')) {

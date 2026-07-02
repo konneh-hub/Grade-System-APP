@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
+import { getDashboardStats } from '@/lib/services/dashboard.service';
 
 export async function GET() {
-  return NextResponse.json({ message: 'API route stub' });
+  return NextResponse.json(getDashboardStats());
 }

@@ -12,7 +12,7 @@ export function middleware(req: NextRequest) {
       return NextResponse.redirect(url);
     }
     const roles = info.roles || [];
-    if (roles.includes('admin')) url.pathname = '/dashboard/admin';
+    if (roles.includes('admin')) url.pathname = '/admin';
     else if (roles.includes('dean')) url.pathname = '/dashboard/dean';
     else if (roles.includes('hod')) url.pathname = '/dashboard/hod';
     else if (roles.includes('lecturer')) url.pathname = '/dashboard/lecturer';

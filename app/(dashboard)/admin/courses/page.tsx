@@ -1,7 +1,36 @@
-export default function Page() {
+import DataTable from '@/components/shared/DataTable';
+
+async function getCourses() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/courses`, { cache: 'no-store' });
+  return res.json();
+}
+
+export default async function Page() {
+  const rows = await getCourses();
+
   return (
-    <main className="p-6">
-      <h1 className="text-xl font-semibold">Coming soon</h1>
-    </main>
+    <div className="space-y-6">
+      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#2563EB]">Administration</p>
+        <h1 className="mt-2 text-3xl font-semibold text-slate-900">Course administration</h1>
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
+          Review academic courses, credits, and the active course catalog.
+        </p>
+      </section>
+
+      <DataTable
+        title="Academic courses"
+        description="All courses available in the current teaching setup."
+        rows={rows}
+        emptyMessage="No courses are available yet."
+        columns={[
+          { header: 'Code', accessor: 'code' },
+          { header: 'Title', accessor: 'title' },
+          { header: 'Level', accessor: 'level' },
+          { header: 'Credits', accessor: 'credit_units' },
+          { header: 'Status', accessor: 'is_active' },
+        ]}
+      />
+    </div>
   );
 }

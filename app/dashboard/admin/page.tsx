@@ -1,3 +1,5 @@
-export default function AdminDashboard() {
-  return <div>Admin dashboard</div>;
+import { redirect } from 'next/navigation';
+
+export default function LegacyAdminPage() {
+	redirect('/admin');
 }

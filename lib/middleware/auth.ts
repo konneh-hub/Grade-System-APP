@@ -1,5 +1,6 @@
 import { verifyToken } from '@/lib/utils/crypto';
 import { config } from '@/lib/config/env';
+import type { NextRequest } from 'next/server';
 
 interface TokenPayload {
   userId: number | string;
@@ -17,10 +18,13 @@ export function parseCookies(cookieHeader: string | null) {
   }));
 }
 
-export function getUserFromRequest(req: Request) {
+export function getUserFromRequest(req: Request | NextRequest) {
   const cookieHeader = typeof req.headers?.get === 'function' ? req.headers.get('cookie') : null;
   const cookies = parseCookies(cookieHeader);
-  const token = cookies[config.COOKIE_NAME];
+  const nextCookieValue = typeof req === 'object' && req !== null && 'cookies' in req && typeof (req as NextRequest).cookies?.get === 'function'
+    ? (req as NextRequest).cookies.get(config.COOKIE_NAME)?.value
+    : null;
+  const token = nextCookieValue || cookies[config.COOKIE_NAME];
   if (!token) return null;
   const payload = verifyToken(token as string) as TokenPayload | null;
   if (!payload || !payload.userId || !payload.roles) return null;

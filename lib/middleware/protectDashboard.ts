@@ -31,7 +31,7 @@ export function middleware(req: NextRequest) {
       const requiredRole = roleMap[requestedRole];
       if (requiredRole && !roles.includes(requiredRole)) {
         const target = roles.includes('admin')
-          ? '/dashboard/admin'
+          ? '/admin'
           : roles.includes('dean')
           ? '/dashboard/dean'
           : roles.includes('hod')
