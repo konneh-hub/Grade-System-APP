@@ -1,7 +1,11 @@
+import RoleDetailWorkspace from '@/components/shared/RoleDetailWorkspace';
+
 export default function Page() {
   return (
-    <main className="p-6">
-      <h1 className="text-xl font-semibold">Coming soon</h1>
-    </main>
+    <RoleDetailWorkspace
+      title="Result Processing Detail"
+      description="Process selected result records and capture final processing notes."
+      primaryActionLabel="Confirm Processing Decision"
+    />
   );
 }

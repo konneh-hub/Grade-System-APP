@@ -1,7 +1,12 @@
+import RoleModuleWorkspace from '@/components/shared/RoleModuleWorkspace';
+
 export default function Page() {
   return (
-    <main className="p-6">
-      <h1 className="text-xl font-semibold">Coming soon</h1>
-    </main>
+    <RoleModuleWorkspace
+      title="Submit Complaint"
+      description="Submit complaint records with structured details for faster routing."
+      actionLabel="Submit Complaint"
+      summaryLabel="Complaint Draft"
+    />
   );
 }

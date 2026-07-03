@@ -18,14 +18,14 @@ export default function Page() {
   async function loadConfig() {
     try {
       const response = await fetch('/api/grading', { cache: 'no-store' });
-      const payload = (await response.json()) as { items?: Array<Record<string, unknown>>; error?: string };
-      if (!response.ok) throw new Error(payload.error || 'Failed to load grading config');
-      const mapped = (payload.items || []).map((item) => ({
-        min: String(item.min_score ?? ''),
-        max: String(item.max_score ?? ''),
-        grade: String(item.letter_grade ?? ''),
-        point: String(item.grade_point ?? ''),
-        remark: String(item.remark ?? ''),
+      const payload = (await response.json()) as Array<Record<string, unknown>> | { error?: string };
+      if (!response.ok) throw new Error((payload as { error?: string }).error || 'Failed to load grading config');
+      const mapped = (payload as Array<Record<string, unknown>>).map((item) => ({
+        min: String(item.pass_mark ?? ''),
+        max: '100',
+        grade: String(item.grade_scale ?? ''),
+        point: String(item.ca_weight ?? ''),
+        remark: `Exam weight: ${String(item.exam_weight ?? '')}`,
       }));
       if (mapped.length > 0) setRows(mapped);
     } catch (err) {

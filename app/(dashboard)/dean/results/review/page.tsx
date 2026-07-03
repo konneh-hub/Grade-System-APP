@@ -1,7 +1,12 @@
+import RoleModuleWorkspace from '@/components/shared/RoleModuleWorkspace';
+
 export default function Page() {
   return (
-    <main className="p-6">
-      <h1 className="text-xl font-semibold">Coming soon</h1>
-    </main>
+    <RoleModuleWorkspace
+      title="Result Review Board"
+      description="Capture dean review board actions and monitor pending academic decisions."
+      actionLabel="Record Board Decision"
+      summaryLabel="Board Review Case"
+    />
   );
 }

@@ -1,7 +1,12 @@
+import RoleModuleWorkspace from '@/components/shared/RoleModuleWorkspace';
+
 export default function Page() {
   return (
-    <main className="p-6">
-      <h1 className="text-xl font-semibold">Coming soon</h1>
-    </main>
+    <RoleModuleWorkspace
+      title="Lecturer Reports"
+      description="Generate teaching reports and monitor completion for department submission."
+      actionLabel="Save Report Task"
+      summaryLabel="Report Task"
+    />
   );
 }

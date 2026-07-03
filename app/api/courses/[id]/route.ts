@@ -11,7 +11,7 @@ export async function GET(_req: Request, context: ParamsContext) {
   const db = getDatabase();
   const row = db
     .prepare(
-      `SELECT c.id, c.code, c.title, c.unit, c.level, c.semester, c.department_id, d.name AS department_name,
+      `SELECT c.id, c.code, c.title, c.credit_units, c.level, c.semester, c.department_id, d.name AS department_name,
               c.created_at
        FROM courses c
        LEFT JOIN departments d ON d.id = c.department_id
@@ -43,7 +43,7 @@ export async function PATCH(req: Request, context: ParamsContext) {
     `UPDATE courses
      SET code = COALESCE(?, code),
          title = COALESCE(?, title),
-         unit = COALESCE(?, unit),
+         credit_units = COALESCE(?, credit_units),
          level = COALESCE(?, level),
          semester = COALESCE(?, semester),
          department_id = COALESCE(?, department_id)

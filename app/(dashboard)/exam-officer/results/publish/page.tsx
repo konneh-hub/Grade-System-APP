@@ -1,7 +1,12 @@
+import RoleModuleWorkspace from '@/components/shared/RoleModuleWorkspace';
+
 export default function Page() {
   return (
-    <main className="p-6">
-      <h1 className="text-xl font-semibold">Coming soon</h1>
-    </main>
+    <RoleModuleWorkspace
+      title="Result Publication"
+      description="Prepare and approve publication batches with full publication notes."
+      actionLabel="Save Publication Batch"
+      summaryLabel="Publication Batch"
+    />
   );
 }

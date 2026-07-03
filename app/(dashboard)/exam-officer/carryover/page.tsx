@@ -1,7 +1,12 @@
+import RoleModuleWorkspace from '@/components/shared/RoleModuleWorkspace';
+
 export default function Page() {
   return (
-    <main className="p-6">
-      <h1 className="text-xl font-semibold">Coming soon</h1>
-    </main>
+    <RoleModuleWorkspace
+      title="Carryover Processing"
+      description="Manage carryover requests, outcomes, and follow-up timelines for affected students."
+      actionLabel="Save Carryover Action"
+      summaryLabel="Carryover Request"
+    />
   );
 }

@@ -1,7 +1,12 @@
+import RoleModuleWorkspace from '@/components/shared/RoleModuleWorkspace';
+
 export default function Page() {
   return (
-    <main className="p-6">
-      <h1 className="text-xl font-semibold">Coming soon</h1>
-    </main>
+    <RoleModuleWorkspace
+      title="Rectification Queue"
+      description="Track submitted rectifications and document correction approvals end-to-end."
+      actionLabel="Save Rectification Update"
+      summaryLabel="Rectification Case"
+    />
   );
 }

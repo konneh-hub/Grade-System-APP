@@ -5,10 +5,10 @@ import { FormEvent, useEffect, useState } from 'react';
 type NotificationRow = {
   id: number;
   title: string;
-  message: string;
-  type: string;
+  body: string;
+  recipient_email?: string;
   channel: string;
-  status: string;
+  is_read: number;
   created_at: string;
 };
 
@@ -33,9 +33,9 @@ export default function NotificationsPage() {
   async function fetchNotifications() {
     try {
       const response = await fetch('/api/notifications', { cache: 'no-store' });
-      const payload = (await response.json()) as { items?: NotificationRow[]; error?: string };
-      if (!response.ok) throw new Error(payload.error || 'Failed to load notifications');
-      setRows(payload.items || []);
+      const payload = (await response.json()) as NotificationRow[] | { error?: string };
+      if (!response.ok) throw new Error((payload as { error?: string }).error || 'Failed to load notifications');
+      setRows(payload as NotificationRow[]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load notifications');
     }
@@ -51,7 +51,12 @@ export default function NotificationsPage() {
       const response = await fetch('/api/notifications', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          title: form.title,
+          message: form.message,
+          deliveryType: form.channel === 'in-app' ? 'dashboard' : form.channel,
+          targetAudience: form.audience === 'role' ? form.target_role : 'all',
+        }),
       });
       const payload = (await response.json()) as { error?: string };
       if (!response.ok) throw new Error(payload.error || 'Failed to send notification');
@@ -91,8 +96,9 @@ export default function NotificationsPage() {
         <div className="mt-4 space-y-2">
           {rows.length === 0 ? <p className="text-sm text-slate-600">No notifications yet.</p> : rows.map((row) => (
             <div key={row.id} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
-              <p className="font-medium text-slate-900">{row.title} <span className="font-normal text-slate-500">({row.type}/{row.channel})</span></p>
-              <p className="mt-1">{row.message}</p>
+              <p className="font-medium text-slate-900">{row.title} <span className="font-normal text-slate-500">({row.channel}/{row.is_read ? 'read' : 'unread'})</span></p>
+              <p className="mt-1">{row.body}</p>
+              <p className="mt-1 text-xs text-slate-500">Recipient: {row.recipient_email || 'unknown'}</p>
             </div>
           ))}
         </div>

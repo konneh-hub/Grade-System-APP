@@ -1,7 +1,11 @@
+import RoleDetailWorkspace from '@/components/shared/RoleDetailWorkspace';
+
 export default function Page() {
   return (
-    <main className="p-6">
-      <h1 className="text-xl font-semibold">Coming soon</h1>
-    </main>
+    <RoleDetailWorkspace
+      title="Result Submission Detail"
+      description="Finalize result submission package and validation notes."
+      primaryActionLabel="Submit Result Package"
+    />
   );
 }

@@ -1,7 +1,12 @@
+import RoleModuleWorkspace from '@/components/shared/RoleModuleWorkspace';
+
 export default function Page() {
   return (
-    <main className="p-6">
-      <h1 className="text-xl font-semibold">Coming soon</h1>
-    </main>
+    <RoleModuleWorkspace
+      title="Transcript Operations"
+      description="Manage transcript lifecycle from request verification to issuance."
+      actionLabel="Save Transcript Update"
+      summaryLabel="Transcript Request"
+    />
   );
 }

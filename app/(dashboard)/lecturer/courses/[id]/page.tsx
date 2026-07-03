@@ -1,7 +1,11 @@
+import RoleDetailWorkspace from '@/components/shared/RoleDetailWorkspace';
+
 export default function Page() {
   return (
-    <main className="p-6">
-      <h1 className="text-xl font-semibold">Coming soon</h1>
-    </main>
+    <RoleDetailWorkspace
+      title="Course Detail Workspace"
+      description="Manage the selected course delivery details and teaching actions."
+      primaryActionLabel="Save Course Decision"
+    />
   );
 }

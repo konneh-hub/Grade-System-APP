@@ -11,8 +11,8 @@ export default async function Page() {
   return (
     <div className="space-y-6">
       <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#2563EB]">Exam officer</p>
-        <h1 className="mt-2 text-3xl font-semibold text-slate-900">Results processing</h1>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#1A3A6B]">Exam officer</p>
+        <h1 className="mt-2 text-[28px] font-bold text-[#2D3748]">Results processing</h1>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
           Review submitted results and ensure they are ready for publishing.
         </p>

@@ -24,9 +24,9 @@ export default function Page() {
   async function fetchFaculties() {
     try {
       const response = await fetch('/api/faculties', { cache: 'no-store' });
-      const payload = (await response.json()) as { items?: Faculty[]; error?: string };
-      if (!response.ok) throw new Error(payload.error || 'Failed to load faculties');
-      setFaculties(payload.items || []);
+      const payload = (await response.json()) as Faculty[] | { error?: string };
+      if (!response.ok) throw new Error((payload as { error?: string }).error || 'Failed to load faculties');
+      setFaculties(payload as Faculty[]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load faculties');
     }

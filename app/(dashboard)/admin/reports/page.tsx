@@ -1,14 +1,16 @@
 'use client';
 
+import Link from 'next/link';
 import { FormEvent, useEffect, useState } from 'react';
 
 type ReportRow = {
   id: number;
-  name: string;
-  type: string;
-  description: string;
+  template_name: string;
+  category: string;
+  format: string;
   generated_at: string | null;
-  status: string | null;
+  created_at: string;
+  status: string;
 };
 
 export default function Page() {
@@ -25,9 +27,9 @@ export default function Page() {
   async function fetchReports() {
     try {
       const response = await fetch('/api/reports', { cache: 'no-store' });
-      const payload = (await response.json()) as { items?: ReportRow[]; error?: string };
+      const payload = (await response.json()) as { generated?: ReportRow[]; error?: string };
       if (!response.ok) throw new Error(payload.error || 'Failed to load reports');
-      setReports(payload.items || []);
+      setReports(payload.generated || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load reports');
     }
@@ -40,13 +42,11 @@ export default function Page() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/reports/generate', {
+      const response = await fetch(`/api/reports/${filters.type}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          type: filters.type,
-          title: `${filters.type.toUpperCase()} report`,
-          description: `Generated between ${filters.from || 'start'} and ${filters.to || 'now'} in ${filters.format.toUpperCase()}`,
+          format: filters.format,
         }),
       });
 
@@ -84,10 +84,13 @@ export default function Page() {
       <section className="grid gap-4 md:grid-cols-3">
         {reports.map((report) => (
           <div key={report.id} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-semibold text-slate-900">{report.name}</h2>
-            <p className="mt-2 text-sm text-slate-600">{report.description}</p>
-            <p className="mt-2 text-xs text-slate-500">Type: {report.type}</p>
-            <p className="mt-4 inline-flex rounded-full bg-[#EFF6FF] px-3 py-1 text-sm font-medium text-[#2563EB]">{report.status || 'available'}</p>
+            <h2 className="text-lg font-semibold text-slate-900">{report.template_name || 'Generated report'}</h2>
+            <p className="mt-2 text-sm text-slate-600">Format: {report.format.toUpperCase()} | Category: {report.category || 'general'}</p>
+            <p className="mt-2 text-xs text-slate-500">Generated: {new Date(report.created_at).toLocaleString()}</p>
+            <div className="mt-4 flex items-center justify-between gap-2">
+              <p className="inline-flex rounded-full bg-[#EFF6FF] px-3 py-1 text-sm font-medium text-[#2563EB]">{report.status || 'available'}</p>
+              <Link href={`/admin/reports/${report.category || filters.type}`} className="text-sm font-medium text-[#1A3A6B] hover:underline">Open type</Link>
+            </div>
           </div>
         ))}
       </section>
