@@ -1,7 +1,12 @@
+import RoleModuleWorkspace from '@/components/shared/RoleModuleWorkspace';
+
 export default function Page() {
   return (
-    <main className="p-6">
-      <h1 className="text-xl font-semibold">Coming soon</h1>
-    </main>
+    <RoleModuleWorkspace
+      title="Course Management"
+      description="Track assigned courses, class delivery updates, and follow-up actions."
+      actionLabel="Save Course Update"
+      summaryLabel="Course Item"
+    />
   );
 }

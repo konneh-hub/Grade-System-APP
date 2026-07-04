@@ -1,7 +1,11 @@
+import RoleDetailWorkspace from '@/components/shared/RoleDetailWorkspace';
+
 export default function Page() {
   return (
-    <main className="p-6">
-      <h1 className="text-xl font-semibold">Coming soon</h1>
-    </main>
+    <RoleDetailWorkspace
+      title="Transcript Request Detail"
+      description="Review transcript request details and complete issuance decision."
+      primaryActionLabel="Finalize Transcript Decision"
+    />
   );
 }

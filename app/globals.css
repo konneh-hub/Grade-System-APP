@@ -15,12 +15,15 @@
 }
 
 :root {
-  --background: #F8FAFC;
+  --background: #f7fafc;
   --card: #ffffff;
-  --primary: #2563EB;
-  --accent: #3B82F6;
-  --heading: #0F172A;
-  --body-text: #475569;
+  --primary: #1a3a6b;
+  --secondary: #c5a55a;
+  --success: #28a745;
+  --warning: #ffc107;
+  --danger: #dc3545;
+  --heading: #2d3748;
+  --body-text: #4a5568;
 }
 
 @theme inline {
@@ -36,6 +39,34 @@ body {
   background: var(--background);
   color: var(--heading);
   font-family: var(--font-sans);
+}
+
+h1 {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+h4 {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+p,
+span,
+label,
+li,
+a {
+  font-size: 14px;
 }
 
 input,

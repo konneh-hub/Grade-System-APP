@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
@@ -41,12 +41,8 @@ export default function Page() {
   const isStudent = useMemo(() => form.role === 'student', [form.role]);
   const isStaffTokenRole = useMemo(() => ['lecturer', 'hod', 'dean', 'exam_officer'].includes(form.role), [form.role]);
 
-  useEffect(() => {
+  const loadUser = useCallback(async () => {
     if (!userId) return;
-    void loadUser();
-  }, [userId]);
-
-  async function loadUser() {
     setLoading(true);
     setError('');
     try {
@@ -68,7 +64,11 @@ export default function Page() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [userId]);
+
+  useEffect(() => {
+    void loadUser();
+  }, [loadUser]);
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();

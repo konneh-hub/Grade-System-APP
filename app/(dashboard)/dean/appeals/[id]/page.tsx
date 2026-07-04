@@ -1,7 +1,11 @@
+import RoleDetailWorkspace from '@/components/shared/RoleDetailWorkspace';
+
 export default function Page() {
   return (
-    <main className="p-6">
-      <h1 className="text-xl font-semibold">Coming soon</h1>
-    </main>
+    <RoleDetailWorkspace
+      title="Appeal Case Detail"
+      description="Review submitted evidence, assign decision, and finalize appeal outcomes."
+      primaryActionLabel="Finalize Appeal Decision"
+    />
   );
 }

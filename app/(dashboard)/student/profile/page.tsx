@@ -1,7 +1,12 @@
+import RoleModuleWorkspace from '@/components/shared/RoleModuleWorkspace';
+
 export default function Page() {
   return (
-    <main className="p-6">
-      <h1 className="text-xl font-semibold">Coming soon</h1>
-    </main>
+    <RoleModuleWorkspace
+      title="Student Profile Management"
+      description="Maintain profile details and keep academic profile updates documented."
+      actionLabel="Save Profile Update"
+      summaryLabel="Profile Update"
+    />
   );
 }

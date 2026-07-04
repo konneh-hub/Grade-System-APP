@@ -30,13 +30,13 @@ export default function Page() {
         fetch('/api/departments', { cache: 'no-store' }),
         fetch('/api/faculties', { cache: 'no-store' }),
       ]);
-      const deptPayload = (await deptRes.json()) as { items?: Department[]; error?: string };
-      const facPayload = (await facRes.json()) as { items?: FacultyOption[]; error?: string };
-      if (!deptRes.ok) throw new Error(deptPayload.error || 'Failed to load departments');
-      if (!facRes.ok) throw new Error(facPayload.error || 'Failed to load faculties');
+      const deptPayload = (await deptRes.json()) as Department[] | { error?: string };
+      const facPayload = (await facRes.json()) as FacultyOption[] | { error?: string };
+      if (!deptRes.ok) throw new Error((deptPayload as { error?: string }).error || 'Failed to load departments');
+      if (!facRes.ok) throw new Error((facPayload as { error?: string }).error || 'Failed to load faculties');
 
-      setRows(deptPayload.items || []);
-      setFaculties(facPayload.items || []);
+      setRows(deptPayload as Department[]);
+      setFaculties(facPayload as FacultyOption[]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load department data');
     }

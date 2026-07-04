@@ -1,7 +1,11 @@
+import RoleDetailWorkspace from '@/components/shared/RoleDetailWorkspace';
+
 export default function Page() {
   return (
-    <main className="p-6">
-      <h1 className="text-xl font-semibold">Coming soon</h1>
-    </main>
+    <RoleDetailWorkspace
+      title="Result Case Detail"
+      description="Validate detailed result case data and capture dean decision notes."
+      primaryActionLabel="Finalize Result Decision"
+    />
   );
 }

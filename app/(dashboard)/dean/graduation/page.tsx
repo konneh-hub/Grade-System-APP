@@ -1,7 +1,12 @@
+import RoleModuleWorkspace from '@/components/shared/RoleModuleWorkspace';
+
 export default function Page() {
   return (
-    <main className="p-6">
-      <h1 className="text-xl font-semibold">Coming soon</h1>
-    </main>
+    <RoleModuleWorkspace
+      title="Graduation Review"
+      description="Validate graduation applications and document final faculty decisions."
+      actionLabel="Save Graduation Decision"
+      summaryLabel="Graduation Application"
+    />
   );
 }

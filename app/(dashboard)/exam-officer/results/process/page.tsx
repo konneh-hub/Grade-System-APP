@@ -1,7 +1,12 @@
+import RoleModuleWorkspace from '@/components/shared/RoleModuleWorkspace';
+
 export default function Page() {
   return (
-    <main className="p-6">
-      <h1 className="text-xl font-semibold">Coming soon</h1>
-    </main>
+    <RoleModuleWorkspace
+      title="Result Processing Pipeline"
+      description="Execute staged result processing tasks and log progress safely."
+      actionLabel="Save Pipeline Step"
+      summaryLabel="Pipeline Step"
+    />
   );
 }

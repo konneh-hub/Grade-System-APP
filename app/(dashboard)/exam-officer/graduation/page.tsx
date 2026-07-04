@@ -1,7 +1,12 @@
+import RoleModuleWorkspace from '@/components/shared/RoleModuleWorkspace';
+
 export default function Page() {
   return (
-    <main className="p-6">
-      <h1 className="text-xl font-semibold">Coming soon</h1>
-    </main>
+    <RoleModuleWorkspace
+      title="Graduation Compliance"
+      description="Validate graduation readiness checks and keep examination records synchronized."
+      actionLabel="Save Compliance Review"
+      summaryLabel="Compliance Record"
+    />
   );
 }

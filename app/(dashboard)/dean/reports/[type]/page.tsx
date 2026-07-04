@@ -1,7 +1,11 @@
+import RoleDetailWorkspace from '@/components/shared/RoleDetailWorkspace';
+
 export default function Page() {
   return (
-    <main className="p-6">
-      <h1 className="text-xl font-semibold">Coming soon</h1>
-    </main>
+    <RoleDetailWorkspace
+      title="Report Detail Review"
+      description="Review the selected report type and capture publication notes."
+      primaryActionLabel="Approve Report Review"
+    />
   );
 }
