@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getUserFromRequest } from '@/lib/middleware/auth';
+import { getDashboardPath } from '@/lib/utils/rolePaths';
 
 export function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
@@ -30,18 +31,7 @@ export function middleware(req: NextRequest) {
       };
       const requiredRole = roleMap[requestedRole];
       if (requiredRole && !roles.includes(requiredRole)) {
-        const target = roles.includes('admin')
-          ? '/admin'
-          : roles.includes('dean')
-          ? '/dashboard/dean'
-          : roles.includes('hod')
-          ? '/dashboard/hod'
-          : roles.includes('lecturer')
-          ? '/dashboard/lecturer'
-          : roles.includes('exam_officer') || roles.includes('exam-officer')
-          ? '/dashboard/exam-officer'
-          : '/dashboard/student';
-        return NextResponse.redirect(new URL(target, req.url));
+        return NextResponse.redirect(new URL(getDashboardPath(roles), req.url));
       }
     }
   }

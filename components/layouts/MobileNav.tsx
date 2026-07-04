@@ -26,6 +26,16 @@ function getMobileItems(pathname: string): NavItem[] {
 		];
 	}
 
+	if (pathname.startsWith('/hod')) {
+		return [
+			{ href: '/hod', label: 'Home', icon: '🏠' },
+			{ href: '/hod/students', label: 'Students', icon: '🧑‍🎓' },
+			{ href: '/hod/courses', label: 'Courses', icon: '📚' },
+			{ href: '/hod/results', label: 'Results', icon: '📊' },
+			{ href: '/hod/complaints', label: 'Complaints', icon: '📋' },
+		];
+	}
+
 	if (pathname.startsWith('/exam-officer')) {
 		return [
 			{ href: '/exam-officer', label: 'Home', icon: '🏠' },

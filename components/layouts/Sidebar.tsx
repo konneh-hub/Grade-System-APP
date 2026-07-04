@@ -54,6 +54,20 @@ const deanSections = [
   },
 ];
 
+const hodSections = [
+  {
+    title: 'Main',
+    items: [
+      { href: '/hod', label: 'Dashboard', icon: '🏠' },
+      { href: '/hod/students', label: 'Student Management', icon: '🧑‍🎓' },
+      { href: '/hod/courses', label: 'Course Assignments', icon: '📚' },
+      { href: '/hod/results', label: 'Department Results', icon: '📊' },
+      { href: '/hod/complaints', label: 'Complaints', icon: '📋' },
+      { href: '/hod/reports', label: 'Reports', icon: '📈' },
+    ],
+  },
+];
+
 const examOfficerSections = [
   {
     title: 'Main',
@@ -101,11 +115,13 @@ export default function Sidebar() {
     ? { title: 'Admin console', subtitle: 'University administration and operations.', sections: adminSections }
     : pathname.startsWith('/dean')
       ? { title: 'Dean workspace', subtitle: 'Faculty-level academic leadership.', sections: deanSections }
-      : pathname.startsWith('/exam-officer')
-        ? { title: 'Exam operations', subtitle: 'Result publication and transcript workflows.', sections: examOfficerSections }
-        : pathname.startsWith('/lecturer')
-          ? { title: 'Lecturer workspace', subtitle: 'Teaching, scoring, and reporting.', sections: lecturerSections }
-          : { title: 'Student portal', subtitle: 'Personal academic tools and records.', sections: studentSections }), [pathname]);
+      : pathname.startsWith('/hod')
+        ? { title: 'HOD workspace', subtitle: 'Department oversight and coordination.', sections: hodSections }
+        : pathname.startsWith('/exam-officer')
+          ? { title: 'Exam operations', subtitle: 'Result publication and transcript workflows.', sections: examOfficerSections }
+          : pathname.startsWith('/lecturer')
+            ? { title: 'Lecturer workspace', subtitle: 'Teaching, scoring, and reporting.', sections: lecturerSections }
+            : { title: 'Student portal', subtitle: 'Personal academic tools and records.', sections: studentSections }), [pathname]);
 
   return (
     <aside className={`hidden shrink-0 border-r border-slate-200 bg-[#1A3A6B] p-4 text-slate-100 transition-all duration-300 lg:block ${collapsed ? 'w-[72px]' : 'w-[280px]'}`}>

@@ -4,6 +4,7 @@ import LoginForm from '@/components/auth/LoginForm';
 import AuthModal from '@/components/auth/AuthModal';
 import { useRouter } from 'next/navigation';
 import { useState, useCallback } from 'react';
+import { getDashboardPath } from '@/lib/utils/rolePaths';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,13 +21,7 @@ export default function LoginPage() {
 
   function closeSuccessAndRedirect() {
     setShowSuccessModal(false);
-    const roles = pendingRoles;
-    if (roles.includes('admin')) { router.push('/admin'); return; }
-    if (roles.includes('dean')) { router.push('/dashboard/dean'); return; }
-    if (roles.includes('hod')) { router.push('/dashboard/hod'); return; }
-    if (roles.includes('lecturer')) { router.push('/dashboard/lecturer'); return; }
-    if (roles.includes('exam_officer') || roles.includes('exam-officer')) { router.push('/dashboard/exam-officer'); return; }
-    router.push('/dashboard/student');
+    router.push(getDashboardPath(pendingRoles));
   }
 
   function handleError(_message: string) {

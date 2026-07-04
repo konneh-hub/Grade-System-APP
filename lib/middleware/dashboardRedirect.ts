@@ -13,11 +13,11 @@ export function middleware(req: NextRequest) {
     }
     const roles = info.roles || [];
     if (roles.includes('admin')) url.pathname = '/admin';
-    else if (roles.includes('dean')) url.pathname = '/dashboard/dean';
-    else if (roles.includes('hod')) url.pathname = '/dashboard/hod';
-    else if (roles.includes('lecturer')) url.pathname = '/dashboard/lecturer';
-    else if (roles.includes('exam_officer') || roles.includes('exam-officer')) url.pathname = '/dashboard/exam-officer';
-    else url.pathname = '/dashboard/student';
+    else if (roles.includes('dean')) url.pathname = '/dean';
+    else if (roles.includes('hod')) url.pathname = '/hod';
+    else if (roles.includes('lecturer')) url.pathname = '/lecturer';
+    else if (roles.includes('exam_officer') || roles.includes('exam-officer')) url.pathname = '/exam-officer';
+    else url.pathname = '/student';
     return NextResponse.redirect(url);
   }
   return NextResponse.next();

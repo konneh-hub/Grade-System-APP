@@ -1,6 +1,7 @@
 "use client";
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { getDashboardPath } from '@/lib/utils/rolePaths';
 
 export default function RegisterForm() {
   const [registrationType, setRegistrationType] = useState<'staff' | 'student'>('staff');
@@ -38,27 +39,7 @@ export default function RegisterForm() {
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || 'Registration failed');
       const roles: string[] = Array.isArray(data?.roles) ? data.roles : [];
-      if (roles.includes('admin')) {
-        router.push('/admin');
-        return;
-      }
-      if (roles.includes('dean')) {
-        router.push('/dashboard/dean');
-        return;
-      }
-      if (roles.includes('hod')) {
-        router.push('/dashboard/hod');
-        return;
-      }
-      if (roles.includes('lecturer')) {
-        router.push('/dashboard/lecturer');
-        return;
-      }
-      if (roles.includes('exam_officer') || roles.includes('exam-officer')) {
-        router.push('/dashboard/exam-officer');
-        return;
-      }
-      router.push('/dashboard/student');
+      router.push(getDashboardPath(roles));
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Registration failed');
     } finally {
