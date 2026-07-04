@@ -12,7 +12,7 @@ const adminSections = [
     items: [
       { href: '/admin', label: 'Dashboard', icon: 'dashboard' },
       { href: '/admin/users', label: 'User Management', icon: 'group' },
-      { href: '/admin/users/create', label: 'Create User', icon: 'person_add' },
+      { href: '/admin/users', label: 'Create User', icon: 'person_add' },
       { href: '/admin/roles', label: 'Roles & Permissions', icon: 'admin_panel_settings' },
     ] as NavItem[],
   },

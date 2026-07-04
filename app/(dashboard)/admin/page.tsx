@@ -10,9 +10,9 @@ const chartCards = [
 ];
 
 const quickActions = [
-  { title: 'Create User', href: '/admin/users/create', icon: 'person_add', desc: 'Add a new user account' },
-  { title: 'Add Faculty', href: '/admin/faculties/create', icon: 'account_balance', desc: 'Create a new faculty' },
-  { title: 'Add Department', href: '/admin/departments/create', icon: 'business', desc: 'Create a new department' },
+  { title: 'Create User', href: '/admin/users', icon: 'person_add', desc: 'Add a new user account' },
+  { title: 'Add Faculty', href: '/admin/faculties', icon: 'account_balance', desc: 'Create a new faculty' },
+  { title: 'Add Department', href: '/admin/departments', icon: 'business', desc: 'Create a new department' },
   { title: 'Create Session', href: '/admin/academic-sessions/create', icon: 'calendar_month', desc: 'Start academic session' },
   { title: 'Send Notification', href: '/admin/notifications', icon: 'notifications', desc: 'Broadcast to users' },
   { title: 'Run Backup', href: '/admin/backup', icon: 'backup', desc: 'System backup now' },
