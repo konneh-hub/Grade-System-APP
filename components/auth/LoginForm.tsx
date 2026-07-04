@@ -6,7 +6,7 @@ interface LoginResponse {
   roles?: string[];
 }
 
-export default function LoginForm({ onSuccess }: { onSuccess?: (data: LoginResponse) => void }) {
+export default function LoginForm({ onSuccess, onError }: { onSuccess?: (data: LoginResponse) => void; onError?: (message: string) => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -26,7 +26,9 @@ export default function LoginForm({ onSuccess }: { onSuccess?: (data: LoginRespo
       if (!res.ok) throw new Error(data?.error || 'Login failed');
       onSuccess?.(data as LoginResponse);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Login failed');
+      const message = err instanceof Error ? err.message : 'Login failed';
+      setError(message);
+      onError?.(message);
     } finally {
       setLoading(false);
     }
@@ -68,7 +70,6 @@ export default function LoginForm({ onSuccess }: { onSuccess?: (data: LoginRespo
           className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition-all duration-300 ease-out placeholder:text-slate-400 hover:border-slate-300 focus:border-[#1E3A8A] focus:bg-[#F8FAFC] focus:ring-4 focus:ring-[#1E3A8A]/10 focus:shadow-lg focus:shadow-[#1E3A8A]/5"
         />
       </div>
-      {error && <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600 ring-1 ring-red-100 animate-fade-in-up">{error}</div>}
       <button
         type="submit"
         disabled={loading}

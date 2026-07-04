@@ -1,34 +1,36 @@
 'use client';
 
 import LoginForm from '@/components/auth/LoginForm';
+import AuthModal from '@/components/auth/AuthModal';
 import { useRouter } from 'next/navigation';
+import { useState, useCallback } from 'react';
 
 export default function LoginPage() {
   const router = useRouter();
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+  const [pendingRoles, setPendingRoles] = useState<string[]>([]);
 
-  function handleSuccess(data: { roles?: string[] }) {
-    const roles = data.roles || [];
-    if (roles.includes('admin')) {
-      router.push('/admin');
-      return;
-    }
-    if (roles.includes('dean')) {
-      router.push('/dashboard/dean');
-      return;
-    }
-    if (roles.includes('hod')) {
-      router.push('/dashboard/hod');
-      return;
-    }
-    if (roles.includes('lecturer')) {
-      router.push('/dashboard/lecturer');
-      return;
-    }
-    if (roles.includes('exam_officer') || roles.includes('exam-officer')) {
-      router.push('/dashboard/exam-officer');
-      return;
-    }
+  const handleSuccess = useCallback((data: { roles?: string[]; user?: { email?: string } }) => {
+    setUserEmail(data?.user?.email || '');
+    setPendingRoles(data?.roles || []);
+    setShowSuccessModal(true);
+  }, []);
+
+  function closeSuccessAndRedirect() {
+    setShowSuccessModal(false);
+    const roles = pendingRoles;
+    if (roles.includes('admin')) { router.push('/admin'); return; }
+    if (roles.includes('dean')) { router.push('/dashboard/dean'); return; }
+    if (roles.includes('hod')) { router.push('/dashboard/hod'); return; }
+    if (roles.includes('lecturer')) { router.push('/dashboard/lecturer'); return; }
+    if (roles.includes('exam_officer') || roles.includes('exam-officer')) { router.push('/dashboard/exam-officer'); return; }
     router.push('/dashboard/student');
+  }
+
+  function handleError(_message: string) {
+    setShowErrorModal(true);
   }
 
   return (
@@ -79,11 +81,23 @@ export default function LoginPage() {
             </div>
             <div className="mt-7 border-t border-slate-100 pt-7">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#94A3B8]">Sign in</p>
-              <LoginForm onSuccess={handleSuccess} />
+              <LoginForm onSuccess={handleSuccess} onError={handleError} />
             </div>
           </div>
         </div>
       </section>
+
+      <AuthModal
+        open={showSuccessModal}
+        onClose={closeSuccessAndRedirect}
+        type="success"
+        email={userEmail}
+      />
+      <AuthModal
+        open={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
+        type="error"
+      />
     </div>
   );
 }
