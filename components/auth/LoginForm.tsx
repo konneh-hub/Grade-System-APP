@@ -49,7 +49,7 @@ export default function LoginForm({ onSuccess }: { onSuccess?: (data: LoginRespo
           type="email"
           required
           spellCheck={false}
-          className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#2563EB] focus:ring-4 focus:ring-[#3B82F6]/20"
+          className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/20"
         />
       </div>
       <div className="space-y-2">
@@ -65,24 +65,24 @@ export default function LoginForm({ onSuccess }: { onSuccess?: (data: LoginRespo
           onChange={(e) => setPassword(e.target.value)}
           type="password"
           required
-          className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#2563EB] focus:ring-4 focus:ring-[#3B82F6]/20"
+          className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/20"
         />
       </div>
       {error && <div className="text-sm text-red-600">{error}</div>}
       <button
         type="submit"
         disabled={loading}
-        className="inline-flex w-full h-12 items-center justify-center rounded-xl bg-[#2563EB] px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#1d4ed8] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#3B82F6]/40 disabled:cursor-not-allowed disabled:bg-slate-400"
+        className="inline-flex w-full h-12 items-center justify-center rounded-xl bg-[#1E3A8A] px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#152C6B] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#1E3A8A]/40 disabled:cursor-not-allowed disabled:bg-slate-400"
       >
         {loading ? 'Signing in...' : 'Sign in'}
       </button>
       <div className="flex flex-col gap-3 text-center text-sm sm:flex-row sm:items-center sm:justify-between">
-        <Link href="/forgot-password" className="font-medium text-[#2563EB] transition hover:text-[#1d4ed8]">
+        <Link href="/forgot-password" className="font-medium text-[#1E3A8A] transition hover:text-[#152C6B]">
           Forgot password?
         </Link>
         <Link
           href="/register"
-          className="inline-flex items-center justify-center rounded-xl border border-[#2563EB] bg-white px-4 py-3 text-sm font-semibold text-[#2563EB] transition hover:bg-[#eff6ff]"
+          className="inline-flex items-center justify-center rounded-xl border border-[#1E3A8A] bg-white px-4 py-3 text-sm font-semibold text-[#1E3A8A] transition hover:bg-[#DBEAFE]"
         >
           Register
         </Link>
