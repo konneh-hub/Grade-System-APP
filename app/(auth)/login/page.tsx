@@ -55,17 +55,32 @@ export default function LoginPage() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-[420px]">
-        <div className="rounded-2xl bg-white p-8 shadow-xl ring-1 ring-slate-200 sm:p-10">
-          <div className="space-y-3">
-            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#1E3A8A]">Welcome back</p>
-            <h1 className="text-3xl font-semibold text-[#0F172A]">Sign in to your account</h1>
-            <p className="text-sm leading-6 text-[#475569]">
-              Enter your email and password to continue to the Slughub portal.
-            </p>
-          </div>
-          <div className="mt-8">
-            <LoginForm onSuccess={handleSuccess} />
+      <section className="mx-auto w-full max-w-[420px] animate-fade-in-up">
+        <div className="rounded-2xl bg-white p-8 shadow-xl ring-1 ring-slate-200 sm:p-10 relative overflow-hidden">
+          <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-[#1E3A8A]/5 blur-3xl" />
+          <div className="relative z-10">
+            <div className="flex flex-col items-center text-center">
+              <div className="animate-float">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" className="h-16 w-16 text-[#1E3A8A]">
+                  <circle cx="32" cy="32" r="30" stroke="currentColor" strokeWidth="1.5" className="opacity-20" />
+                  <path d="M32 12L14 22v12c0 8.84 8.06 16 18 16s18-7.16 18-16V22L32 12Z" fill="currentColor" className="opacity-10" stroke="currentColor" strokeWidth="1.5" />
+                  <path d="M32 12L14 22v4l18-10 18 10v-4L32 12Z" fill="currentColor" className="opacity-25" />
+                  <path d="M18 28v6c0 6.63 6.27 12 14 12s14-5.37 14-12v-6" stroke="currentColor" strokeWidth="1.5" fill="none" />
+                  <path d="M27 31l3 3 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+              <h1 className="mt-5 text-2xl font-bold leading-tight text-[#0F172A]">
+                Sierra Leone University<br />
+                <span className="text-[#1E3A8A]">Grading Hub</span>
+              </h1>
+              <p className="mt-2 text-sm leading-5 text-[#64748B] max-w-xs">
+                Academic results &amp; student administration portal
+              </p>
+            </div>
+            <div className="mt-7 border-t border-slate-100 pt-7">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#94A3B8]">Sign in</p>
+              <LoginForm onSuccess={handleSuccess} />
+            </div>
           </div>
         </div>
       </section>
