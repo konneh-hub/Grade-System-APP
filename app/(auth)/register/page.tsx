@@ -1,4 +1,5 @@
 import RegisterForm from '@/components/auth/RegisterForm';
+import Link from 'next/link';
 
 export default function RegisterPage() {
   return (
@@ -19,6 +20,12 @@ export default function RegisterPage() {
           <div className="mt-8">
             <RegisterForm />
           </div>
+          <p className="mt-6 text-center text-sm text-[#475569]">
+            Already have an account?{' '}
+            <Link href="/login" className="font-semibold text-[#1E3A8A] transition hover:text-[#152C6B]">
+              Sign in
+            </Link>
+          </p>
         </div>
       </section>
     </div>
