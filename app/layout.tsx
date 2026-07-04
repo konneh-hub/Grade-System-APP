@@ -5,8 +5,8 @@ export const metadata: Metadata = {
   title: "Slughub",
   description: "Slughub academic portal for managing results, students, and administrative workflows.",
   icons: {
-    icon: "/slughub.jpeg",    shortcut: "/slughub.jpeg",
-    apple: "/slughub.jpeg",  },
+    icon: "/slughublogo.png",    shortcut: "/slughublogo.png",
+    apple: "/slughublogo.png",  },
 };
 
 export default function RootLayout({
