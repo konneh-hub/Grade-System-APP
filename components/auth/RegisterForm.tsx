@@ -67,8 +67,8 @@ export default function RegisterForm() {
   }
 
   return (
-    <form onSubmit={submit} className="space-y-6">
-      <div className="space-y-2">
+    <form onSubmit={submit} className="space-y-4">
+      <div className="space-y-1.5">
         <label htmlFor="register-type" className="block text-sm font-medium text-[#475569]">
           Registration type
         </label>
@@ -76,13 +76,13 @@ export default function RegisterForm() {
           id="register-type"
           value={registrationType}
           onChange={(e) => setRegistrationType(e.target.value as 'staff' | 'student')}
-          className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/20"
+          className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition-all duration-300 ease-out hover:border-slate-300 focus:border-[#1E3A8A] focus:bg-[#F8FAFC] focus:ring-4 focus:ring-[#1E3A8A]/10 focus:shadow-lg focus:shadow-[#1E3A8A]/5"
         >
           <option value="staff">Staff</option>
           <option value="student">Student</option>
         </select>
       </div>
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <label htmlFor="register-email" className="block text-sm font-medium text-[#475569]">
           Email
         </label>
@@ -94,11 +94,11 @@ export default function RegisterForm() {
           onChange={(e) => setEmail(e.target.value)}
           type="email"
           required
-          className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/20"
+          className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition-all duration-300 ease-out placeholder:text-slate-400 hover:border-slate-300 focus:border-[#1E3A8A] focus:bg-[#F8FAFC] focus:ring-4 focus:ring-[#1E3A8A]/10 focus:shadow-lg focus:shadow-[#1E3A8A]/5"
         />
       </div>
       {registrationType === 'staff' ? (
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <label htmlFor="register-token" className="block text-sm font-medium text-[#475569]">
             Registration token
           </label>
@@ -109,12 +109,12 @@ export default function RegisterForm() {
             value={registrationToken}
             onChange={(e) => setRegistrationToken(e.target.value)}
             required
-            className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/20"
+            className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition-all duration-300 ease-out placeholder:text-slate-400 hover:border-slate-300 focus:border-[#1E3A8A] focus:bg-[#F8FAFC] focus:ring-4 focus:ring-[#1E3A8A]/10 focus:shadow-lg focus:shadow-[#1E3A8A]/5"
           />
         </div>
       ) : (
         <>
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <label htmlFor="register-student-id" className="block text-sm font-medium text-[#475569]">
               Student ID
             </label>
@@ -125,10 +125,10 @@ export default function RegisterForm() {
               value={studentId}
               onChange={(e) => setStudentId(e.target.value)}
               required
-              className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/20"
+              className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition-all duration-300 ease-out placeholder:text-slate-400 hover:border-slate-300 focus:border-[#1E3A8A] focus:bg-[#F8FAFC] focus:ring-4 focus:ring-[#1E3A8A]/10 focus:shadow-lg focus:shadow-[#1E3A8A]/5"
             />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <label htmlFor="register-full-name" className="block text-sm font-medium text-[#475569]">
               Full name
             </label>
@@ -139,10 +139,10 @@ export default function RegisterForm() {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               required
-              className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/20"
+              className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition-all duration-300 ease-out placeholder:text-slate-400 hover:border-slate-300 focus:border-[#1E3A8A] focus:bg-[#F8FAFC] focus:ring-4 focus:ring-[#1E3A8A]/10 focus:shadow-lg focus:shadow-[#1E3A8A]/5"
             />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <label htmlFor="register-faculty" className="block text-sm font-medium text-[#475569]">
               Faculty
             </label>
@@ -153,10 +153,10 @@ export default function RegisterForm() {
               value={faculty}
               onChange={(e) => setFaculty(e.target.value)}
               required
-              className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/20"
+              className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition-all duration-300 ease-out placeholder:text-slate-400 hover:border-slate-300 focus:border-[#1E3A8A] focus:bg-[#F8FAFC] focus:ring-4 focus:ring-[#1E3A8A]/10 focus:shadow-lg focus:shadow-[#1E3A8A]/5"
             />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <label htmlFor="register-department" className="block text-sm font-medium text-[#475569]">
               Department
             </label>
@@ -167,10 +167,10 @@ export default function RegisterForm() {
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
               required
-              className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/20"
+              className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition-all duration-300 ease-out placeholder:text-slate-400 hover:border-slate-300 focus:border-[#1E3A8A] focus:bg-[#F8FAFC] focus:ring-4 focus:ring-[#1E3A8A]/10 focus:shadow-lg focus:shadow-[#1E3A8A]/5"
             />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <label htmlFor="register-level" className="block text-sm font-medium text-[#475569]">
               Academic level
             </label>
@@ -178,7 +178,7 @@ export default function RegisterForm() {
               id="register-level"
               value={academicLevel}
               onChange={(e) => setAcademicLevel(e.target.value)}
-              className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/20"
+              className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition-all duration-300 ease-out hover:border-slate-300 focus:border-[#1E3A8A] focus:bg-[#F8FAFC] focus:ring-4 focus:ring-[#1E3A8A]/10 focus:shadow-lg focus:shadow-[#1E3A8A]/5"
             >
               <option value="year1">Year 1</option>
               <option value="year2">Year 2</option>
@@ -189,7 +189,7 @@ export default function RegisterForm() {
           </div>
         </>
       )}
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <label htmlFor="register-password" className="block text-sm font-medium text-[#475569]">
           Password
         </label>
@@ -201,19 +201,34 @@ export default function RegisterForm() {
           onChange={(e) => setPassword(e.target.value)}
           type="password"
           required
-          className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/20"
+          className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition-all duration-300 ease-out placeholder:text-slate-400 hover:border-slate-300 focus:border-[#1E3A8A] focus:bg-[#F8FAFC] focus:ring-4 focus:ring-[#1E3A8A]/10 focus:shadow-lg focus:shadow-[#1E3A8A]/5"
         />
       </div>
       <p className="text-sm leading-6 text-[#475569]">
         Staff registration requires admin-issued token. Students register using Student ID, email, full name, faculty, department, and academic level.
       </p>
-      {error && <div className="text-sm text-red-600">{error}</div>}
+      {error && <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600 ring-1 ring-red-100 animate-fade-in-up">{error}</div>}
       <button
         type="submit"
         disabled={loading}
-        className="inline-flex w-full h-12 items-center justify-center rounded-xl bg-[#1E3A8A] px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#152C6B] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#1E3A8A]/40 disabled:cursor-not-allowed disabled:bg-slate-400"
+        className="group inline-flex w-full h-12 items-center justify-center rounded-xl bg-[#1E3A8A] px-4 text-sm font-semibold text-white shadow-lg shadow-[#1E3A8A]/25 transition-all duration-300 ease-out hover:bg-[#152C6B] hover:shadow-xl hover:shadow-[#152C6B]/30 hover:-translate-y-0.5 active:translate-y-0 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#1E3A8A]/40 disabled:cursor-not-allowed disabled:bg-slate-400 disabled:shadow-none disabled:hover:translate-y-0"
       >
-        {loading ? 'Creating...' : 'Create account'}
+        {loading ? (
+          <span className="flex items-center gap-2">
+            <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+            Creating...
+          </span>
+        ) : (
+          <span className="flex items-center gap-2">
+            Create account
+            <svg className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </span>
+        )}
       </button>
     </form>
   );
