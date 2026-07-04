@@ -11,6 +11,7 @@ type AdminProfile = {
   avatar_url: string | null;
   mfa_enabled?: number;
   last_login_at: string | null;
+  recent_logins?: Array<{ id: number; action: string; ip_address: string | null; created_at: string }>;
 };
 
 export default function ProfilePage() {
@@ -107,6 +108,21 @@ export default function ProfilePage() {
         <input type="password" required className="rounded-lg border border-slate-300 px-3 py-2 text-sm" placeholder="New Password" value={passwordForm.newPassword} onChange={(event) => setPasswordForm((prev) => ({ ...prev, newPassword: event.target.value }))} />
         <button disabled={loading} type="submit" className="md:col-span-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 disabled:opacity-60">{loading ? 'Updating...' : 'Change Password'}</button>
       </form>
+
+      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 className="text-lg font-semibold text-slate-900">Recent Login History</h2>
+        <div className="mt-3 space-y-2">
+          {!profile?.recent_logins || profile.recent_logins.length === 0 ? (
+            <p className="text-sm text-slate-600">No login records found.</p>
+          ) : (
+            profile.recent_logins.map((item) => (
+              <div key={item.id} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+                {item.action} | {item.ip_address || 'N/A'} | {new Date(item.created_at).toLocaleString()}
+              </div>
+            ))
+          )}
+        </div>
+      </section>
     </div>
   );
 }

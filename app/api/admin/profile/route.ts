@@ -21,6 +21,10 @@ export async function GET(req: Request) {
     .prepare('SELECT id, email, first_name, last_name, phone, avatar_url, mfa_enabled, last_login_at, created_at FROM users WHERE id = ?')
     .get(auth.user.id);
 
+  if (!user) {
+    return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
+  }
+
   const recentLogins = db
     .prepare(
       `SELECT id, action, ip_address, created_at
@@ -31,7 +35,7 @@ export async function GET(req: Request) {
     )
     .all(auth.user.id);
 
-  return NextResponse.json({ ...user, recent_logins: recentLogins });
+  return NextResponse.json({ ...(user as Record<string, unknown>), recent_logins: recentLogins });
 }
 
 export async function PATCH(req: Request) {

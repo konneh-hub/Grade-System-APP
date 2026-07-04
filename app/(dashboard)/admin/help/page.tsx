@@ -7,11 +7,14 @@ type HelpPayload = {
   docs: Array<{ title: string; content: string }>;
   faqs: Array<{ question: string; answer: string }>;
   support: { email: string; phone: string };
+  release_notes?: Array<{ version: string; date: string; note: string }>;
 };
 
 export default function HelpSupportPage() {
   const [data, setData] = useState<HelpPayload | null>(null);
   const [error, setError] = useState('');
+  const [issue, setIssue] = useState({ subject: '', message: '', email: '' });
+  const [issueFeedback, setIssueFeedback] = useState('');
 
   useEffect(() => {
     void loadHelp();
@@ -26,6 +29,22 @@ export default function HelpSupportPage() {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load help resources');
     }
+  }
+
+  async function submitIssue() {
+    setIssueFeedback('');
+    const response = await fetch('/api/admin/help', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(issue),
+    });
+    const payload = (await response.json()) as { error?: string; ticket_id?: string };
+    if (!response.ok) {
+      setIssueFeedback(payload.error || 'Failed to submit issue');
+      return;
+    }
+    setIssueFeedback(`Issue submitted. Ticket: ${payload.ticket_id}`);
+    setIssue({ subject: '', message: '', email: '' });
   }
 
   return (
@@ -68,6 +87,29 @@ export default function HelpSupportPage() {
         <h2 className="font-semibold text-slate-900">Contact Support</h2>
         <p className="mt-2 text-sm text-slate-700">Email: {data?.support?.email || '-'}</p>
         <p className="text-sm text-slate-700">Phone: {data?.support?.phone || '-'}</p>
+      </section>
+
+      <section className="rounded-xl border border-slate-200 bg-white p-4">
+        <h2 className="font-semibold text-slate-900">Release Notes</h2>
+        <div className="mt-2 space-y-2 text-sm text-slate-700">
+          {(data?.release_notes || []).map((item) => (
+            <div key={`${item.version}-${item.date}`} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+              <p className="font-semibold text-slate-900">{item.version} - {item.date}</p>
+              <p className="text-xs text-slate-600">{item.note}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-xl border border-slate-200 bg-white p-4">
+        <h2 className="font-semibold text-slate-900">Report Issue</h2>
+        <div className="mt-2 grid gap-2 md:grid-cols-2">
+          <input className="rounded-lg border border-slate-300 px-3 py-2 text-sm" placeholder="Subject" value={issue.subject} onChange={(event) => setIssue((prev) => ({ ...prev, subject: event.target.value }))} />
+          <input className="rounded-lg border border-slate-300 px-3 py-2 text-sm" placeholder="Your email (optional)" value={issue.email} onChange={(event) => setIssue((prev) => ({ ...prev, email: event.target.value }))} />
+          <textarea className="md:col-span-2 rounded-lg border border-slate-300 px-3 py-2 text-sm" rows={4} placeholder="Describe the issue" value={issue.message} onChange={(event) => setIssue((prev) => ({ ...prev, message: event.target.value }))} />
+          <button type="button" onClick={submitIssue} className="md:col-span-2 rounded-lg bg-[#1A3A6B] px-4 py-2 text-sm font-semibold text-white">Submit Issue</button>
+          {issueFeedback ? <p className="md:col-span-2 text-sm text-slate-700">{issueFeedback}</p> : null}
+        </div>
       </section>
     </div>
   );

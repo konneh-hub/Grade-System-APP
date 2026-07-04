@@ -80,3 +80,31 @@ export async function POST(req: Request, context: ParamsContext) {
     { status: 201 }
   );
 }
+
+export async function DELETE(req: Request, context: ParamsContext) {
+  const { type } = await context.params;
+  const reportType = String(type ?? '').trim().toLowerCase();
+  const { searchParams } = new URL(req.url);
+  const generatedId = Number(searchParams.get('generated_id') ?? 0);
+  const scheduleId = Number(searchParams.get('schedule_id') ?? 0);
+
+  const db = getDatabase();
+  if (Number.isFinite(generatedId) && generatedId > 0) {
+    const result = db.prepare(
+      `DELETE FROM generated_reports
+       WHERE id = ? AND report_template_id IN (
+         SELECT id FROM report_templates WHERE LOWER(category) = ?
+       )`
+    ).run(generatedId, reportType) as { changes?: number };
+    if (!result.changes) return NextResponse.json({ error: 'Generated report not found' }, { status: 404 });
+    return NextResponse.json({ ok: true, deleted: 'generated', id: generatedId });
+  }
+
+  if (Number.isFinite(scheduleId) && scheduleId > 0) {
+    const result = db.prepare('DELETE FROM report_schedules WHERE id = ? AND LOWER(report_type) = ?').run(scheduleId, reportType) as { changes?: number };
+    if (!result.changes) return NextResponse.json({ error: 'Report schedule not found' }, { status: 404 });
+    return NextResponse.json({ ok: true, deleted: 'schedule', id: scheduleId });
+  }
+
+  return NextResponse.json({ error: 'generated_id or schedule_id is required' }, { status: 400 });
+}

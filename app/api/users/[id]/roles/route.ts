@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/config/database';
+import { getUserFromRequest } from '@/lib/middleware/auth';
 
 type ParamsContext = { params: Promise<{ id: string }> };
 
@@ -23,6 +24,11 @@ export async function GET(_req: Request, context: ParamsContext) {
 }
 
 export async function PUT(req: Request, context: ParamsContext) {
+  const auth = getUserFromRequest(req);
+  if (!auth || !auth.roles.includes('admin')) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   const { id } = await context.params;
   const userId = Number(id);
   if (!Number.isFinite(userId)) return NextResponse.json({ error: 'Invalid user id' }, { status: 400 });
@@ -37,6 +43,10 @@ export async function PUT(req: Request, context: ParamsContext) {
     .all(...roles) as Array<{ id: number; name: string }>;
 
   if (roleRows.length === 0) return NextResponse.json({ error: 'No valid roles found' }, { status: 400 });
+
+  if (roleRows.some((item) => item.name === 'lecturer')) {
+    return NextResponse.json({ error: 'Lecturer assignment is restricted to HoD workflow' }, { status: 403 });
+  }
 
   db.prepare('DELETE FROM user_roles WHERE user_id = ?').run(userId);
   for (const role of roleRows) {
