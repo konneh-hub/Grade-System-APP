@@ -76,7 +76,7 @@ export default function RegisterForm() {
           id="register-type"
           value={registrationType}
           onChange={(e) => setRegistrationType(e.target.value as 'staff' | 'student')}
-          className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#2563EB] focus:ring-4 focus:ring-[#3B82F6]/20"
+          className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/20"
         >
           <option value="staff">Staff</option>
           <option value="student">Student</option>
@@ -94,7 +94,7 @@ export default function RegisterForm() {
           onChange={(e) => setEmail(e.target.value)}
           type="email"
           required
-          className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#2563EB] focus:ring-4 focus:ring-[#3B82F6]/20"
+          className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/20"
         />
       </div>
       {registrationType === 'staff' ? (
@@ -109,7 +109,7 @@ export default function RegisterForm() {
             value={registrationToken}
             onChange={(e) => setRegistrationToken(e.target.value)}
             required
-            className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#2563EB] focus:ring-4 focus:ring-[#3B82F6]/20"
+            className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/20"
           />
         </div>
       ) : (
@@ -125,7 +125,7 @@ export default function RegisterForm() {
               value={studentId}
               onChange={(e) => setStudentId(e.target.value)}
               required
-              className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#2563EB] focus:ring-4 focus:ring-[#3B82F6]/20"
+              className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/20"
             />
           </div>
           <div className="space-y-2">
@@ -139,7 +139,7 @@ export default function RegisterForm() {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               required
-              className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#2563EB] focus:ring-4 focus:ring-[#3B82F6]/20"
+              className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/20"
             />
           </div>
           <div className="space-y-2">
@@ -153,7 +153,7 @@ export default function RegisterForm() {
               value={faculty}
               onChange={(e) => setFaculty(e.target.value)}
               required
-              className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#2563EB] focus:ring-4 focus:ring-[#3B82F6]/20"
+              className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/20"
             />
           </div>
           <div className="space-y-2">
@@ -167,7 +167,7 @@ export default function RegisterForm() {
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
               required
-              className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#2563EB] focus:ring-4 focus:ring-[#3B82F6]/20"
+              className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/20"
             />
           </div>
           <div className="space-y-2">
@@ -178,7 +178,7 @@ export default function RegisterForm() {
               id="register-level"
               value={academicLevel}
               onChange={(e) => setAcademicLevel(e.target.value)}
-              className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#2563EB] focus:ring-4 focus:ring-[#3B82F6]/20"
+              className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/20"
             >
               <option value="year1">Year 1</option>
               <option value="year2">Year 2</option>
@@ -201,7 +201,7 @@ export default function RegisterForm() {
           onChange={(e) => setPassword(e.target.value)}
           type="password"
           required
-          className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#2563EB] focus:ring-4 focus:ring-[#3B82F6]/20"
+          className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm text-slate-900 outline-none transition focus:border-[#1E3A8A] focus:ring-4 focus:ring-[#1E3A8A]/20"
         />
       </div>
       <p className="text-sm leading-6 text-[#475569]">
@@ -211,7 +211,7 @@ export default function RegisterForm() {
       <button
         type="submit"
         disabled={loading}
-        className="inline-flex w-full h-12 items-center justify-center rounded-xl bg-[#2563EB] px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#1d4ed8] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#3B82F6]/40 disabled:cursor-not-allowed disabled:bg-slate-400"
+        className="inline-flex w-full h-12 items-center justify-center rounded-xl bg-[#1E3A8A] px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#152C6B] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#1E3A8A]/40 disabled:cursor-not-allowed disabled:bg-slate-400"
       >
         {loading ? 'Creating...' : 'Create account'}
       </button>
