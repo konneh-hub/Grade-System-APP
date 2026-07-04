@@ -20,7 +20,7 @@ export default function RegisterPage() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-[420px]">
+      <section className="w-full">
         <div className="rounded-2xl bg-white p-8 shadow-xl ring-1 ring-slate-200 sm:p-10">
           <div className="space-y-3">
             <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#2563EB]">Register</p>
