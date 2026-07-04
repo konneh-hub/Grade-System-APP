@@ -1,8 +1,25 @@
 "use client";
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import Modal from "@/components/ui/Modal";
 
 type Role = "admin" | "lecturer" | "hod" | "dean" | "exam_officer" | "student";
+
+interface Faculty {
+  id: number;
+  name: string;
+}
+
+interface Department {
+  id: number;
+  name: string;
+  faculty_id: number;
+}
+
+interface Programme {
+  id: number;
+  name: string;
+  department_id: number;
+}
 
 export default function CreateUserModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [form, setForm] = useState({
@@ -26,6 +43,47 @@ export default function CreateUserModal({ open, onClose }: { open: boolean; onCl
   const [registrationInfo, setRegistrationInfo] = useState<{ email: string; token: string; expiresAt?: string | null } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRegeneratingToken, setIsRegeneratingToken] = useState(false);
+
+  const [faculties, setFaculties] = useState<Faculty[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [programmes, setProgrammes] = useState<Programme[]>([]);
+  const [selectedFacultyId, setSelectedFacultyId] = useState<number | "">("");
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState<number | "">("");
+  const [selectedProgrammeId, setSelectedProgrammeId] = useState<number | "">("");
+  const [loadingFaculties, setLoadingFaculties] = useState(false);
+  const [loadingDepartments, setLoadingDepartments] = useState(false);
+  const [loadingProgrammes, setLoadingProgrammes] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    setLoadingFaculties(true);
+    Promise.all([
+      fetch("/api/faculties").then((r) => r.json()) as Promise<Faculty[]>,
+      fetch("/api/departments").then((r) => r.json()) as Promise<Department[]>,
+    ])
+      .then(([f, d]) => {
+        setFaculties(f);
+        setDepartments(d);
+      })
+      .finally(() => setLoadingFaculties(false));
+  }, [open]);
+
+  useEffect(() => {
+    if (!selectedDepartmentId) {
+      setProgrammes([]);
+      return;
+    }
+    setLoadingProgrammes(true);
+    fetch(`/api/programmes?department_id=${selectedDepartmentId}`)
+      .then((r) => r.json())
+      .then((data) => setProgrammes(data))
+      .finally(() => setLoadingProgrammes(false));
+  }, [selectedDepartmentId]);
+
+  const filteredDepartments = useMemo(
+    () => (selectedFacultyId ? departments.filter((d) => d.faculty_id === selectedFacultyId) : []),
+    [departments, selectedFacultyId]
+  );
 
   const showAcademicFields = useMemo(() => form.role !== "admin", [form.role]);
   const showProgramme = useMemo(() => form.role === "student", [form.role]);
@@ -56,6 +114,29 @@ export default function CreateUserModal({ open, onClose }: { open: boolean; onCl
     } finally {
       setIsRegeneratingToken(false);
     }
+  }
+
+  function handleFacultyChange(facultyId: number | "") {
+    setSelectedFacultyId(facultyId);
+    setSelectedDepartmentId("");
+    setSelectedProgrammeId("");
+    setProgrammes([]);
+    const faculty = faculties.find((f) => f.id === facultyId);
+    setForm((prev) => ({ ...prev, faculty: faculty?.name ?? "", department: "", programme: "" }));
+  }
+
+  function handleDepartmentChange(deptId: number | "") {
+    setSelectedDepartmentId(deptId);
+    setSelectedProgrammeId("");
+    setProgrammes([]);
+    const dept = departments.find((d) => d.id === deptId);
+    setForm((prev) => ({ ...prev, department: dept?.name ?? "", programme: "" }));
+  }
+
+  function handleProgrammeChange(progId: number | "") {
+    setSelectedProgrammeId(progId);
+    const prog = programmes.find((p) => p.id === progId);
+    setForm((prev) => ({ ...prev, programme: prog?.name ?? "" }));
   }
 
   async function onSubmit(event: FormEvent) {
@@ -119,6 +200,10 @@ export default function CreateUserModal({ open, onClose }: { open: boolean; onCl
         status: "active",
         generateRegistrationToken: true,
       });
+      setSelectedFacultyId("");
+      setSelectedDepartmentId("");
+      setSelectedProgrammeId("");
+      setProgrammes([]);
     } finally {
       setIsSubmitting(false);
     }
@@ -129,6 +214,10 @@ export default function CreateUserModal({ open, onClose }: { open: boolean; onCl
     setRegistrationInfo(null);
     setCreatedUserId(null);
     onClose();
+  }
+
+  function inputClass() {
+    return "mt-1 h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition-all duration-300 focus:border-[#1E3A8A] focus:bg-white focus:ring-4 focus:ring-[#1E3A8A]/10";
   }
 
   return (
@@ -151,58 +240,30 @@ export default function CreateUserModal({ open, onClose }: { open: boolean; onCl
         <form onSubmit={onSubmit} className="grid gap-4 sm:grid-cols-2">
           <label className="text-sm font-medium text-slate-700">
             First Name
-            <input
-              className="mt-1 h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition-all duration-300 focus:border-[#1E3A8A] focus:bg-white focus:ring-4 focus:ring-[#1E3A8A]/10"
-              value={form.firstName}
-              onChange={(e) => setForm((prev) => ({ ...prev, firstName: e.target.value }))}
-              required
-            />
+            <input className={inputClass()} value={form.firstName} onChange={(e) => setForm((prev) => ({ ...prev, firstName: e.target.value }))} required />
           </label>
           <label className="text-sm font-medium text-slate-700">
             Last Name
-            <input
-              className="mt-1 h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition-all duration-300 focus:border-[#1E3A8A] focus:bg-white focus:ring-4 focus:ring-[#1E3A8A]/10"
-              value={form.lastName}
-              onChange={(e) => setForm((prev) => ({ ...prev, lastName: e.target.value }))}
-              required
-            />
+            <input className={inputClass()} value={form.lastName} onChange={(e) => setForm((prev) => ({ ...prev, lastName: e.target.value }))} required />
           </label>
           <label className="text-sm font-medium text-slate-700">
             Email
-            <input
-              type="email"
-              className="mt-1 h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition-all duration-300 focus:border-[#1E3A8A] focus:bg-white focus:ring-4 focus:ring-[#1E3A8A]/10"
-              value={form.email}
-              onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
-              required
-            />
+            <input type="email" className={inputClass()} value={form.email} onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))} required />
           </label>
           <label className="text-sm font-medium text-slate-700">
             Phone Number
-            <input
-              className="mt-1 h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition-all duration-300 focus:border-[#1E3A8A] focus:bg-white focus:ring-4 focus:ring-[#1E3A8A]/10"
-              value={form.phone}
-              onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))}
-            />
+            <input className={inputClass()} value={form.phone} onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))} />
           </label>
           <label className="text-sm font-medium text-slate-700">
             Gender
-            <select
-              className="mt-1 h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition-all duration-300 focus:border-[#1E3A8A] focus:bg-white focus:ring-4 focus:ring-[#1E3A8A]/10"
-              value={form.gender}
-              onChange={(e) => setForm((prev) => ({ ...prev, gender: e.target.value }))}
-            >
+            <select className={inputClass()} value={form.gender} onChange={(e) => setForm((prev) => ({ ...prev, gender: e.target.value }))}>
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
           </label>
           <label className="text-sm font-medium text-slate-700">
             Role
-            <select
-              className="mt-1 h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition-all duration-300 focus:border-[#1E3A8A] focus:bg-white focus:ring-4 focus:ring-[#1E3A8A]/10"
-              value={form.role}
-              onChange={(e) => setForm((prev) => ({ ...prev, role: e.target.value as Role }))}
-            >
+            <select className={inputClass()} value={form.role} onChange={(e) => setForm((prev) => ({ ...prev, role: e.target.value as Role }))}>
               <option value="admin">Admin</option>
               <option value="lecturer">Lecturer</option>
               <option value="hod">HoD</option>
@@ -211,44 +272,82 @@ export default function CreateUserModal({ open, onClose }: { open: boolean; onCl
               <option value="student">Student</option>
             </select>
           </label>
+
           {showAcademicFields && (
             <label className="text-sm font-medium text-slate-700">
               Faculty
-              <input
-                className="mt-1 h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition-all duration-300 focus:border-[#1E3A8A] focus:bg-white focus:ring-4 focus:ring-[#1E3A8A]/10"
-                value={form.faculty}
-                onChange={(e) => setForm((prev) => ({ ...prev, faculty: e.target.value }))}
-              />
+              {loadingFaculties ? (
+                <div className="mt-1 flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-400">
+                  <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                  Loading...
+                </div>
+              ) : (
+                <select
+                  className={inputClass()}
+                  value={selectedFacultyId}
+                  onChange={(e) => handleFacultyChange(e.target.value ? Number(e.target.value) : "")}
+                >
+                  <option value="">Select faculty</option>
+                  {faculties.map((f) => (
+                    <option key={f.id} value={f.id}>{f.name}</option>
+                  ))}
+                </select>
+              )}
             </label>
           )}
+
           {showAcademicFields && (
             <label className="text-sm font-medium text-slate-700">
               Department
-              <input
-                className="mt-1 h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition-all duration-300 focus:border-[#1E3A8A] focus:bg-white focus:ring-4 focus:ring-[#1E3A8A]/10"
-                value={form.department}
-                onChange={(e) => setForm((prev) => ({ ...prev, department: e.target.value }))}
-              />
+              {loadingDepartments ? (
+                <div className="mt-1 flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-400">
+                  <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                  Loading...
+                </div>
+              ) : (
+                <select
+                  className={inputClass()}
+                  value={selectedDepartmentId}
+                  onChange={(e) => handleDepartmentChange(e.target.value ? Number(e.target.value) : "")}
+                  disabled={!selectedFacultyId}
+                >
+                  <option value="">{selectedFacultyId ? "Select department" : "Select a faculty first"}</option>
+                  {filteredDepartments.map((d) => (
+                    <option key={d.id} value={d.id}>{d.name}</option>
+                  ))}
+                </select>
+              )}
             </label>
           )}
+
           {showProgramme && (
             <label className="text-sm font-medium text-slate-700">
               Programme
-              <input
-                className="mt-1 h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition-all duration-300 focus:border-[#1E3A8A] focus:bg-white focus:ring-4 focus:ring-[#1E3A8A]/10"
-                value={form.programme}
-                onChange={(e) => setForm((prev) => ({ ...prev, programme: e.target.value }))}
-              />
+              {loadingProgrammes ? (
+                <div className="mt-1 flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-400">
+                  <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                  Loading...
+                </div>
+              ) : (
+                <select
+                  className={inputClass()}
+                  value={selectedProgrammeId}
+                  onChange={(e) => handleProgrammeChange(e.target.value ? Number(e.target.value) : "")}
+                  disabled={!selectedDepartmentId}
+                >
+                  <option value="">{selectedDepartmentId ? "Select programme" : "Select a department first"}</option>
+                  {programmes.map((p) => (
+                    <option key={p.id} value={p.id}>{p.name}</option>
+                  ))}
+                </select>
+              )}
             </label>
           )}
+
           {showProgramme && (
             <label className="text-sm font-medium text-slate-700">
               Academic Level
-              <select
-                className="mt-1 h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition-all duration-300 focus:border-[#1E3A8A] focus:bg-white focus:ring-4 focus:ring-[#1E3A8A]/10"
-                value={form.academicLevel}
-                onChange={(e) => setForm((prev) => ({ ...prev, academicLevel: e.target.value }))}
-              >
+              <select className={inputClass()} value={form.academicLevel} onChange={(e) => setForm((prev) => ({ ...prev, academicLevel: e.target.value }))}>
                 <option value="year1">Year 1</option>
                 <option value="year2">Year 2</option>
                 <option value="year3">Year 3</option>
@@ -257,30 +356,18 @@ export default function CreateUserModal({ open, onClose }: { open: boolean; onCl
               </select>
             </label>
           )}
+
           <label className="text-sm font-medium text-slate-700">
             Staff ID / Student ID
-            <input
-              className="mt-1 h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition-all duration-300 focus:border-[#1E3A8A] focus:bg-white focus:ring-4 focus:ring-[#1E3A8A]/10"
-              value={form.externalId}
-              onChange={(e) => setForm((prev) => ({ ...prev, externalId: e.target.value }))}
-            />
+            <input className={inputClass()} value={form.externalId} onChange={(e) => setForm((prev) => ({ ...prev, externalId: e.target.value }))} />
           </label>
           <label className="text-sm font-medium text-slate-700">
             Password
-            <input
-              className="mt-1 h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition-all duration-300 focus:border-[#1E3A8A] focus:bg-white focus:ring-4 focus:ring-[#1E3A8A]/10"
-              value={form.password}
-              onChange={(e) => setForm((prev) => ({ ...prev, password: e.target.value }))}
-              placeholder="Leave blank to auto-generate"
-            />
+            <input className={inputClass()} value={form.password} onChange={(e) => setForm((prev) => ({ ...prev, password: e.target.value }))} placeholder="Leave blank to auto-generate" />
           </label>
           <label className="text-sm font-medium text-slate-700">
             Status
-            <select
-              className="mt-1 h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 outline-none transition-all duration-300 focus:border-[#1E3A8A] focus:bg-white focus:ring-4 focus:ring-[#1E3A8A]/10"
-              value={form.status}
-              onChange={(e) => setForm((prev) => ({ ...prev, status: e.target.value }))}
-            >
+            <select className={inputClass()} value={form.status} onChange={(e) => setForm((prev) => ({ ...prev, status: e.target.value }))}>
               <option value="active">Active</option>
               <option value="suspended">Suspended</option>
             </select>
