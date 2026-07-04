@@ -4,40 +4,42 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+type NavItem = { href: string; label: string; icon: string };
+
 const adminSections = [
   {
     title: 'Main',
     items: [
-      { href: '/admin', label: 'Dashboard', icon: '🏠' },
-      { href: '/admin/users', label: 'User Management', icon: '👥' },
-      { href: '/admin/users/create', label: 'Create User', icon: '➕' },
-      { href: '/admin/users/roles', label: 'User Roles', icon: '🛡️' },
-    ],
+      { href: '/admin', label: 'Dashboard', icon: 'dashboard' },
+      { href: '/admin/users', label: 'User Management', icon: 'group' },
+      { href: '/admin/users/create', label: 'Create User', icon: 'person_add' },
+      { href: '/admin/users/roles', label: 'User Roles', icon: 'admin_panel_settings' },
+    ] as NavItem[],
   },
   {
     title: 'Academic Structure',
     items: [
-      { href: '/admin/faculties', label: 'Faculties', icon: '🏛️' },
-      { href: '/admin/departments', label: 'Departments', icon: '🏢' },
-      { href: '/admin/programmes', label: 'Programmes', icon: '🎓' },
-      { href: '/admin/academic-sessions', label: 'Academic Sessions', icon: '📆' },
-      { href: '/admin/semesters', label: 'Semesters', icon: '🗓️' },
-      { href: '/admin/courses', label: 'Courses', icon: '📚' },
-    ],
+      { href: '/admin/faculties', label: 'Faculties', icon: 'account_balance' },
+      { href: '/admin/departments', label: 'Departments', icon: 'business' },
+      { href: '/admin/programmes', label: 'Programmes', icon: 'school' },
+      { href: '/admin/academic-sessions', label: 'Academic Sessions', icon: 'calendar_month' },
+      { href: '/admin/semesters', label: 'Semesters', icon: 'calendar_view_month' },
+      { href: '/admin/courses', label: 'Courses', icon: 'menu_book' },
+    ] as NavItem[],
   },
   {
     title: 'System',
     items: [
-      { href: '/admin/calendar', label: 'Academic Calendar', icon: '📅' },
-      { href: '/admin/notifications', label: 'Notifications', icon: '🔔' },
-      { href: '/admin/reports', label: 'Reports & Analytics', icon: '📊' },
-      { href: '/admin/audit', label: 'Audit Logs', icon: '📝' },
-      { href: '/admin/backup', label: 'Backup & Restore', icon: '💾' },
-      { href: '/admin/settings', label: 'System Settings', icon: '⚙️' },
-      { href: '/admin/security', label: 'Security', icon: '🔐' },
-      { href: '/admin/profile', label: 'Profile', icon: '👤' },
-      { href: '/admin/help', label: 'Help & Support', icon: '❓' },
-    ],
+      { href: '/admin/calendar', label: 'Academic Calendar', icon: 'calendar_today' },
+      { href: '/admin/notifications', label: 'Notifications', icon: 'notifications' },
+      { href: '/admin/reports', label: 'Reports & Analytics', icon: 'bar_chart' },
+      { href: '/admin/audit', label: 'Audit Logs', icon: 'description' },
+      { href: '/admin/backup', label: 'Backup & Restore', icon: 'backup' },
+      { href: '/admin/settings', label: 'System Settings', icon: 'settings' },
+      { href: '/admin/security', label: 'Security', icon: 'security' },
+      { href: '/admin/profile', label: 'Profile', icon: 'person' },
+      { href: '/admin/help', label: 'Help & Support', icon: 'help' },
+    ] as NavItem[],
   },
 ];
 
@@ -45,12 +47,12 @@ const deanSections = [
   {
     title: 'Main',
     items: [
-      { href: '/dean', label: 'Dashboard', icon: '🏠' },
-      { href: '/dean/results', label: 'Results Review', icon: '📊' },
-      { href: '/dean/graduation', label: 'Graduation Review', icon: '🎓' },
-      { href: '/dean/appeals', label: 'Appeals', icon: '📋' },
-      { href: '/dean/reports', label: 'Reports', icon: '📈' },
-    ],
+      { href: '/dean', label: 'Dashboard', icon: 'dashboard' },
+      { href: '/dean/results', label: 'Results Review', icon: 'fact_check' },
+      { href: '/dean/graduation', label: 'Graduation Review', icon: 'workspace_premium' },
+      { href: '/dean/appeals', label: 'Appeals', icon: 'feedback' },
+      { href: '/dean/reports', label: 'Reports', icon: 'assessment' },
+    ] as NavItem[],
   },
 ];
 
@@ -58,13 +60,13 @@ const examOfficerSections = [
   {
     title: 'Main',
     items: [
-      { href: '/exam-officer', label: 'Dashboard', icon: '🏠' },
-      { href: '/exam-officer/results', label: 'Results Processing', icon: '⚙️' },
-      { href: '/exam-officer/carryover', label: 'Carryover', icon: '📦' },
-      { href: '/exam-officer/transcripts', label: 'Transcripts', icon: '📄' },
-      { href: '/exam-officer/graduation', label: 'Graduation', icon: '🎓' },
-      { href: '/exam-officer/rectification', label: 'Rectification', icon: '🛠️' },
-    ],
+      { href: '/exam-officer', label: 'Dashboard', icon: 'dashboard' },
+      { href: '/exam-officer/results', label: 'Results Processing', icon: 'engineering' },
+      { href: '/exam-officer/carryover', label: 'Carryover', icon: 'inventory' },
+      { href: '/exam-officer/transcripts', label: 'Transcripts', icon: 'article' },
+      { href: '/exam-officer/graduation', label: 'Graduation', icon: 'school' },
+      { href: '/exam-officer/rectification', label: 'Rectification', icon: 'build' },
+    ] as NavItem[],
   },
 ];
 
@@ -72,11 +74,11 @@ const lecturerSections = [
   {
     title: 'Main',
     items: [
-      { href: '/lecturer', label: 'Dashboard', icon: '🏠' },
-      { href: '/lecturer/courses', label: 'My Courses', icon: '📚' },
-      { href: '/lecturer/reports', label: 'Reports', icon: '📊' },
-      { href: '/lecturer/notifications', label: 'Notifications', icon: '🔔' },
-    ],
+      { href: '/lecturer', label: 'Dashboard', icon: 'dashboard' },
+      { href: '/lecturer/courses', label: 'My Courses', icon: 'menu_book' },
+      { href: '/lecturer/reports', label: 'Reports', icon: 'assessment' },
+      { href: '/lecturer/notifications', label: 'Notifications', icon: 'notifications' },
+    ] as NavItem[],
   },
 ];
 
@@ -84,12 +86,12 @@ const studentSections = [
   {
     title: 'Main',
     items: [
-      { href: '/student', label: 'Dashboard', icon: '🏠' },
-      { href: '/student/results', label: 'My Results', icon: '📊' },
-      { href: '/student/transcripts', label: 'Transcripts', icon: '📄' },
-      { href: '/student/complaints', label: 'Complaints', icon: '📋' },
-      { href: '/student/profile', label: 'Profile', icon: '👤' },
-    ],
+      { href: '/student', label: 'Dashboard', icon: 'dashboard' },
+      { href: '/student/results', label: 'My Results', icon: 'grade' },
+      { href: '/student/transcripts', label: 'Transcripts', icon: 'article' },
+      { href: '/student/complaints', label: 'Complaints', icon: 'forum' },
+      { href: '/student/profile', label: 'Profile', icon: 'person' },
+    ] as NavItem[],
   },
 ];
 
@@ -141,7 +143,7 @@ export default function Sidebar() {
                   href={item.href}
                   className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition ${pathname === item.href || pathname.startsWith(`${item.href}/`) ? 'bg-[#C5A55A] text-[#1A3A6B]' : 'text-slate-100 hover:bg-[#274d85] hover:text-white'}`}
                 >
-                  <span aria-hidden="true">{item.icon}</span>
+                  <span className="material-symbols-outlined text-lg">{item.icon}</span>
                   {!collapsed ? <span>{item.label}</span> : null}
                 </Link>
               ))}
