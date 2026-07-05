@@ -24,7 +24,7 @@ const adminSections = [
       { href: '/admin/programmes', label: 'Programmes', icon: 'school' },
       { href: '/admin/academic-sessions', label: 'Academic Sessions', icon: 'calendar_month' },
       { href: '/admin/semesters', label: 'Semesters', icon: 'calendar_view_month' },
-      { href: '/admin/courses', label: 'Courses', icon: 'menu_book' },
+      { href: '/admin/courses', label: 'Modules', icon: 'menu_book' },
     ] as NavItem[],
   },
   {
@@ -62,7 +62,7 @@ const hodSections = [
     items: [
       { href: '/hod', label: 'Dashboard', icon: '🏠' },
       { href: '/hod/students', label: 'Student Management', icon: '🧑‍🎓' },
-      { href: '/hod/courses', label: 'Course Assignments', icon: '📚' },
+      { href: '/hod/courses', label: 'Module Assignments', icon: '📚' },
       { href: '/hod/results', label: 'Department Results', icon: '📊' },
       { href: '/hod/complaints', label: 'Complaints', icon: '📋' },
       { href: '/hod/reports', label: 'Reports', icon: '📈' },
@@ -89,7 +89,7 @@ const lecturerSections = [
     title: 'Main',
     items: [
       { href: '/lecturer', label: 'Dashboard', icon: 'dashboard' },
-      { href: '/lecturer/courses', label: 'My Courses', icon: 'menu_book' },
+      { href: '/lecturer/courses', label: 'My Modules', icon: 'menu_book' },
       { href: '/lecturer/reports', label: 'Reports', icon: 'assessment' },
       { href: '/lecturer/notifications', label: 'Notifications', icon: 'notifications' },
     ] as NavItem[],

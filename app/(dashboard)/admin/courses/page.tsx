@@ -12,17 +12,17 @@ export default async function Page() {
     <div className="space-y-6">
       <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#2563EB]">Administration</p>
-        <h1 className="mt-2 text-3xl font-semibold text-slate-900">Course administration</h1>
+        <h1 className="mt-2 text-3xl font-semibold text-slate-900">Module administration</h1>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
-          Review academic courses, credits, and the active course catalog.
+          Review academic modules, credits, and the active module catalog.
         </p>
       </section>
 
       <DataTable
-        title="Academic courses"
-        description="All courses available in the current teaching setup."
+        title="Academic modules"
+        description="All modules available in the current teaching setup."
         rows={rows}
-        emptyMessage="No courses are available yet."
+        emptyMessage="No modules are available yet."
         columns={[
           { header: 'Code', accessor: 'code' },
           { header: 'Title', accessor: 'title' },

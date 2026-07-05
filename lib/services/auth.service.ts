@@ -1,6 +1,6 @@
 import { getUserByEmail, getUserById, getUserRoles } from '@/lib/services/user.service';
 import { verifyPassword, signToken, hashPassword } from '@/lib/utils/crypto';
-import { getDatabase } from '@/lib/config/database';
+import { prepare } from '@/lib/config/database';
 
 export interface RegisterPayload {
   email: string;
@@ -64,8 +64,7 @@ export async function registerUser(payload: RegisterPayload) {
   }
 
   const password_hash = await hashPassword(payload.password);
-  const db = getDatabase();
-  db.prepare(
+  prepare(
     'UPDATE users SET password_hash = ?, status = ?, registered_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP, registration_token = NULL WHERE id = ?'
   ).run(password_hash, 'active', existing.id);
 
@@ -118,8 +117,7 @@ export async function changePassword(userId: number, oldPassword: string, newPas
   const ok = await verifyPassword(oldPassword, user.password_hash);
   if (!ok) throw new Error('Current password is incorrect');
   const newHash = await hashPassword(newPassword);
-  const db = getDatabase();
-  db.prepare('UPDATE users SET password_hash = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(newHash, userId);
+  prepare('UPDATE users SET password_hash = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(newHash, userId);
   return true;
 }
 
