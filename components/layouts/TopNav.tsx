@@ -3,10 +3,12 @@
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import LogoutModal from '@/components/ui/LogoutModal';
 
 export default function TopNav() {
   const pathname = usePathname();
   const [profileOpen, setProfileOpen] = useState(false);
+  const [logoutOpen, setLogoutOpen] = useState(false);
 
   const roleProfile = useMemo(() => {
     if (pathname.startsWith('/admin')) {
@@ -152,19 +154,20 @@ export default function TopNav() {
                       {link.label}
                     </Link>
                   ))}
-                  <Link
-                    href="/logout"
-                    className="block rounded-lg px-2 py-1.5 text-sm font-medium text-rose-700 transition hover:bg-rose-50"
-                    onClick={() => setProfileOpen(false)}
+                  <button
+                    type="button"
+                    onClick={() => { setProfileOpen(false); setLogoutOpen(true); }}
+                    className="block w-full rounded-lg px-2 py-1.5 text-left text-sm font-medium text-rose-700 transition hover:bg-rose-50"
                   >
                     Logout
-                  </Link>
+                  </button>
                 </div>
               </div>
             ) : null}
           </div>
         </div>
       </div>
+      <LogoutModal open={logoutOpen} onClose={() => setLogoutOpen(false)} />
     </header>
   );
 }
