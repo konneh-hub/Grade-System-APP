@@ -13,6 +13,29 @@ export interface CourseRow {
   created_at: string;
 }
 
+function normalizeCourseLevel(level: unknown): number {
+  const raw = String(level ?? 'year1').trim().toLowerCase();
+  const mapping: Record<string, number> = {
+    year1: 100,
+    year2: 200,
+    year3: 300,
+    year4: 400,
+    year5: 500,
+    '100': 100,
+    '200': 200,
+    '300': 300,
+    '400': 400,
+    '500': 500,
+    '1': 100,
+    '2': 200,
+    '3': 300,
+    '4': 400,
+    '5': 500,
+  };
+
+  return mapping[raw] ?? 100;
+}
+
 export function listCourses() {
   const db = getDatabase();
   return db.prepare('SELECT * FROM courses ORDER BY title ASC').all() as CourseRow[];
@@ -37,7 +60,7 @@ export function createCourse(payload: Partial<CourseRow>) {
       payload.description ?? null,
       payload.department_id ?? null,
       payload.credit_units ?? 3,
-      payload.level ?? 100,
+      normalizeCourseLevel(payload.level),
       payload.semester ?? 'first',
       payload.is_active ?? 1
     ) as { lastInsertRowid: number };
@@ -55,7 +78,7 @@ export function updateCourse(id: number, payload: Partial<CourseRow>) {
     payload.description ?? null,
     payload.department_id ?? null,
     payload.credit_units ?? 3,
-    payload.level ?? 100,
+    normalizeCourseLevel(payload.level),
     payload.semester ?? 'first',
     payload.is_active ?? 1,
     id

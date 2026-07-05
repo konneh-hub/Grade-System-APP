@@ -17,6 +17,29 @@ type CoursePayload = {
   department_name?: string;
 };
 
+function normalizeLevelValue(value: string | number | null | undefined): string {
+  const raw = String(value ?? 'year1').trim().toLowerCase();
+  const mapping: Record<string, string> = {
+    year1: 'year1',
+    year2: 'year2',
+    year3: 'year3',
+    year4: 'year4',
+    year5: 'year5',
+    '100': 'year1',
+    '200': 'year2',
+    '300': 'year3',
+    '400': 'year4',
+    '500': 'year5',
+    '1': 'year1',
+    '2': 'year2',
+    '3': 'year3',
+    '4': 'year4',
+    '5': 'year5',
+  };
+
+  return mapping[raw] ?? 'year1';
+}
+
 export default function Page() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
@@ -32,7 +55,7 @@ export default function Page() {
     code: '',
     title: '',
     creditUnits: '3',
-    level: '100',
+    level: 'year1',
     semester: 'first',
     departmentId: '',
   });
@@ -66,7 +89,7 @@ export default function Page() {
         code: course.code || '',
         title: course.title || '',
         creditUnits: String(course.credit_units ?? 3),
-        level: String(course.level ?? '100'),
+        level: normalizeLevelValue(course.level),
         semester: String(course.semester ?? 'first'),
         departmentId: course.department_id != null ? String(course.department_id) : '',
       });
@@ -154,7 +177,7 @@ export default function Page() {
         <label className="text-sm">Course code<input required className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" value={form.code} onChange={(event) => setForm((prev) => ({ ...prev, code: event.target.value }))} /></label>
         <label className="text-sm">Course title<input required className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" value={form.title} onChange={(event) => setForm((prev) => ({ ...prev, title: event.target.value }))} /></label>
         <label className="text-sm">Credit units<input required type="number" min="1" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" value={form.creditUnits} onChange={(event) => setForm((prev) => ({ ...prev, creditUnits: event.target.value }))} /></label>
-        <label className="text-sm">Level<input required className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" value={form.level} onChange={(event) => setForm((prev) => ({ ...prev, level: event.target.value }))} /></label>
+        <label className="text-sm">Academic level<select className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" value={form.level} onChange={(event) => setForm((prev) => ({ ...prev, level: event.target.value }))}><option value="year1">Year 1</option><option value="year2">Year 2</option><option value="year3">Year 3</option><option value="year4">Year 4</option><option value="year5">Year 5</option></select></label>
         <label className="text-sm">Semester<select className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" value={form.semester} onChange={(event) => setForm((prev) => ({ ...prev, semester: event.target.value }))}><option value="first">First</option><option value="second">Second</option><option value="third">Third</option></select></label>
         <label className="text-sm">Department<select className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" value={form.departmentId} onChange={(event) => setForm((prev) => ({ ...prev, departmentId: event.target.value }))}><option value="">Unassigned</option>{departments.map((department) => <option key={department.id} value={department.id}>{department.name} ({department.code})</option>)}</select></label>
 
