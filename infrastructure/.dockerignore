@@ -1,0 +1,12 @@
+.git
+.gitignore
+.next
+node_modules
+db/slughub.db
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
+README.md
+TODO.md
+AGENTS.md
+CLAUDE.md

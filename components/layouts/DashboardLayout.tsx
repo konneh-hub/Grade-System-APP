@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import Sidebar from '@/components/layouts/Sidebar';
 import TopNav from '@/components/layouts/TopNav';
 import MobileNav from '@/components/layouts/MobileNav';
+import SessionTimeoutModal from '@/components/ui/SessionTimeoutModal';
 
 export default function DashboardLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
@@ -16,6 +17,7 @@ export default function DashboardLayout({ children }: Readonly<{ children: React
         <main className="flex-1 p-4 pb-24 sm:p-6 sm:pb-24 lg:pb-6 animate-fade-in">{children}</main>
         <MobileNav />
       </div>
+      <SessionTimeoutModal />
     </div>
   );
 }
