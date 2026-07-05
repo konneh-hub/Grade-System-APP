@@ -85,19 +85,24 @@ export default function CourseBulkImport({ open, onClose, onImported }: CourseBu
   const [rows, setRows] = useState<ImportRow[]>([]);
   const [departments, setDepartments] = useState<DepartmentOption[]>([]);
   const [programmes, setProgrammes] = useState<ProgrammeOption[]>([]);
-  const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  function resetImportState() {
+    setFileName('');
+    setRows([]);
+    setError('');
+    setSuccess('');
+  }
+
+  function handleClose() {
+    resetImportState();
+    onClose();
+  }
+
   useEffect(() => {
-    if (!open) {
-      setFileName('');
-      setRows([]);
-      setError('');
-      setSuccess('');
-      return;
-    }
+    if (!open) return;
 
     async function loadMetadata() {
       try {
@@ -196,9 +201,7 @@ export default function CourseBulkImport({ open, onClose, onImported }: CourseBu
 
       setSuccess(`Imported ${result.imported ?? payload.length} courses successfully.`);
       onImported();
-      setRows([]);
-      setFileName('');
-      setTimeout(() => onClose(), 600);
+      setTimeout(() => handleClose(), 600);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Bulk import failed.');
     } finally {
@@ -240,8 +243,8 @@ export default function CourseBulkImport({ open, onClose, onImported }: CourseBu
         ) : null}
 
         <div className="mt-6 flex flex-wrap items-center justify-end gap-3">
-          <button type="button" onClick={onClose} className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700">Cancel</button>
-          <button type="button" disabled={submitting || loading || !rows.length} onClick={handleImport} className="rounded-lg bg-[#1A3A6B] px-4 py-2 text-sm font-semibold text-white disabled:opacity-60">
+          <button type="button" onClick={handleClose} className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700">Cancel</button>
+          <button type="button" disabled={submitting || !rows.length} onClick={handleImport} className="rounded-lg bg-[#1A3A6B] px-4 py-2 text-sm font-semibold text-white disabled:opacity-60">
             {submitting ? 'Importing...' : 'Import courses'}
           </button>
         </div>

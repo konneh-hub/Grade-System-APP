@@ -220,7 +220,7 @@ export default function Page() {
         searchValue={searchValue}
         onSearchChange={setSearchValue}
         filters={filters}
-        onFilterChange={(field, value) => setFilters((prev) => ({ ...prev, [field]: value }))}
+        onFilterChange={(field: keyof FilterState, value: string) => setFilters((prev) => ({ ...prev, [field]: value }))}
         onClearFilters={() => {
           setSearchValue('');
           setFilters(initialFilters);
@@ -237,6 +237,7 @@ export default function Page() {
       {loading ? <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">Loading courses...</div> : <CourseList rows={courses} onView={openEditModal} onEdit={openEditModal} onArchive={handleArchive} />}
 
       <CourseBulkImport
+        key={showBulkImport ? 'bulk-import-open' : 'bulk-import-closed'}
         open={showBulkImport}
         onClose={() => setShowBulkImport(false)}
         onImported={() => {

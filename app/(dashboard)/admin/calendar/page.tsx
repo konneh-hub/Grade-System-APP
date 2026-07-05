@@ -96,23 +96,41 @@ export default function AcademicCalendarPage() {
       </section>
 
       <form onSubmit={onSubmit} className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:grid-cols-3">
-        <input required className="rounded-lg border border-slate-300 px-3 py-2 text-sm" placeholder="Event title" value={form.title} onChange={(event) => setForm((prev) => ({ ...prev, title: event.target.value }))} />
-        <select className="rounded-lg border border-slate-300 px-3 py-2 text-sm" value={form.category} onChange={(event) => setForm((prev) => ({ ...prev, category: event.target.value }))}>
-          <option value="registration">Registration</option>
-          <option value="examination">Examination</option>
-          <option value="result-entry">Result Entry</option>
-          <option value="submission-deadline">Submission Deadline</option>
-          <option value="graduation">Graduation</option>
-          <option value="holiday">Holiday</option>
-        </select>
-        <select className="rounded-lg border border-slate-300 px-3 py-2 text-sm" value={form.status} onChange={(event) => setForm((prev) => ({ ...prev, status: event.target.value }))}>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-          <option value="closed">Closed</option>
-        </select>
-        <input required type="date" className="rounded-lg border border-slate-300 px-3 py-2 text-sm" value={form.startDate} onChange={(event) => setForm((prev) => ({ ...prev, startDate: event.target.value }))} />
-        <input required type="date" className="rounded-lg border border-slate-300 px-3 py-2 text-sm" value={form.endDate} onChange={(event) => setForm((prev) => ({ ...prev, endDate: event.target.value }))} />
-        <input className="rounded-lg border border-slate-300 px-3 py-2 text-sm" placeholder="Description" value={form.description} onChange={(event) => setForm((prev) => ({ ...prev, description: event.target.value }))} />
+        <label className="block">
+          <span className="sr-only">Event title</span>
+          <input required className="rounded-lg border border-slate-300 px-3 py-2 text-sm" placeholder="Event title" value={form.title} onChange={(event) => setForm((prev) => ({ ...prev, title: event.target.value }))} />
+        </label>
+        <label className="block">
+          <span className="sr-only">Category</span>
+          <select className="rounded-lg border border-slate-300 px-3 py-2 text-sm" value={form.category} onChange={(event) => setForm((prev) => ({ ...prev, category: event.target.value }))} aria-label="Category">
+            <option value="registration">Registration</option>
+            <option value="examination">Examination</option>
+            <option value="result-entry">Result Entry</option>
+            <option value="submission-deadline">Submission Deadline</option>
+            <option value="graduation">Graduation</option>
+            <option value="holiday">Holiday</option>
+          </select>
+        </label>
+        <label className="block">
+          <span className="sr-only">Status</span>
+          <select className="rounded-lg border border-slate-300 px-3 py-2 text-sm" value={form.status} onChange={(event) => setForm((prev) => ({ ...prev, status: event.target.value }))} aria-label="Status">
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="closed">Closed</option>
+          </select>
+        </label>
+        <label className="block">
+          <span className="sr-only">Start date</span>
+          <input required type="date" className="rounded-lg border border-slate-300 px-3 py-2 text-sm" value={form.startDate} onChange={(event) => setForm((prev) => ({ ...prev, startDate: event.target.value }))} aria-label="Start date" />
+        </label>
+        <label className="block">
+          <span className="sr-only">End date</span>
+          <input required type="date" className="rounded-lg border border-slate-300 px-3 py-2 text-sm" value={form.endDate} onChange={(event) => setForm((prev) => ({ ...prev, endDate: event.target.value }))} aria-label="End date" />
+        </label>
+        <label className="block">
+          <span className="sr-only">Description</span>
+          <input className="rounded-lg border border-slate-300 px-3 py-2 text-sm" placeholder="Description" value={form.description} onChange={(event) => setForm((prev) => ({ ...prev, description: event.target.value }))} />
+        </label>
         <button disabled={loading} type="submit" className="md:col-span-3 rounded-lg bg-[#1A3A6B] px-4 py-2 text-sm font-semibold text-white disabled:opacity-60">{loading ? 'Saving...' : 'Create Event'}</button>
         {error ? <p className="md:col-span-3 text-sm text-rose-700">{error}</p> : null}
         {success ? <p className="md:col-span-3 text-sm text-emerald-700">{success}</p> : null}

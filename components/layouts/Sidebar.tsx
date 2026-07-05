@@ -56,6 +56,20 @@ const deanSections = [
   },
 ];
 
+const hodSections = [
+  {
+    title: 'Main',
+    items: [
+      { href: '/hod', label: 'Dashboard', icon: 'home' },
+      { href: '/hod/students', label: 'Student Management', icon: 'group' },
+      { href: '/hod/courses', label: 'Course Assignments', icon: 'menu_book' },
+      { href: '/hod/results', label: 'Department Results', icon: 'bar_chart' },
+      { href: '/hod/complaints', label: 'Complaints', icon: 'forum' },
+      { href: '/hod/reports', label: 'Reports', icon: 'assessment' },
+    ] as NavItem[],
+  },
+];
+
 const examOfficerSections = [
   {
     title: 'Main',
@@ -103,11 +117,13 @@ export default function Sidebar() {
     ? { title: 'Admin console', subtitle: 'University administration and operations.', sections: adminSections }
     : pathname.startsWith('/dean')
       ? { title: 'Dean workspace', subtitle: 'Faculty-level academic leadership.', sections: deanSections }
-      : pathname.startsWith('/exam-officer')
-        ? { title: 'Exam operations', subtitle: 'Result publication and transcript workflows.', sections: examOfficerSections }
-        : pathname.startsWith('/lecturer')
-          ? { title: 'Lecturer workspace', subtitle: 'Teaching, scoring, and reporting.', sections: lecturerSections }
-          : { title: 'Student portal', subtitle: 'Personal academic tools and records.', sections: studentSections }), [pathname]);
+      : pathname.startsWith('/hod')
+        ? { title: 'HOD workspace', subtitle: 'Department oversight and coordination.', sections: hodSections }
+        : pathname.startsWith('/exam-officer')
+          ? { title: 'Exam operations', subtitle: 'Result publication and transcript workflows.', sections: examOfficerSections }
+          : pathname.startsWith('/lecturer')
+            ? { title: 'Lecturer workspace', subtitle: 'Teaching, scoring, and reporting.', sections: lecturerSections }
+            : { title: 'Student portal', subtitle: 'Personal academic tools and records.', sections: studentSections }), [pathname]);
 
   return (
     <aside className={`relative hidden shrink-0 border-r border-[#1E3A8A]/20 bg-gradient-to-b from-[#0F1F3D] via-[#1A3A6B] to-[#1E3A8A] p-4 text-slate-100 shadow-xl shadow-[#1E3A8A]/10 transition-all duration-500 ease-out lg:block ${collapsed ? 'w-[72px]' : 'w-[280px]'}`}>
@@ -138,10 +154,10 @@ export default function Sidebar() {
 
       <nav className="relative z-10 space-y-6">
         {profile.sections.map((section) => (
-          <div key={section.title} className="animate-fade-in-up" style={{ animationDuration: '0.4s' }}>
+          <div key={section.title} className="animate-fade-in-up">
             {!collapsed ? <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">{section.title}</p> : null}
             <div className="space-y-1">
-              {section.items.map((item, i) => {
+              {section.items.map((item) => {
                 const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
                 return (
                   <Link
@@ -151,9 +167,7 @@ export default function Sidebar() {
                       isActive
                         ? 'bg-[#C5A55A] text-[#0F1F3D] shadow-lg shadow-[#C5A55A]/30'
                         : 'text-slate-300 hover:bg-white/10 hover:text-white hover:shadow-lg hover:shadow-black/5'
-                    }`}
-                    style={{ animation: `fade-in-up 0.3s ease-out both`, animationDelay: `${i * 0.04}s` }}
-                  >
+                    }`}>
                     {isActive && (
                       <div className="absolute -left-3 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-[#C5A55A] shadow-sm shadow-[#C5A55A]/50" />
                     )}
@@ -169,3 +183,4 @@ export default function Sidebar() {
     </aside>
   );
 }
+

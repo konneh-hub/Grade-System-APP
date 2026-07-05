@@ -48,6 +48,20 @@ export default function TopNav() {
       };
     }
 
+    if (pathname.startsWith('/hod')) {
+      return {
+        role: 'HOD',
+        user: 'HOD User',
+        title: 'HOD Department Desk',
+        searchPlaceholder: 'Search students, courses, complaints, reports',
+        quickLinks: [
+          { label: 'My Dashboard', href: '/hod' },
+          { label: 'Student Management', href: '/hod/students' },
+          { label: 'Course Assignments', href: '/hod/courses' },
+        ],
+      };
+    }
+
     if (pathname.startsWith('/exam-officer')) {
       return {
         role: 'Exam Officer',
@@ -177,3 +191,4 @@ export default function TopNav() {
     </header>
   );
 }
+
