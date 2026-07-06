@@ -10,7 +10,7 @@ function getMobileItems(pathname: string): NavItem[] {
     return [
       { href: '/admin', label: 'Home', icon: 'home' },
       { href: '/admin/users', label: 'Users', icon: 'group' },
-      { href: '/admin/courses', label: 'Courses', icon: 'menu_book' },
+      { href: '/admin/courses', label: 'Modules', icon: 'menu_book' },
       { href: '/admin/reports', label: 'Reports', icon: 'bar_chart' },
       { href: '/admin/settings', label: 'Settings', icon: 'settings' },
     ];
@@ -30,7 +30,7 @@ function getMobileItems(pathname: string): NavItem[] {
     return [
       { href: '/hod', label: 'Home', icon: 'home' },
       { href: '/hod/students', label: 'Students', icon: 'group' },
-      { href: '/hod/courses', label: 'Courses', icon: 'menu_book' },
+      { href: '/hod/courses', label: 'Modules', icon: 'menu_book' },
       { href: '/hod/results', label: 'Results', icon: 'bar_chart' },
       { href: '/hod/complaints', label: 'Complaints', icon: 'forum' },
     ];
@@ -49,7 +49,7 @@ function getMobileItems(pathname: string): NavItem[] {
   if (pathname.startsWith('/lecturer')) {
     return [
       { href: '/lecturer', label: 'Home', icon: 'home' },
-      { href: '/lecturer/courses', label: 'Courses', icon: 'menu_book' },
+      { href: '/lecturer/courses', label: 'Modules', icon: 'menu_book' },
       { href: '/lecturer/reports', label: 'Reports', icon: 'assessment' },
       { href: '/lecturer/notifications', label: 'Alerts', icon: 'notifications' },
       { href: '/lecturer', label: 'Classes', icon: 'school' },

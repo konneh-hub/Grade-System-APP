@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: slughub-app
+  labels:
+    app: slughub
+    tier: frontend
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP
+      name: http
+  selector:
+    app: slughub
+    tier: frontend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: slughub-redis
+  labels:
+    app: slughub
+    tier: cache
+spec:
+  type: ClusterIP
+  ports:
+    - port: 6379
+      targetPort: 6379
+      protocol: TCP
+      name: redis
+  selector:
+    app: slughub
+    tier: cache

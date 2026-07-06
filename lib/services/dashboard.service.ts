@@ -1,4 +1,4 @@
-import { getDatabase } from '@/lib/config/database';
+import { getDatabase, prepare } from '@/lib/config/database';
 import { dbPath } from '@/lib/config/database';
 import { existsSync, statSync } from 'node:fs';
 
@@ -58,15 +58,13 @@ type SessionRow = { name: string; start_date?: string };
 type StringRow = { value: string | null };
 
 function getString(sql: string, params: readonly unknown[] = []): string | null {
-  const db = getDatabase();
-  const row = db.prepare(sql).get(...params) as StringRow | null;
+  const row = prepare(sql).get(...params) as StringRow | null;
   if (!row || row.value == null) return null;
   return String(row.value);
 }
 
 function getCount(sql: string, params: readonly unknown[] = []): number {
-  const db = getDatabase();
-  const row = db.prepare(sql).get(...params) as CountRow | null;
+  const row = prepare(sql).get(...params) as CountRow | null;
   return Number(row?.count ?? 0);
 }
 
@@ -115,9 +113,7 @@ export function getDashboardStats(): DashboardStats {
   const totalCourses = getCount('SELECT COUNT(*) AS count FROM courses');
   const unassignedCourses = getCount('SELECT COUNT(*) AS count FROM courses WHERE department_id IS NULL');
 
-  const activeSession = db
-    .prepare('SELECT name, start_date FROM academic_sessions WHERE is_active = 1 ORDER BY id DESC LIMIT 1')
-    .get() as SessionRow | null;
+  const activeSession = prepare('SELECT name, start_date FROM academic_sessions WHERE is_active = 1 ORDER BY id DESC LIMIT 1').get() as SessionRow | null;
 
   const firstSystemEvent = getString(
     `SELECT MIN(created_at) AS value

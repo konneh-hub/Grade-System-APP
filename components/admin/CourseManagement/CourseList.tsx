@@ -44,7 +44,7 @@ function formatLevel(value: number | string) {
 
 export default function CourseList({ rows, onView, onEdit, onArchive }: CourseListProps) {
   if (!rows.length) {
-    return <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">No courses match the current filters.</div>;
+    return <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">No modules match the current filters.</div>;
   }
 
   return (

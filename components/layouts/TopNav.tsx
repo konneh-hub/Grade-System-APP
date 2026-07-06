@@ -1,12 +1,14 @@
-'use client';
+"use client";
 
 import { useMemo, useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import LogoutModal from '@/components/ui/LogoutModal';
 
 export default function TopNav() {
   const pathname = usePathname();
   const [profileOpen, setProfileOpen] = useState(false);
+  const [logoutOpen, setLogoutOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -53,11 +55,11 @@ export default function TopNav() {
         role: 'HOD',
         user: 'HOD User',
         title: 'HOD Department Desk',
-        searchPlaceholder: 'Search students, courses, complaints, reports',
+        searchPlaceholder: 'Search students, modules, complaints, reports',
         quickLinks: [
           { label: 'My Dashboard', href: '/hod' },
           { label: 'Student Management', href: '/hod/students' },
-          { label: 'Course Assignments', href: '/hod/courses' },
+          { label: 'Module Assignments', href: '/hod/courses' },
         ],
       };
     }
@@ -81,10 +83,10 @@ export default function TopNav() {
         role: 'Lecturer',
         user: 'Lecturer User',
         title: 'Lecturer Teaching Desk',
-        searchPlaceholder: 'Search courses, score sheets, reports',
+        searchPlaceholder: 'Search modules, score sheets, reports',
         quickLinks: [
           { label: 'My Dashboard', href: '/lecturer' },
-          { label: 'My Courses', href: '/lecturer/courses' },
+          { label: 'My Modules', href: '/lecturer/courses' },
           { label: 'Teaching Reports', href: '/lecturer/reports' },
         ],
       };
@@ -173,14 +175,14 @@ export default function TopNav() {
                     </Link>
                   ))}
                   <div className="border-t border-slate-100 pt-1">
-                    <Link
-                      href="/logout"
-                      className="group flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium text-rose-700 transition-all duration-200 hover:bg-rose-50"
-                      onClick={() => setProfileOpen(false)}
+                    <button
+                      type="button"
+                      onClick={() => { setProfileOpen(false); setLogoutOpen(true); }}
+                      className="group flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium text-rose-700 transition-all duration-200 hover:bg-rose-50"
                     >
                       <span className="material-symbols-outlined text-lg text-rose-400 transition-all duration-200 group-hover:text-rose-600">logout</span>
                       Logout
-                    </Link>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -188,7 +190,7 @@ export default function TopNav() {
           </div>
         </div>
       </div>
+      <LogoutModal open={logoutOpen} onClose={() => setLogoutOpen(false)} />
     </header>
   );
 }
-

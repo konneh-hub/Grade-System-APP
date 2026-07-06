@@ -1,4 +1,4 @@
-import { getDatabase } from '@/lib/config/database';
+import { prepare } from '@/lib/config/database';
 
 export interface ResultRow {
   id: number;
@@ -17,47 +17,41 @@ export interface ResultRow {
 }
 
 export function listResults() {
-  const db = getDatabase();
-  return db.prepare('SELECT * FROM results ORDER BY created_at DESC').all() as ResultRow[];
+  return prepare('SELECT * FROM results ORDER BY created_at DESC').all() as ResultRow[];
 }
 
 export function getResultById(id: number): ResultRow | null {
-  const db = getDatabase();
-  const row = db.prepare('SELECT * FROM results WHERE id = ?').get(id) as ResultRow | null;
+  const row = prepare('SELECT * FROM results WHERE id = ?').get(id) as ResultRow | null;
   return row || null;
 }
 
 export function createResult(payload: Partial<ResultRow>) {
-  const db = getDatabase();
   const total = Number(payload.ca_score ?? 0) + Number(payload.exam_score ?? 0);
   const grade = total >= 70 ? 'A' : total >= 60 ? 'B' : total >= 50 ? 'C' : total >= 40 ? 'D' : 'F';
-  const result = db
-    .prepare(
-      `INSERT INTO results (student_id, course_id, academic_session_id, ca_score, exam_score, total_score, grade, grade_point, status, submitted_by, approved_by, created_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`
-    )
-    .run(
-      payload.student_id ?? 0,
-      payload.course_id ?? 0,
-      payload.academic_session_id ?? null,
-      payload.ca_score ?? 0,
-      payload.exam_score ?? 0,
-      total,
-      grade,
-      total >= 70 ? 5 : total >= 60 ? 4 : total >= 50 ? 3 : total >= 40 ? 2 : 0,
-      payload.status ?? 'draft',
-      payload.submitted_by ?? null,
-      payload.approved_by ?? null
-    ) as { lastInsertRowid: number };
+  const result = prepare(
+    `INSERT INTO results (student_id, course_id, academic_session_id, ca_score, exam_score, total_score, grade, grade_point, status, submitted_by, approved_by, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`
+  ).run(
+    payload.student_id ?? 0,
+    payload.course_id ?? 0,
+    payload.academic_session_id ?? null,
+    payload.ca_score ?? 0,
+    payload.exam_score ?? 0,
+    total,
+    grade,
+    total >= 70 ? 5 : total >= 60 ? 4 : total >= 50 ? 3 : total >= 40 ? 2 : 0,
+    payload.status ?? 'draft',
+    payload.submitted_by ?? null,
+    payload.approved_by ?? null
+  ) as { lastInsertRowid: number };
 
   return getResultById(Number(result.lastInsertRowid));
 }
 
 export function updateResult(id: number, payload: Partial<ResultRow>) {
-  const db = getDatabase();
   const total = Number(payload.ca_score ?? 0) + Number(payload.exam_score ?? 0);
   const grade = total >= 70 ? 'A' : total >= 60 ? 'B' : total >= 50 ? 'C' : total >= 40 ? 'D' : 'F';
-  db.prepare(
+  prepare(
     `UPDATE results SET student_id = ?, course_id = ?, academic_session_id = ?, ca_score = ?, exam_score = ?, total_score = ?, grade = ?, grade_point = ?, status = ?, submitted_by = ?, approved_by = ? WHERE id = ?`
   ).run(
     payload.student_id ?? 0,
@@ -78,8 +72,7 @@ export function updateResult(id: number, payload: Partial<ResultRow>) {
 }
 
 export function deleteResult(id: number) {
-  const db = getDatabase();
-  db.prepare('DELETE FROM results WHERE id = ?').run(id);
+  prepare('DELETE FROM results WHERE id = ?').run(id);
   return true;
 }
 

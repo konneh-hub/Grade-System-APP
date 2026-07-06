@@ -209,8 +209,8 @@ export default function Page() {
     <div className="space-y-6">
       <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <p className="text-sm font-semibold uppercase tracking-[0.25em] text-[#2563EB]">Administration</p>
-        <h1 className="mt-2 text-3xl font-semibold text-slate-900">Course management</h1>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">Create, search, filter, edit, and archive courses with Year 1–5 academic levels.</p>
+        <h1 className="mt-2 text-3xl font-semibold text-slate-900">Module management</h1>
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">Create, search, filter, edit, and archive modules with Year 1–5 academic levels.</p>
       </section>
 
       {error ? <div className="rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">{error}</div> : null}
@@ -234,7 +234,7 @@ export default function Page() {
         programmes={programmes}
       />
 
-      {loading ? <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">Loading courses...</div> : <CourseList rows={courses} onView={openEditModal} onEdit={openEditModal} onArchive={handleArchive} />}
+      {loading ? <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">Loading modules...</div> : <CourseList rows={courses} onView={openEditModal} onEdit={openEditModal} onArchive={handleArchive} />}
 
       <CourseBulkImport
         key={showBulkImport ? 'bulk-import-open' : 'bulk-import-closed'}

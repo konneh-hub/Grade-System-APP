@@ -216,8 +216,8 @@ export default function CourseBulkImport({ open, onClose, onImported }: CourseBu
       <div className="w-full max-w-3xl rounded-2xl bg-white p-6 shadow-xl">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h2 className="text-xl font-semibold text-slate-900">Import courses in bulk</h2>
-            <p className="mt-1 text-sm text-slate-600">Upload a .csv, .xlsx, or .xls file with course rows. The import accepts code, title, credit units, academic level, department, programme, semester, status, and description.</p>
+            <h2 className="text-xl font-semibold text-slate-900">Import modules in bulk</h2>
+            <p className="mt-1 text-sm text-slate-600">Upload a .csv, .xlsx, or .xls file with module rows. The import accepts code, title, credit units, academic level, department, programme, semester, status, and description.</p>
           </div>
           <button type="button" onClick={onClose} className="rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700">Close</button>
         </div>
@@ -245,7 +245,7 @@ export default function CourseBulkImport({ open, onClose, onImported }: CourseBu
         <div className="mt-6 flex flex-wrap items-center justify-end gap-3">
           <button type="button" onClick={handleClose} className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700">Cancel</button>
           <button type="button" disabled={submitting || !rows.length} onClick={handleImport} className="rounded-lg bg-[#1A3A6B] px-4 py-2 text-sm font-semibold text-white disabled:opacity-60">
-            {submitting ? 'Importing...' : 'Import courses'}
+            {submitting ? 'Importing...' : 'Import modules'}
           </button>
         </div>
       </div>

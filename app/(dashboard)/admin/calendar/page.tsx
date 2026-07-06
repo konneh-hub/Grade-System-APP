@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 'use client';
 
 import { FormEvent, useEffect, useState } from 'react';
@@ -155,3 +156,14 @@ export default function AcademicCalendarPage() {
     </div>
   );
 }
+=======
+import CalendarPageContent from "@/components/admin/CalendarPageContent";
+
+export const metadata = {
+  title: "Academic Calendar — Slughub",
+};
+
+export default function CalendarPage() {
+  return <CalendarPageContent />;
+}
+>>>>>>> c5b1436a6ccd41df531f90c514b4fe20efc9d118

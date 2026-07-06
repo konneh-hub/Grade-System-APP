@@ -156,7 +156,7 @@ export default function Page() {
   }
 
   if (loading) {
-    return <main className="p-6 text-sm text-slate-600">Loading course details...</main>;
+    return <main className="p-6 text-sm text-slate-600">Loading module details...</main>;
   }
 
   return (
@@ -164,8 +164,8 @@ export default function Page() {
       <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold text-slate-900">Course detail</h1>
-            <p className="mt-2 text-sm text-slate-600">Update course catalog metadata and assignment context.</p>
+            <h1 className="text-2xl font-semibold text-slate-900">Module detail</h1>
+            <p className="mt-2 text-sm text-slate-600">Update module catalog metadata and assignment context.</p>
           </div>
           <Link href="/admin/courses" className="rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700">
             Back to courses
@@ -183,7 +183,7 @@ export default function Page() {
 
         <div className="md:col-span-2 flex flex-wrap items-center gap-3">
           <button disabled={saving} type="submit" className="rounded-lg bg-[#1A3A6B] px-4 py-2 text-sm font-semibold text-white disabled:opacity-60">{saving ? 'Saving...' : 'Save changes'}</button>
-          <button disabled={deleting} type="button" onClick={onDelete} className="rounded-lg border border-rose-300 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-700 disabled:opacity-60">{deleting ? 'Deleting...' : 'Delete course'}</button>
+            <button disabled={deleting} type="button" onClick={onDelete} className="rounded-lg border border-rose-300 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-700 disabled:opacity-60">{deleting ? 'Deleting...' : 'Delete module'}</button>
           {success ? <p className="text-sm text-emerald-700">{success}</p> : null}
           {error ? <p className="text-sm text-rose-700">{error}</p> : null}
         </div>

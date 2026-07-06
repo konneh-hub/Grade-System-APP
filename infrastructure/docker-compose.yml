@@ -1,0 +1,35 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: slughub-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - JWT_SECRET=${JWT_SECRET:-change-me-in-production}
+      - SESSION_COOKIE_NAME=${SESSION_COOKIE_NAME:-slughub_session}
+      - SESSION_MAX_AGE=${SESSION_MAX_AGE:-604800}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+    volumes:
+      - slughub-db:/app/db
+    depends_on:
+      redis:
+        condition: service_started
+
+  redis:
+    image: redis:7-alpine
+    container_name: slughub-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-}
+    volumes:
+      - slughub-redis:/data
+
+volumes:
+  slughub-db:
+  slughub-redis:

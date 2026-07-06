@@ -44,12 +44,12 @@ export default function CourseForm({
     <form onSubmit={onSubmit} className="space-y-5">
       <div className="grid gap-4 md:grid-cols-2">
         <label className="text-sm font-medium text-slate-700">
-          Course code
+          Module code
           <input required value={form.code} onChange={(event) => onChange('code', event.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" />
         </label>
 
         <label className="text-sm font-medium text-slate-700">
-          Course title
+          Module title
           <input required value={form.title} onChange={(event) => onChange('title', event.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" />
         </label>
 
@@ -129,7 +129,7 @@ export default function CourseForm({
           Cancel
         </button>
         <button type="submit" disabled={saving} className="rounded-lg bg-[#1A3A6B] px-4 py-2 text-sm font-semibold text-white disabled:opacity-60">
-          {saving ? (mode === 'create' ? 'Saving...' : 'Updating...') : mode === 'create' ? 'Save course' : 'Update course'}
+          {saving ? (mode === 'create' ? 'Saving...' : 'Updating...') : mode === 'create' ? 'Save module' : 'Update module'}
         </button>
       </div>
     </form>

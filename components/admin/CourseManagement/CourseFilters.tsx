@@ -48,7 +48,7 @@ export default function CourseFilters({
     <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex-1">
-          <label htmlFor="course-search" className="text-sm font-medium text-slate-700">Search courses</label>
+          <label htmlFor="course-search" className="text-sm font-medium text-slate-700">Search modules</label>
           <input
             id="course-search"
             value={searchValue}
@@ -61,7 +61,7 @@ export default function CourseFilters({
             }}
             placeholder="Search by code or title"
             className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none ring-0"
-            aria-label="Search courses"
+            aria-label="Search modules"
           />
         </div>
 
@@ -141,11 +141,11 @@ export default function CourseFilters({
           </button>
 
           <button type="button" onClick={onImportCourses} className="rounded-lg border border-[#1A3A6B] px-4 py-2 text-sm font-semibold text-[#1A3A6B]">
-            Import courses
+            Import modules
           </button>
 
           <button type="button" onClick={onAddCourse} className="rounded-lg bg-[#1A3A6B] px-4 py-2 text-sm font-semibold text-white">
-            + Add course
+            + Add module
           </button>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { getDatabase } from '@/lib/config/database';
+import { prepare } from '@/lib/config/database';
 
 export interface CourseRow {
   id: number;
@@ -37,17 +37,16 @@ function normalizeCourseLevel(level: unknown): number {
 }
 
 export function listCourses() {
-  const db = getDatabase();
-  return db.prepare('SELECT * FROM courses ORDER BY title ASC').all() as CourseRow[];
+  return prepare('SELECT * FROM courses ORDER BY title ASC').all() as CourseRow[];
 }
 
 export function getCourseById(id: number): CourseRow | null {
-  const db = getDatabase();
-  const row = db.prepare('SELECT * FROM courses WHERE id = ?').get(id) as CourseRow | null;
+  const row = prepare('SELECT * FROM courses WHERE id = ?').get(id) as CourseRow | null;
   return row || null;
 }
 
 export function createCourse(payload: Partial<CourseRow>) {
+<<<<<<< HEAD
   const db = getDatabase();
   const result = db
     .prepare(
@@ -64,13 +63,27 @@ export function createCourse(payload: Partial<CourseRow>) {
       payload.semester ?? 'first',
       payload.is_active ?? 1
     ) as { lastInsertRowid: number };
+=======
+  const result = prepare(
+    `INSERT INTO courses (code, title, description, department_id, credit_units, level, semester, is_active, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`
+  ).run(
+    payload.code ?? 'CRS',
+    payload.title ?? 'Untitled course',
+    payload.description ?? null,
+    payload.department_id ?? null,
+    payload.credit_units ?? 3,
+    payload.level ?? 100,
+    payload.semester ?? 'first',
+    payload.is_active ?? 1
+  ) as { lastInsertRowid: number };
+>>>>>>> c5b1436a6ccd41df531f90c514b4fe20efc9d118
 
   return getCourseById(Number(result.lastInsertRowid));
 }
 
 export function updateCourse(id: number, payload: Partial<CourseRow>) {
-  const db = getDatabase();
-  db.prepare(
+  prepare(
     `UPDATE courses SET code = ?, title = ?, description = ?, department_id = ?, credit_units = ?, level = ?, semester = ?, is_active = ? WHERE id = ?`
   ).run(
     payload.code ?? '',
@@ -88,8 +101,7 @@ export function updateCourse(id: number, payload: Partial<CourseRow>) {
 }
 
 export function deleteCourse(id: number) {
-  const db = getDatabase();
-  db.prepare('DELETE FROM courses WHERE id = ?').run(id);
+  prepare('DELETE FROM courses WHERE id = ?').run(id);
   return true;
 }
 

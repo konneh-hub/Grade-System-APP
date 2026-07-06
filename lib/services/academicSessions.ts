@@ -1,4 +1,4 @@
-import { getDatabase } from '@/lib/config/database';
+import { prepare } from '@/lib/config/database';
 import { AcademicSession } from '@/lib/types/academicSession';
 
 function mapAcademicSessionRow(row: Record<string, unknown>): AcademicSession {
@@ -14,13 +14,11 @@ function mapAcademicSessionRow(row: Record<string, unknown>): AcademicSession {
 }
 
 export function getAcademicSessions(): AcademicSession[] {
-  const db = getDatabase();
-  const rows = db.prepare('SELECT * FROM academic_sessions ORDER BY start_date DESC').all() as Array<Record<string, unknown>>;
+  const rows = prepare('SELECT * FROM academic_sessions ORDER BY start_date DESC').all() as Array<Record<string, unknown>>;
   return rows.map(mapAcademicSessionRow);
 }
 
 export function getAcademicSessionById(id: string): AcademicSession | null {
-  const db = getDatabase();
-  const row = db.prepare('SELECT * FROM academic_sessions WHERE id = ?').get(Number(id)) as Record<string, unknown> | null;
+  const row = prepare('SELECT * FROM academic_sessions WHERE id = ?').get(Number(id)) as Record<string, unknown> | null;
   return row ? mapAcademicSessionRow(row) : null;
 }

@@ -13,7 +13,7 @@ const adminSections = [
       { href: '/admin', label: 'Dashboard', icon: 'dashboard' },
       { href: '/admin/users', label: 'User Management', icon: 'group' },
       { href: '/admin/users', label: 'Create User', icon: 'person_add' },
-      { href: '/admin/users/roles', label: 'User Roles', icon: 'admin_panel_settings' },
+      { href: '/admin/roles', label: 'Roles & Permissions', icon: 'admin_panel_settings' },
     ] as NavItem[],
   },
   {
@@ -24,7 +24,7 @@ const adminSections = [
       { href: '/admin/programmes', label: 'Programmes', icon: 'school' },
       { href: '/admin/academic-sessions', label: 'Academic Sessions', icon: 'calendar_month' },
       { href: '/admin/semesters', label: 'Semesters', icon: 'calendar_view_month' },
-      { href: '/admin/courses', label: 'Courses', icon: 'menu_book' },
+      { href: '/admin/courses', label: 'Modules', icon: 'menu_book' },
     ] as NavItem[],
   },
   {
@@ -62,7 +62,7 @@ const hodSections = [
     items: [
       { href: '/hod', label: 'Dashboard', icon: 'home' },
       { href: '/hod/students', label: 'Student Management', icon: 'group' },
-      { href: '/hod/courses', label: 'Course Assignments', icon: 'menu_book' },
+      { href: '/hod/courses', label: 'Module Assignments', icon: 'menu_book' },
       { href: '/hod/results', label: 'Department Results', icon: 'bar_chart' },
       { href: '/hod/complaints', label: 'Complaints', icon: 'forum' },
       { href: '/hod/reports', label: 'Reports', icon: 'assessment' },
@@ -89,7 +89,7 @@ const lecturerSections = [
     title: 'Main',
     items: [
       { href: '/lecturer', label: 'Dashboard', icon: 'dashboard' },
-      { href: '/lecturer/courses', label: 'My Courses', icon: 'menu_book' },
+      { href: '/lecturer/courses', label: 'My Modules', icon: 'menu_book' },
       { href: '/lecturer/reports', label: 'Reports', icon: 'assessment' },
       { href: '/lecturer/notifications', label: 'Notifications', icon: 'notifications' },
     ] as NavItem[],
@@ -183,4 +183,4 @@ export default function Sidebar() {
     </aside>
   );
 }
-
+// End of file — duplicate/conflict section removed
