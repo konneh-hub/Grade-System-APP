@@ -45,7 +45,7 @@ export async function registerUser(payload: RegisterPayload) {
     if (providedFullName !== expectedFullName) throw new Error('Full name does not match the provisioned record');
     if (String(payload.student_id).trim().toLowerCase() !== expectedStudentId) throw new Error('Student ID does not match the provisioned record');
     if (String(payload.faculty).trim().toLowerCase() !== expectedFaculty) throw new Error('Faculty does not match the provisioned record');
-    if (String(payload.department).trim().toLowerCase() !== expectedDepartment) throw new Error('Department does not match the provisioned record');
+    if (String(payload.department).trim().toLowerCase().toLowerCase() !== expectedDepartment) throw new Error('Department does not match the provisioned record');
     if (String(payload.academic_level).trim().toLowerCase() !== expectedLevel) throw new Error('Academic level does not match the provisioned record');
   } else {
     if (!payload.registration_token || payload.registration_token !== existing.registration_token) {

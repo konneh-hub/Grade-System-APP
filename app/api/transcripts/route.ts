@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getUserFromRequest } from '@/lib/middleware/auth';
 import { getStudentByUserId } from '@/lib/services/student.service';
 import { getTranscriptRequestsByStudent, createTranscriptRequest } from '@/lib/services/transcript.service';
+import { sendTemplatedEmail } from '@/lib/email/send';
 
 export async function GET(req: Request) {
   try {
@@ -35,6 +36,23 @@ export async function POST(req: Request) {
       copies: data.copies,
       notes: data.notes,
     });
+
+    try {
+      sendTemplatedEmail({
+        to: auth.user.email,
+        type: 'transcript_notification',
+        subject: 'Transcript request submitted',
+        data: {
+          firstName: auth.user.first_name,
+          transcriptId: request?.id,
+          status: request?.status,
+          link: `${process.env.APP_URL ?? 'http://localhost:3000'}/student/transcripts`,
+        },
+        maxAttempts: 2,
+      }).catch((e) => console.error('Transcript notification failed:', e));
+    } catch (e) {
+      console.error('Failed to trigger transcript notification:', e);
+    }
 
     return NextResponse.json(request);
   } catch (error) {

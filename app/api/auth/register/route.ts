@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { registerUser } from '@/lib/services/auth.service';
 import { config } from '@/lib/config/env';
+import { sendTemplatedEmail } from '@/lib/email/send';
 
 export async function POST(req: Request) {
   try {
@@ -24,6 +25,20 @@ export async function POST(req: Request) {
       path: '/',
       maxAge: config.COOKIE_MAX_AGE,
     });
+
+    try {
+      const appUrl = process.env.APP_URL ?? 'http://localhost:3000';
+      sendTemplatedEmail({
+        to: result.user.email,
+        type: 'account_activation',
+        data: { firstName: result.user.first_name, activationUrl: `${appUrl}/auth/login` },
+        subject: 'Welcome to Slughub',
+        maxAttempts: 2,
+      }).catch((e) => console.error('Welcome email failed:', e));
+    } catch (e) {
+      console.error('Failed to trigger welcome email:', e);
+    }
+
     return res;
   } catch (err) {
     const error = err instanceof Error ? err.message : 'Server error';

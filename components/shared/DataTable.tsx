@@ -52,10 +52,10 @@ export default function DataTable<T extends Record<string, unknown>>({
                       <td key={String(column.accessor)} className="px-3 py-3 text-slate-700">
                         {hrefBuilder ? (
                           <Link href={hrefBuilder(row)} className="font-medium text-[#2563EB] hover:underline">
-                            {content}
+                            {content as React.ReactNode}
                           </Link>
                         ) : (
-                          content ?? ''
+                          (content as React.ReactNode) ?? ''
                         )}
                       </td>
                     );

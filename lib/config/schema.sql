@@ -307,6 +307,43 @@ CREATE TABLE IF NOT EXISTS graduation_reviews (
   reviewed_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS appeals (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+  result_id INTEGER REFERENCES results(id) ON DELETE SET NULL,
+  title TEXT NOT NULL,
+  description TEXT NOT NULL,
+  appeal_type TEXT NOT NULL DEFAULT 'grade',
+  status TEXT NOT NULL DEFAULT 'submitted',
+  priority TEXT NOT NULL DEFAULT 'medium',
+  assigned_to INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  decision TEXT,
+  decision_remarks TEXT,
+  reviewed_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  submitted_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  reviewed_at TEXT,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS rectification_records (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  result_id INTEGER NOT NULL REFERENCES results(id) ON DELETE CASCADE,
+  student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+  course_id INTEGER NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
+  original_score REAL NOT NULL,
+  corrected_score REAL NOT NULL,
+  original_grade TEXT NOT NULL,
+  corrected_grade TEXT NOT NULL,
+  reason TEXT NOT NULL,
+  requested_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  approved_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  status TEXT NOT NULL DEFAULT 'pending',
+  submitted_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  processed_at TEXT,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE INDEX IF NOT EXISTS idx_departments_faculty_id ON departments(faculty_id);
 CREATE INDEX IF NOT EXISTS idx_programs_department_id ON programs(department_id);
 CREATE INDEX IF NOT EXISTS idx_students_program_id ON students(program_id);
@@ -315,3 +352,7 @@ CREATE INDEX IF NOT EXISTS idx_results_student_id ON results(student_id);
 CREATE INDEX IF NOT EXISTS idx_complaints_status ON complaints(status);
 CREATE INDEX IF NOT EXISTS idx_notifications_recipient_id ON notifications(recipient_id);
 CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at);
+CREATE INDEX IF NOT EXISTS idx_appeals_student_id ON appeals(student_id);
+CREATE INDEX IF NOT EXISTS idx_appeals_status ON appeals(status);
+CREATE INDEX IF NOT EXISTS idx_rectification_records_student_id ON rectification_records(student_id);
+CREATE INDEX IF NOT EXISTS idx_rectification_records_result_id ON rectification_records(result_id);

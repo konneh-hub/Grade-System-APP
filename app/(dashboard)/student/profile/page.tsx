@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 type ProfileData = {
   student: {
-    matric_number: string;
+    id: number;
     first_name: string | null;
     last_name: string | null;
     email: string | null;
@@ -86,7 +86,7 @@ export default function Page() {
               </div>
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Registration number</p>
-                <p className="mt-1 text-sm text-slate-700">{valueOrDefault(profile.matric_number)}</p>
+                <p className="mt-1 text-sm text-slate-700">{valueOrDefault(profile.id)}</p>
               </div>
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Email</p>
