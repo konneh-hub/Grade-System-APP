@@ -109,7 +109,7 @@ export default function Page() {
       const response = await fetch(`/api/courses?${params.toString()}`, { cache: 'no-store' });
       setCourses(((await response.json()) as CourseRow[]) ?? []);
     } catch {
-      setError('Unable to load courses right now.');
+      setError('Unable to load modules right now.');
     } finally {
       setLoading(false);
     }
@@ -176,20 +176,20 @@ export default function Page() {
         }),
       });
       const payload = (await response.json()) as { error?: string };
-      if (!response.ok) throw new Error(payload.error || 'Unable to save course.');
-      setSuccess(modalMode === 'create' ? 'Course created successfully.' : 'Course updated successfully.');
+      if (!response.ok) throw new Error(payload.error || 'Unable to save module.');
+      setSuccess(modalMode === 'create' ? 'Module created successfully.' : 'Module updated successfully.');
       setShowModal(false);
       resetForm();
       await loadCourses();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unable to save course.');
+      setError(err instanceof Error ? err.message : 'Unable to save module.');
     } finally {
       setSaving(false);
     }
   }
 
   async function handleArchive(course: CourseRow) {
-    if (!window.confirm('Archive this course? Archived courses cannot be reused for future academic sessions.')) return;
+    if (!window.confirm('Archive this module? Archived modules cannot be reused for future academic sessions.')) return;
     try {
       const response = await fetch(`/api/courses/${course.id}`, {
         method: 'PATCH',
@@ -197,11 +197,11 @@ export default function Page() {
         body: JSON.stringify({ is_active: 0, status: 'archived' }),
       });
       const payload = (await response.json()) as { error?: string };
-      if (!response.ok) throw new Error(payload.error || 'Unable to archive course.');
-      setSuccess('Course archived successfully.');
+      if (!response.ok) throw new Error(payload.error || 'Unable to archive module.');
+      setSuccess('Module archived successfully.');
       await loadCourses();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unable to archive course.');
+      setError(err instanceof Error ? err.message : 'Unable to archive module.');
     }
   }
 
@@ -251,8 +251,8 @@ export default function Page() {
           <div className="w-full max-w-3xl rounded-2xl bg-white p-6 shadow-xl">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
-                <h2 className="text-xl font-semibold text-slate-900">{modalMode === 'create' ? 'Add new course' : 'Edit course'}</h2>
-                <p className="text-sm text-slate-600">{modalMode === 'create' ? 'Create a course for the academic catalog.' : 'Update course details and availability.'}</p>
+                <h2 className="text-xl font-semibold text-slate-900">{modalMode === 'create' ? 'Add new module' : 'Edit module'}</h2>
+                <p className="text-sm text-slate-600">{modalMode === 'create' ? 'Create a module for the academic catalog.' : 'Update module details and availability.'}</p>
               </div>
               <button type="button" onClick={() => { setShowModal(false); resetForm(); }} className="rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700">Close</button>
             </div>

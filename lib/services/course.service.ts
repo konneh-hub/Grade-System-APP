@@ -46,24 +46,6 @@ export function getCourseById(id: number): CourseRow | null {
 }
 
 export function createCourse(payload: Partial<CourseRow>) {
-<<<<<<< HEAD
-  const db = getDatabase();
-  const result = db
-    .prepare(
-      `INSERT INTO courses (code, title, description, department_id, credit_units, level, semester, is_active, created_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`
-    )
-    .run(
-      payload.code ?? 'CRS',
-      payload.title ?? 'Untitled course',
-      payload.description ?? null,
-      payload.department_id ?? null,
-      payload.credit_units ?? 3,
-      normalizeCourseLevel(payload.level),
-      payload.semester ?? 'first',
-      payload.is_active ?? 1
-    ) as { lastInsertRowid: number };
-=======
   const result = prepare(
     `INSERT INTO courses (code, title, description, department_id, credit_units, level, semester, is_active, created_at)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`
@@ -73,11 +55,10 @@ export function createCourse(payload: Partial<CourseRow>) {
     payload.description ?? null,
     payload.department_id ?? null,
     payload.credit_units ?? 3,
-    payload.level ?? 100,
+    normalizeCourseLevel(payload.level),
     payload.semester ?? 'first',
     payload.is_active ?? 1
   ) as { lastInsertRowid: number };
->>>>>>> c5b1436a6ccd41df531f90c514b4fe20efc9d118
 
   return getCourseById(Number(result.lastInsertRowid));
 }

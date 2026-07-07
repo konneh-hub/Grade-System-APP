@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -112,18 +112,25 @@ const studentSections = [
 export default function Sidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  const profile = useMemo(() => (pathname.startsWith('/admin')
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const effectivePathname = mounted ? pathname : '';
+
+  const profile = useMemo(() => (effectivePathname.startsWith('/admin')
     ? { title: 'Admin console', subtitle: 'University administration and operations.', sections: adminSections }
-    : pathname.startsWith('/dean')
+    : effectivePathname.startsWith('/dean')
       ? { title: 'Dean workspace', subtitle: 'Faculty-level academic leadership.', sections: deanSections }
-      : pathname.startsWith('/hod')
+      : effectivePathname.startsWith('/hod')
         ? { title: 'HOD workspace', subtitle: 'Department oversight and coordination.', sections: hodSections }
-        : pathname.startsWith('/exam-officer')
+        : effectivePathname.startsWith('/exam-officer')
           ? { title: 'Exam operations', subtitle: 'Result publication and transcript workflows.', sections: examOfficerSections }
-          : pathname.startsWith('/lecturer')
+          : effectivePathname.startsWith('/lecturer')
             ? { title: 'Lecturer workspace', subtitle: 'Teaching, scoring, and reporting.', sections: lecturerSections }
-            : { title: 'Student portal', subtitle: 'Personal academic tools and records.', sections: studentSections }), [pathname]);
+            : { title: 'Student portal', subtitle: 'Personal academic tools and records.', sections: studentSections }), [effectivePathname]);
 
   return (
     <aside className={`relative hidden shrink-0 border-r border-[#1E3A8A]/20 bg-gradient-to-b from-[#0F1F3D] via-[#1A3A6B] to-[#1E3A8A] p-4 text-slate-100 shadow-xl shadow-[#1E3A8A]/10 transition-all duration-500 ease-out lg:block ${collapsed ? 'w-[72px]' : 'w-[280px]'}`}>

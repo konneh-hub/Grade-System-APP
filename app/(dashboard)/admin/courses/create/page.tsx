@@ -37,7 +37,7 @@ export default function Page() {
         <label className="text-sm">Semester<select className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" value={form.semester} onChange={(e) => setForm((prev) => ({ ...prev, semester: e.target.value }))}><option value="first">First</option><option value="second">Second</option><option value="summer">Summer</option></select></label>
         <label className="text-sm">Status<select className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2" value={form.status} onChange={(e) => setForm((prev) => ({ ...prev, status: e.target.value }))}><option value="active">Active</option><option value="inactive">Inactive</option></select></label>
         <button type="submit" className="md:col-span-2 rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white">Save Module</button>
-        {saved ? <p className="md:col-span-2 text-sm text-emerald-700">Course saved. Delete action remains restricted if enrolled students exist.</p> : null}
+        {saved ? <p className="md:col-span-2 text-sm text-emerald-700">Module saved. Delete action remains restricted if enrolled students exist.</p> : null}
       </form>
     </div>
   );

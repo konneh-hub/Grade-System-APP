@@ -163,7 +163,7 @@ export default function CourseBulkImport({ open, onClose, onImported }: CourseBu
 
   async function handleImport() {
     if (!rows.length) {
-      setError('Upload a file with at least one course row.');
+      setError('Upload a file with at least one module row.');
       return;
     }
 
@@ -199,7 +199,7 @@ export default function CourseBulkImport({ open, onClose, onImported }: CourseBu
       const result = (await response.json()) as { error?: string; imported?: number; failed?: number };
       if (!response.ok) throw new Error(result.error || 'Bulk import failed.');
 
-      setSuccess(`Imported ${result.imported ?? payload.length} courses successfully.`);
+      setSuccess(`Imported ${result.imported ?? payload.length} modules successfully.`);
       onImported();
       setTimeout(() => handleClose(), 600);
     } catch (err) {
@@ -225,7 +225,7 @@ export default function CourseBulkImport({ open, onClose, onImported }: CourseBu
         <div className="mt-6 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4">
           <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-6 text-center text-sm text-slate-600">
             <span className="text-base font-semibold text-slate-800">Choose a file</span>
-            <span>{fileName || 'Select a spreadsheet or CSV with course records'}</span>
+            <span>{fileName || 'Select a spreadsheet or CSV with module records'}</span>
             <input type="file" accept=".csv,.xlsx,.xls" className="hidden" onChange={handleFileChange} />
           </label>
         </div>

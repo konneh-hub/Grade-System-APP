@@ -40,3 +40,14 @@ INSERT OR IGNORE INTO users (id, email, password_hash, first_name, last_name, ph
 
 INSERT OR IGNORE INTO user_roles (user_id, role_id) VALUES
   (1, 1);
+
+-- Test student user
+INSERT OR IGNORE INTO users (id, email, password_hash, first_name, last_name, phone, status, registered_at) VALUES
+  (2, 'student@slughub.local', 'demo-hash', 'John', 'Doe', '08012345678', 'active', CURRENT_TIMESTAMP);
+
+INSERT OR IGNORE INTO user_roles (user_id, role_id) VALUES
+  (2, 6);
+
+-- Student record
+INSERT OR IGNORE INTO students (id, user_id, matric_number, program_id, department_id, current_level, entry_session_id, graduation_status, academic_status, date_of_admission) VALUES
+  (1, 2, 'CSC/001/2021', 1, 1, 200, 1, 'active', 'active', '2021-09-01');

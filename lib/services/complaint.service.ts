@@ -13,7 +13,10 @@ export interface ComplaintRow {
   updated_at: string;
 }
 
-export function listComplaints() {
+export function listComplaints(studentId?: number) {
+  if (studentId != null) {
+    return prepare('SELECT * FROM complaints WHERE student_id = ? ORDER BY created_at DESC').all(studentId) as ComplaintRow[];
+  }
   return prepare('SELECT * FROM complaints ORDER BY created_at DESC').all() as ComplaintRow[];
 }
 
