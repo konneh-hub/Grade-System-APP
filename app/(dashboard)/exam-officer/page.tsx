@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import GpaCgpaManager from '@/components/exam-officer/GpaCgpaManager';
 
 const metrics = [
   { label: 'Pending processing batches', value: '14', note: '3 critical batches' },
@@ -11,6 +12,7 @@ const cards = [
   { title: 'Results processing', description: 'Process, validate, and publish result batches safely.', href: '/exam-officer/results' },
   { title: 'Carryover', description: 'Manage carryover requests and approval stages.', href: '/exam-officer/carryover' },
   { title: 'Transcripts', description: 'Generate and track transcript issuance end-to-end.', href: '/exam-officer/transcripts' },
+  { title: 'Transcript queue status', description: 'Monitor queued transcript jobs and worker progress.', href: '/exam-officer/transcripts/status' },
   { title: 'Rectification', description: 'Handle rectification requests and correction workflows.', href: '/exam-officer/rectification' },
 ];
 
@@ -58,6 +60,14 @@ export default function Page() {
               {activity}
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 className="text-lg font-semibold text-slate-900">GPA & CGPA</h2>
+        <p className="text-sm text-slate-600">Quick access to GPA/CGPA management tools.</p>
+        <div className="mt-4">
+          <GpaCgpaManager />
         </div>
       </section>
     </div>

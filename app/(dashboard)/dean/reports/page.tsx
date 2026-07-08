@@ -93,9 +93,12 @@ export default function Page() {
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [reportType, setReportType] = useState<'performance' | 'graduation' | 'probation'>('performance');
   const [reportTitle, setReportTitle] = useState('');
+  const [isHydrated, setIsHydrated] = useState(false);
 
   // Load initial data
   useEffect(() => {
+    setIsHydrated(true);
+
     const loadInitialData = async () => {
       try {
         const [perfRes, gradRes, probRes, deptRes, progRes] = await Promise.all([
@@ -318,22 +321,24 @@ export default function Page() {
   }, [reportTitle, reportType, handlePerformanceReport, handleGraduationReport, handleProbationReport]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
+    <div suppressHydrationWarning className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div suppressHydrationWarning className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               <h1 className="text-4xl font-bold text-slate-900 mb-2">Dean Reports</h1>
               <p className="text-slate-600">Generate faculty reports and keep a structured decision trail for review meetings.</p>
             </div>
-            <button
-              type="button"
-              onClick={() => setReportModalOpen(true)}
-              className="inline-flex items-center rounded-full bg-slate-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-900"
-            >
-              Create Report
-            </button>
+            {isHydrated && (
+              <button
+                type="button"
+                onClick={() => setReportModalOpen(true)}
+                className="inline-flex items-center rounded-full bg-slate-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-900"
+              >
+                Create Report
+              </button>
+            )}
           </div>
         </div>
 
