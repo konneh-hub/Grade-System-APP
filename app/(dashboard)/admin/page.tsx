@@ -4,7 +4,7 @@ import { getRecentAuditActivity } from '@/lib/services/audit.service';
 
 const chartCards = [
   { title: 'Students per Faculty', hint: 'Bar chart - click to drill down', footer: 'Daily refresh', icon: 'bar_chart' },
-  { title: 'Courses per Department', hint: 'Workload balance by department', footer: 'Daily refresh', icon: 'stacked_bar_chart' },
+  { title: 'Modules per Department', hint: 'Workload balance by department', footer: 'Daily refresh', icon: 'stacked_bar_chart' },
   { title: 'User Role Distribution', hint: 'Pie chart by role', footer: 'Daily refresh', icon: 'donut_large' },
   { title: 'Monthly Logins', hint: 'Line trend for platform usage', footer: 'Daily refresh', icon: 'show_chart' },
 ];
@@ -144,15 +144,15 @@ export default async function Page() {
     { title: 'Total Faculties', value: formatValue(stats.totalFaculties), note: 'Open faculty module', href: '/admin/faculties', icon: 'account_balance' },
     { title: 'Total Departments', value: formatValue(stats.totalDepartments), note: 'Open departments', href: '/admin/departments', icon: 'business' },
     { title: 'Total Programmes', value: formatValue(stats.totalProgrammes), note: 'Open programmes', href: '/admin/programmes', icon: 'school' },
-    { title: 'Total Courses', value: formatValue(stats.totalCourses), note: 'Course catalog', href: '/admin/courses', icon: 'menu_book' },
+    { title: 'Total Modules', value: formatValue(stats.totalCourses), note: 'Module catalog', href: '/admin/courses', icon: 'menu_book' },
     { title: 'Active Session', value: stats.activeSessionName ?? 'None', note: 'Session control', href: '/admin/academic-sessions', icon: 'calendar_month' },
     { title: 'Active Semester', value: stats.currentSemester, note: 'Semester state', href: '/admin/semesters', icon: 'calendar_view_month' },
   ];
 
   const academicActivityCards = [
-    { title: 'Courses Created', value: formatValue(stats.coursesCreatedCurrentSession), note: 'Current session scope', href: '/admin/courses', icon: 'playlist_add' },
+    { title: 'Modules Created', value: formatValue(stats.coursesCreatedCurrentSession), note: 'Current session scope', href: '/admin/courses', icon: 'playlist_add' },
     { title: 'Calendar Events', value: formatValue(stats.academicCalendarEventsActive), note: 'Recent calendar actions', href: '/admin/calendar', icon: 'event' },
-    { title: 'Pending Setup Items', value: formatValue(stats.pendingCourseSetupItems), note: 'Requires completion', href: '/admin/courses', icon: 'pending_actions' },
+    { title: 'Pending Setup Items', value: formatValue(stats.pendingCourseSetupItems), note: 'Requires module setup completion', href: '/admin/courses', icon: 'pending_actions' },
     { title: 'Setup Completion', value: stats.systemSetupCompletionStatus, note: 'Configuration progress', href: '/admin/settings', icon: 'checklist' },
   ];
 

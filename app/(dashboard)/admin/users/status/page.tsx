@@ -66,8 +66,10 @@ export default function AdminUserStatusPage() {
 
       <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex flex-wrap items-center gap-3">
-          <input type="search" className="h-10 w-full max-w-sm rounded-lg border border-slate-300 px-3 py-2 text-sm" placeholder="Search users" value={query} onChange={(event) => setQuery(event.target.value)} />
-          <select className="h-10 rounded-lg border border-slate-300 px-3 py-2 text-sm" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
+          <label className="sr-only" htmlFor="user-status-search">Search users</label>
+          <input id="user-status-search" type="search" className="h-10 w-full max-w-sm rounded-lg border border-slate-300 px-3 py-2 text-sm" placeholder="Search users" value={query} onChange={(event) => setQuery(event.target.value)} />
+          <label className="sr-only" htmlFor="user-status-filter">Filter status</label>
+          <select id="user-status-filter" className="h-10 rounded-lg border border-slate-300 px-3 py-2 text-sm" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
             <option value="all">All statuses</option>
             <option value="active">Active</option>
             <option value="pending">Pending</option>

@@ -33,9 +33,9 @@ export default function NotificationsPage() {
   async function fetchNotifications() {
     try {
       const response = await fetch('/api/notifications', { cache: 'no-store' });
-      const payload = (await response.json()) as NotificationRow[] | { error?: string };
-      if (!response.ok) throw new Error((payload as { error?: string }).error || 'Failed to load notifications');
-      setRows(payload as NotificationRow[]);
+      const payload = (await response.json()) as { notifications?: NotificationRow[]; scheduled?: unknown; error?: string };
+      if (!response.ok) throw new Error(payload.error || 'Failed to load notifications');
+      setRows(Array.isArray(payload.notifications) ? payload.notifications : []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load notifications');
     }

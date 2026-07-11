@@ -47,18 +47,15 @@ export default function DataTable<T extends Record<string, unknown>>({
                   {columns.map((column) => {
                     const value = row[column.accessor];
                     const content = column.render ? column.render(value, row) : value;
-                    const renderedContent: React.ReactNode = typeof content === 'string' || typeof content === 'number' || typeof content === 'boolean' || content == null
-                      ? String(content ?? '')
-                      : null;
 
                     return (
                       <td key={String(column.accessor)} className="px-3 py-3 text-slate-700">
                         {hrefBuilder ? (
                           <Link href={hrefBuilder(row)} className="font-medium text-[#2563EB] hover:underline">
-                            {renderedContent}
+                            {content as React.ReactNode}
                           </Link>
                         ) : (
-                          renderedContent
+                          (content as React.ReactNode) ?? ''
                         )}
                       </td>
                     );

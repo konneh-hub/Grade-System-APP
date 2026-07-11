@@ -80,15 +80,21 @@ export default function AdminUserRolesPage() {
       </section>
 
       <form onSubmit={onAssign} className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:grid-cols-3">
-        <select className="rounded-lg border border-slate-300 px-3 py-2 text-sm" value={userId} onChange={(event) => setUserId(event.target.value)}>
-          <option value="">Select user</option>
-          {rows.map((item) => (
-            <option key={item.id} value={item.id}>{item.first_name} {item.last_name} ({item.email})</option>
-          ))}
-        </select>
-        <select title="Role" aria-label="Role" className="rounded-lg border border-slate-300 px-3 py-2 text-sm" value={role} onChange={(e) => setRole(e.target.value)}>
-          {roles.map((item) => <option key={item.id} value={item.name}>{item.name}</option>)}
-        </select>
+        <label className="block">
+          <span className="sr-only">Select user</span>
+          <select className="rounded-lg border border-slate-300 px-3 py-2 text-sm" value={userId} onChange={(event) => setUserId(event.target.value)} aria-label="Select user">
+            <option value="">Select user</option>
+            {rows.map((item) => (
+              <option key={item.id} value={item.id}>{item.first_name} {item.last_name} ({item.email})</option>
+            ))}
+          </select>
+        </label>
+        <label className="block">
+          <span className="sr-only">Role</span>
+          <select className="rounded-lg border border-slate-300 px-3 py-2 text-sm" value={role} onChange={(e) => setRole(e.target.value)} aria-label="Role">
+            {roles.map((item) => <option key={item.id} value={item.name}>{item.name}</option>)}
+          </select>
+        </label>
         <button type="submit" className="rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white">Assign Role</button>
         {error ? <p className="md:col-span-3 text-sm text-rose-700">{error}</p> : null}
         {message ? <p className="md:col-span-3 text-sm text-emerald-700">{message}</p> : null}

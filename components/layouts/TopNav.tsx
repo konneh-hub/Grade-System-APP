@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import LogoutModal from '@/components/ui/LogoutModal';
@@ -9,6 +9,17 @@ export default function TopNav() {
   const pathname = usePathname();
   const [profileOpen, setProfileOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setProfileOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
 
   const roleProfile = useMemo(() => {
     if (pathname.startsWith('/admin')) {
@@ -44,11 +55,11 @@ export default function TopNav() {
         role: 'HOD',
         user: 'HOD User',
         title: 'HOD Department Desk',
-        searchPlaceholder: 'Search students, courses, complaints, reports',
+        searchPlaceholder: 'Search students, modules, complaints, reports',
         quickLinks: [
           { label: 'My Dashboard', href: '/hod' },
           { label: 'Student Management', href: '/hod/students' },
-          { label: 'Course Assignments', href: '/hod/courses' },
+          { label: 'Module Assignments', href: '/hod/courses' },
         ],
       };
     }
@@ -72,10 +83,10 @@ export default function TopNav() {
         role: 'Lecturer',
         user: 'Lecturer User',
         title: 'Lecturer Teaching Desk',
-        searchPlaceholder: 'Search courses, score sheets, reports',
+        searchPlaceholder: 'Search modules, score sheets, reports',
         quickLinks: [
           { label: 'My Dashboard', href: '/lecturer' },
-          { label: 'My Courses', href: '/lecturer/courses' },
+          { label: 'My Modules', href: '/lecturer/courses' },
           { label: 'Teaching Reports', href: '/lecturer/reports' },
         ],
       };
@@ -95,50 +106,58 @@ export default function TopNav() {
   }, [pathname]);
 
   return (
-    <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 px-4 py-3 backdrop-blur sm:px-6">
+    <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/80 px-4 py-3 backdrop-blur-xl sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
+        <div className="animate-fade-in">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#1A3A6B]">Slughub</p>
           <h1 className="text-[22px] font-semibold text-slate-900">{roleProfile.title}</h1>
           <p className="text-xs text-slate-500">University Result Management System</p>
         </div>
 
         <div className="flex min-w-[240px] flex-1 items-center justify-center">
-          <div className="relative w-full max-w-xl">
+          <div className="group relative w-full max-w-xl">
+            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-lg text-slate-400 transition-all duration-300 group-focus-within:text-[#1A3A6B]">search</span>
             <input
               type="search"
               title="Global search"
               placeholder={roleProfile.searchPlaceholder}
-              className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-800 outline-none transition focus:border-[#1A3A6B] focus:bg-white"
+              className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm text-slate-800 outline-none transition-all duration-300 ease-out placeholder:text-slate-400 hover:border-slate-300 focus:border-[#1A3A6B] focus:bg-white focus:shadow-lg focus:shadow-[#1A3A6B]/10 focus:ring-4 focus:ring-[#1A3A6B]/10"
             />
-            <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-medium uppercase tracking-wide text-slate-500">Search</div>
+            <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 rounded-md border border-slate-200 bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-400 transition-all duration-300 group-focus-within:border-[#1A3A6B]/20 group-focus-within:bg-[#1A3A6B]/10 group-focus-within:text-[#1A3A6B]">
+              ⌘K
+            </div>
           </div>
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <button className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50" type="button" title="Notifications">
-            <span className="inline-flex items-center gap-1">🔔 <span className="rounded-full bg-[#C5A55A] px-1.5 py-0.5 text-[10px] font-semibold text-[#1A3A6B]">3</span></span>
+          <button
+            className="group relative rounded-xl border border-slate-200 bg-white p-2.5 text-sm font-medium text-slate-700 transition-all duration-300 hover:border-slate-300 hover:bg-slate-50 hover:shadow-md"
+            type="button"
+            title="Notifications"
+          >
+            <span className="material-symbols-outlined text-xl text-slate-500 transition-all duration-300 group-hover:text-[#1A3A6B]">notifications</span>
+            <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#C5A55A] text-[9px] font-bold text-[#1A3A6B] shadow-sm">3</span>
           </button>
-          <div className="relative">
+          <div className="relative" ref={dropdownRef}>
             <button
               type="button"
               title="Profile menu"
               aria-label="Profile menu"
               onClick={() => setProfileOpen((prev) => !prev)}
-              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+              className="group flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition-all duration-300 hover:border-slate-300 hover:bg-slate-50 hover:shadow-md"
             >
-              <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[#1A3A6B] text-xs font-semibold text-white">
+              <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-[#1A3A6B] to-[#1E3A8A] text-xs font-semibold text-white shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:shadow-[#1A3A6B]/30">
                 {roleProfile.user.split(' ').map((part) => part[0]).join('').slice(0, 2)}
               </span>
               <span className="hidden text-left sm:block">
                 <span className="block text-xs font-semibold text-slate-900">{roleProfile.user}</span>
                 <span className="block text-[11px] text-slate-500">{roleProfile.role}</span>
               </span>
-              <span aria-hidden="true">▾</span>
+              <span className={`material-symbols-outlined text-lg text-slate-400 transition-all duration-300 ${profileOpen ? 'rotate-180' : ''}`}>expand_more</span>
             </button>
 
-            {profileOpen ? (
-              <div className="absolute right-0 top-12 z-30 w-56 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
+            {profileOpen && (
+              <div className="absolute right-0 top-12 z-30 w-56 origin-top-right rounded-xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-200/50 animate-scale-in">
                 <div className="border-b border-slate-100 px-2 pb-2">
                   <p className="text-sm font-semibold text-slate-900">{roleProfile.user}</p>
                   <p className="text-xs text-slate-500">{roleProfile.role}</p>
@@ -148,22 +167,26 @@ export default function TopNav() {
                     <Link
                       key={link.href}
                       href={link.href}
-                      className="block rounded-lg px-2 py-1.5 text-sm text-slate-700 transition hover:bg-slate-50"
+                      className="group flex items-center gap-2 rounded-lg px-2 py-2 text-sm text-slate-700 transition-all duration-200 hover:bg-slate-50 hover:text-[#1A3A6B]"
                       onClick={() => setProfileOpen(false)}
                     >
+                      <span className="material-symbols-outlined text-lg text-slate-400 transition-all duration-200 group-hover:text-[#1A3A6B]">chevron_right</span>
                       {link.label}
                     </Link>
                   ))}
-                  <button
-                    type="button"
-                    onClick={() => { setProfileOpen(false); setLogoutOpen(true); }}
-                    className="block w-full rounded-lg px-2 py-1.5 text-left text-sm font-medium text-rose-700 transition hover:bg-rose-50"
-                  >
-                    Logout
-                  </button>
+                  <div className="border-t border-slate-100 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => { setProfileOpen(false); setLogoutOpen(true); }}
+                      className="group flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium text-rose-700 transition-all duration-200 hover:bg-rose-50"
+                    >
+                      <span className="material-symbols-outlined text-lg text-rose-400 transition-all duration-200 group-hover:text-rose-600">logout</span>
+                      Logout
+                    </button>
+                  </div>
                 </div>
               </div>
-            ) : null}
+            )}
           </div>
         </div>
       </div>
