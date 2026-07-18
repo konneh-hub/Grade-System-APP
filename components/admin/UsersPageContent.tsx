@@ -22,6 +22,11 @@ interface User {
 type SortField = "first_name" | "email" | "phone" | "status" | "roles" | "registered_at";
 type SortDir = "asc" | "desc";
 
+function SortIcon({ field, sortField, sortDir }: { field: SortField; sortField: SortField; sortDir: SortDir }) {
+  if (sortField !== field) return <span className="ml-1 text-slate-300">&#8597;</span>;
+  return <span className="ml-1 text-[#1E3A8A]">{sortDir === "asc" ? "↑" : "↓"}</span>;
+}
+
 function wideSearch(user: User, query: string): boolean {
   if (!query.trim()) return true;
   const q = query.toLowerCase();
@@ -64,7 +69,13 @@ export default function UsersPageContent() {
     }
   }
 
-  useEffect(() => { fetchUsers(); }, []);
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      void fetchUsers();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, []);
 
   const uniqueRoles = useMemo(() => {
     const set = new Set<string>();
@@ -96,11 +107,6 @@ export default function UsersPageContent() {
   function toggleSort(field: SortField) {
     if (sortField === field) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
     else { setSortField(field); setSortDir("asc"); }
-  }
-
-  function SortIcon({ field }: { field: SortField }) {
-    if (sortField !== field) return <span className="ml-1 text-slate-300">&#8597;</span>;
-    return <span className="ml-1 text-[#1E3A8A]">{sortDir === "asc" ? "↑" : "↓"}</span>;
   }
 
   function toggleSelect(id: number) {
@@ -262,7 +268,9 @@ export default function UsersPageContent() {
           {/* Search */}
           <div className="relative min-w-[220px] flex-1">
             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-lg text-slate-400">search</span>
+            <label htmlFor="user-search" className="sr-only">Search users</label>
             <input
+              id="user-search"
               type="text"
               placeholder="Wide search (name, email, phone, role, status...)"
               className={`${containerClass} w-full pl-10`}
@@ -272,7 +280,9 @@ export default function UsersPageContent() {
           </div>
 
           {/* Role filter */}
+          <label htmlFor="role-filter" className="sr-only">Filter by role</label>
           <select
+            id="role-filter"
             className={`${containerClass} min-w-[140px]`}
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
@@ -284,7 +294,9 @@ export default function UsersPageContent() {
           </select>
 
           {/* Status filter */}
+          <label htmlFor="status-filter" className="sr-only">Filter by status</label>
           <select
+            id="status-filter"
             className={`${containerClass} min-w-[130px]`}
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
@@ -350,27 +362,29 @@ export default function UsersPageContent() {
               <thead className="bg-slate-50">
                 <tr>
                   <th className="w-10 px-3 py-3">
+                    <label htmlFor="select-all-users" className="sr-only">Select all users</label>
                     <input
+                      id="select-all-users"
                       type="checkbox"
                       checked={selectedIds.size === sortedUsers.length && sortedUsers.length > 0}
                       onChange={toggleSelectAll}
                       className="h-4 w-4 rounded border-slate-300 text-[#1E3A8A] focus:ring-[#1E3A8A]"
                     />
                   </th>
-                  <Th onClick={() => toggleSort("first_name")} active={sortField === "first_name"} sortDir={sortDir}>
-                    Name <SortIcon field="first_name" />
+                  <Th onClick={() => toggleSort("first_name")} active={sortField === "first_name"}>
+                    Name <SortIcon field="first_name" sortField={sortField} sortDir={sortDir} />
                   </Th>
-                  <Th onClick={() => toggleSort("email")} active={sortField === "email"} sortDir={sortDir}>
-                    Email <SortIcon field="email" />
+                  <Th onClick={() => toggleSort("email")} active={sortField === "email"}>
+                    Email <SortIcon field="email" sortField={sortField} sortDir={sortDir} />
                   </Th>
-                  <Th onClick={() => toggleSort("phone")} active={sortField === "phone"} sortDir={sortDir}>
-                    Phone <SortIcon field="phone" />
+                  <Th onClick={() => toggleSort("phone")} active={sortField === "phone"}>
+                    Phone <SortIcon field="phone" sortField={sortField} sortDir={sortDir} />
                   </Th>
-                  <Th onClick={() => toggleSort("roles")} active={sortField === "roles"} sortDir={sortDir}>
-                    Roles <SortIcon field="roles" />
+                  <Th onClick={() => toggleSort("roles")} active={sortField === "roles"}>
+                    Roles <SortIcon field="roles" sortField={sortField} sortDir={sortDir} />
                   </Th>
-                  <Th onClick={() => toggleSort("status")} active={sortField === "status"} sortDir={sortDir}>
-                    Status <SortIcon field="status" />
+                  <Th onClick={() => toggleSort("status")} active={sortField === "status"}>
+                    Status <SortIcon field="status" sortField={sortField} sortDir={sortDir} />
                   </Th>
                   <Th>Actions</Th>
                 </tr>
@@ -379,7 +393,9 @@ export default function UsersPageContent() {
                 {sortedUsers.map((user) => (
                   <tr key={user.id} className={`transition-all duration-200 hover:bg-slate-50 ${selectedIds.has(user.id) ? "bg-blue-50/40" : ""}`}>
                     <td className="px-3 py-3">
+                      <label htmlFor={`select-user-${user.id}`} className="sr-only">Select {user.first_name} {user.last_name}</label>
                       <input
+                        id={`select-user-${user.id}`}
                         type="checkbox"
                         checked={selectedIds.has(user.id)}
                         onChange={() => toggleSelect(user.id)}
@@ -472,12 +488,10 @@ function Th({
   children,
   onClick,
   active,
-  sortDir,
 }: {
   children: React.ReactNode;
   onClick?: () => void;
   active?: boolean;
-  sortDir?: SortDir;
 }) {
   return (
     <th

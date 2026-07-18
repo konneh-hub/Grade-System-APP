@@ -1,4 +1,4 @@
-import { getDatabase, prepare } from '@/lib/config/database';
+import { prepare } from '@/lib/config/database';
 import { dbPath } from '@/lib/config/database';
 import { existsSync, statSync } from 'node:fs';
 
@@ -82,8 +82,6 @@ function getCurrentSemester(): string {
 }
 
 export function getDashboardStats(): DashboardStats {
-  const db = getDatabase();
-
   const totalUsers = getCount('SELECT COUNT(*) AS count FROM users');
   const totalStudents = getCount('SELECT COUNT(*) AS count FROM students');
   const totalLecturers = getCount(

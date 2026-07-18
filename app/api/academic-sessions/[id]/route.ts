@@ -1,8 +1,11 @@
-import { NextResponse, type NextRequest } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { getAcademicSessionById } from '@/lib/services/academicSessions';
 import { getDatabase } from '@/lib/config/database';
+import { requireAuth, requireRoles, ensureOwnsUserOrRole } from '@/lib/middleware/authorization';
 
-export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) {
+export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   const params = await context.params;
   const session = getAcademicSessionById(params.id);
   if (!session) {
@@ -11,7 +14,9 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
   return NextResponse.json({ data: session });
 }
 
-export async function PATCH(request: NextRequest, context: { params: Promise<{ id: string }> }) {
+export async function PATCH(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   const params = await context.params;
   const sessionId = Number(params.id);
   if (!Number.isFinite(sessionId)) {
@@ -24,7 +29,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
     return NextResponse.json({ error: 'Academic session not found' }, { status: 404 });
   }
 
-  const body = (await request.json()) as Record<string, unknown>;
+  const body = (await req.json()) as Record<string, unknown>;
   const status = body.status != null ? String(body.status).trim().toLowerCase() : null;
   const isActive = body.is_active != null ? (Boolean(body.is_active) ? 1 : 0) : null;
 
@@ -54,7 +59,9 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
   return NextResponse.json({ ok: true });
 }
 
-export async function DELETE(_request: NextRequest, context: { params: Promise<{ id: string }> }) {
+export async function DELETE(req: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   const params = await context.params;
   const sessionId = Number(params.id);
   if (!Number.isFinite(sessionId)) {

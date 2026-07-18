@@ -8,11 +8,12 @@ interface TokenPayload {
   first_name?: string;
   last_name?: string;
   roles: string[];
+  rememberMe?: boolean;
 }
 
 export function parseCookies(cookieHeader: string | null) {
   if (!cookieHeader) return {};
-  return Object.fromEntries(cookieHeader.split(';').map(c => {
+  return Object.fromEntries(cookieHeader.split(';').map((c) => {
     const [k, ...v] = c.trim().split('=');
     return [k, decodeURIComponent(v.join('='))];
   }));
@@ -24,7 +25,9 @@ export function getUserFromRequest(req: Request | NextRequest) {
   const nextCookieValue = typeof req === 'object' && req !== null && 'cookies' in req && typeof (req as NextRequest).cookies?.get === 'function'
     ? (req as NextRequest).cookies.get(config.COOKIE_NAME)?.value
     : null;
-  const token = nextCookieValue || cookies[config.COOKIE_NAME];
+  const authHeader = typeof req.headers?.get === 'function' ? req.headers.get('authorization') : null;
+  const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7).trim() : null;
+  const token = nextCookieValue || cookies[config.COOKIE_NAME] || bearerToken;
   if (!token) return null;
   const payload = verifyToken(token as string) as TokenPayload | null;
   if (!payload || !payload.userId || !payload.roles) return null;
@@ -34,5 +37,5 @@ export function getUserFromRequest(req: Request | NextRequest) {
     first_name: payload.first_name || '',
     last_name: payload.last_name || '',
   };
-  return { user, roles: payload.roles };
+  return { user, roles: payload.roles, rememberMe: Boolean(payload.rememberMe) };
 }

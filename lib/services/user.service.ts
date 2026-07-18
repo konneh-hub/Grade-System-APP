@@ -1,4 +1,4 @@
-import { getDatabase, prepare } from '@/lib/config/database';
+import { prepare } from '@/lib/config/database';
 import { hashPassword } from '@/lib/utils/crypto';
 
 export interface CreateUserPayload {

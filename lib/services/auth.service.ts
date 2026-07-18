@@ -1,6 +1,7 @@
-import { getUserByEmail, getUserById, getUserRoles } from '@/lib/services/user.service';
+import { getUserByEmail, getUserById, getUserRoles, createUser, type UserRow } from '@/lib/services/user.service';
 import { verifyPassword, signToken, hashPassword } from '@/lib/utils/crypto';
 import { prepare } from '@/lib/config/database';
+import { config } from '@/lib/config/env';
 
 export interface RegisterPayload {
   email: string;
@@ -19,85 +20,51 @@ export interface TokenPayload {
   roles: string[];
 }
 
-export async function registerUser(payload: RegisterPayload) {
-  const existing = getUserByEmail(payload.email);
-  if (!existing) throw new Error('Account is not provisioned or already registered');
-  if (existing.status !== 'pending') throw new Error('Account already registered');
-  if (!existing.registration_requested_at) {
-    throw new Error('Registration is disabled for this account. Ask admin to create or update your information first');
-  }
-  const roles = getUserRoles(existing.id);
-  const isStudent = roles.includes('student');
-
-  if (isStudent) {
-    const profile = existing.avatar_url ? (JSON.parse(existing.avatar_url) as Record<string, unknown>) : null;
-    const expectedFullName = `${existing.first_name} ${existing.last_name}`.trim().toLowerCase();
-    const providedFullName = String(payload.full_name ?? '').trim().toLowerCase();
-    const expectedStudentId = String(profile?.student_id ?? '').trim().toLowerCase();
-    const expectedFaculty = String(profile?.faculty ?? '').trim().toLowerCase();
-    const expectedDepartment = String(profile?.department ?? '').trim().toLowerCase();
-    const expectedLevel = String(profile?.academic_level ?? '').trim().toLowerCase();
-
-    if (!payload.student_id || !payload.full_name || !payload.faculty || !payload.department || !payload.academic_level) {
-      throw new Error('Student registration requires student_id, full_name, faculty, department, and academic_level');
-    }
-
-    if (providedFullName !== expectedFullName) throw new Error('Full name does not match the provisioned record');
-    if (String(payload.student_id).trim().toLowerCase() !== expectedStudentId) throw new Error('Student ID does not match the provisioned record');
-    if (String(payload.faculty).trim().toLowerCase() !== expectedFaculty) throw new Error('Faculty does not match the provisioned record');
-    if (String(payload.department).trim().toLowerCase().toLowerCase() !== expectedDepartment) throw new Error('Department does not match the provisioned record');
-    if (String(payload.academic_level).trim().toLowerCase() !== expectedLevel) throw new Error('Academic level does not match the provisioned record');
-  } else {
-    if (!payload.registration_token || payload.registration_token !== existing.registration_token) {
-      throw new Error('Invalid registration token');
-    }
-
-    if (!existing.registration_requested_at) {
-      throw new Error('Registration token is invalid or expired');
-    }
-
-    const requestedAt = new Date(existing.registration_requested_at).getTime();
-    const expiresAt = requestedAt + 72 * 60 * 60 * 1000;
-    if (Number.isNaN(requestedAt) || Date.now() > expiresAt) {
-      throw new Error('Registration token has expired. Ask admin to regenerate token');
-    }
-  }
-
-  const password_hash = await hashPassword(payload.password);
-  prepare(
-    'UPDATE users SET password_hash = ?, status = ?, registered_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP, registration_token = NULL WHERE id = ?'
-  ).run(password_hash, 'active', existing.id);
-
-  const user = getUserById(existing.id);
-  if (!user) {
-    throw new Error('Failed to load registered user');
-  }
-
-  const updatedRoles = getUserRoles(existing.id);
-  const token = signToken({
+export function createSessionToken(user: UserRow, roles: string[], rememberMe = false) {
+  const expiresIn = rememberMe ? config.COOKIE_REMEMBER_ME_MAX_AGE : config.COOKIE_DEFAULT_MAX_AGE;
+  return signToken({
     userId: user.id,
     email: user.email,
     first_name: user.first_name,
     last_name: user.last_name,
-    roles: updatedRoles,
-  });
+    roles,
+    rememberMe,
+  }, expiresIn);
+}
+
+export async function registerUser(payload: RegisterPayload) {
+  const existing = getUserByEmail(payload.email);
+
+  if (!existing) {
+    // Open registration: create a new active user using provided details.
+    const full = String(payload.full_name ?? payload.email.split('@')[0]).trim();
+    const parts = full.split(/\s+/);
+    const first = parts.shift() ?? '';
+    const last = parts.join(' ') ?? '';
+    const user = await createUser({ email: String(payload.email), password: String(payload.password), first_name: first, last_name: last });
+    const roles = getUserRoles(user!.id);
+    const token = createSessionToken(user as UserRow, roles, false);
+    return { user, roles, token };
+  }
+
+  // Existing account: allow setting/updating password and activate account.
+  const password_hash = await hashPassword(payload.password);
+  prepare('UPDATE users SET password_hash = ?, status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(password_hash, 'active', existing.id);
+  const user = getUserById(existing.id);
+  if (!user) throw new Error('Failed to load registered user');
+  const updatedRoles = getUserRoles(existing.id);
+  const token = createSessionToken(user, updatedRoles, false);
   return { user, roles: updatedRoles, token };
 }
 
-export async function loginUser(email: string, password: string) {
+export async function loginUser(email: string, password: string, rememberMe = false) {
   const user = getUserByEmail(email);
   if (!user) return null;
   if (user.status !== 'active') return null;
   const ok = await verifyPassword(password, user.password_hash);
   if (!ok) return null;
   const roles = getUserRoles(user.id);
-  const token = signToken({
-    userId: user.id,
-    email: user.email,
-    first_name: user.first_name,
-    last_name: user.last_name,
-    roles,
-  });
+  const token = createSessionToken(user, roles, rememberMe);
   return { user, roles, token };
 }
 
@@ -112,6 +79,8 @@ export function getUserFromTokenPayload(payload: unknown) {
 }
 
 export async function changePassword(userId: number, oldPassword: string, newPassword: string) {
+  if (!oldPassword || !newPassword) throw new Error('Old password and new password are required');
+  if (newPassword.length < 8) throw new Error('New password must be at least 8 characters');
   const user = getUserById(userId);
   if (!user) throw new Error('User not found');
   const ok = await verifyPassword(oldPassword, user.password_hash);

@@ -1,13 +1,18 @@
 import { NextResponse } from 'next/server';
 import { getAcademicSessions } from '@/lib/services/academicSessions';
 import { getDatabase } from '@/lib/config/database';
+import { requireAuth, requireRoles, ensureOwnsUserOrRole } from '@/lib/middleware/authorization';
 
-export async function GET() {
+export async function GET(req: Request) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   const sessions = getAcademicSessions();
   return NextResponse.json({ data: sessions, count: sessions.length });
 }
 
 export async function POST(req: Request) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   const body = (await req.json()) as Record<string, unknown>;
   const name = String(body.name ?? '').trim();
   const code = String(body.code ?? name).trim().toUpperCase();

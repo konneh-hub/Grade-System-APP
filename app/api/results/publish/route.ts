@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/config/database';
 import { requireAuthRole, writeAudit } from '@/app/api/results/_shared';
-import { sendTemplatedEmail } from '@/lib/email/send';
+// email disabled - skipping result publication emails
 
 export async function POST(req: Request) {
   const guard = requireAuthRole(req, ['exam_officer']);
@@ -37,19 +37,7 @@ export async function POST(req: Request) {
       | null;
 
     if (row?.email) {
-      const appUrl = process.env.APP_URL ?? 'http://localhost:3000';
-      sendTemplatedEmail({
-        to: row.email,
-        type: 'result_publication',
-        data: {
-          firstName: row.first_name,
-          courseCode: row.course_code,
-          courseTitle: row.course_title,
-          sessionName: row.session_name,
-          resultsUrl: `${appUrl}/student/results/${resultId}`,
-        },
-        subject: `Results published: ${row.course_code}`,
-      }).catch((e) => console.error('Result notification failed:', e));
+      // email disabled: skip sending result notification
     }
   } catch (e) {
     console.error('Failed to send result notification', e);

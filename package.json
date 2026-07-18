@@ -10,7 +10,8 @@
     "lint": "eslint",
     "db:init": "node scripts/init-db.mjs",
     "db:seed": "node scripts/seed-db.mjs",
-    "transcript:worker": "node scripts/transcript-worker.mjs"
+    "transcript:worker": "node scripts/transcript-worker.mjs",
+    "test:transcript-mapping": "node --test transcript-list-mapping.test.mjs"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

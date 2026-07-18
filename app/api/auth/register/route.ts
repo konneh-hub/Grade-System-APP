@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
 import { registerUser } from '@/lib/services/auth.service';
 import { config } from '@/lib/config/env';
-import { sendTemplatedEmail } from '@/lib/email/send';
+import { requireAuth, requireRoles, ensureOwnsUserOrRole } from '@/lib/middleware/authorization';
 
 export async function POST(req: Request) {
+  const guard = requireAuth(req);
+  if ('error' in guard) return guard.error;
   try {
     const body = await req.json();
     const { email, password, registration_token, student_id, full_name, faculty, department, academic_level } = body;
@@ -26,18 +28,7 @@ export async function POST(req: Request) {
       maxAge: config.COOKIE_MAX_AGE,
     });
 
-    try {
-      const appUrl = process.env.APP_URL ?? 'http://localhost:3000';
-      sendTemplatedEmail({
-        to: result.user.email,
-        type: 'account_activation',
-        data: { firstName: result.user.first_name, activationUrl: `${appUrl}/auth/login` },
-        subject: 'Welcome to Slughub',
-        maxAttempts: 2,
-      }).catch((e) => console.error('Welcome email failed:', e));
-    } catch (e) {
-      console.error('Failed to trigger welcome email:', e);
-    }
+    // Email notifications disabled in this environment.
 
     return res;
   } catch (err) {

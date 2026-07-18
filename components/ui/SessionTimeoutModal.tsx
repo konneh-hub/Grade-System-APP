@@ -21,6 +21,7 @@ export default function SessionTimeoutModal() {
   const startInactivityTimer = useCallback(() => {
     if (inactivityRef.current) clearTimeout(inactivityRef.current);
     inactivityRef.current = setTimeout(() => {
+      setCountdown(COUNTDOWN_DURATION);
       setShowWarning(true);
     }, INACTIVITY_LIMIT);
   }, []);
@@ -54,7 +55,6 @@ export default function SessionTimeoutModal() {
 
   useEffect(() => {
     if (!showWarning) return;
-    setCountdown(COUNTDOWN_DURATION);
     countdownRef.current = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {

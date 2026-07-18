@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/config/database';
+import { requireAuth, requireRoles, ensureOwnsUserOrRole } from '@/lib/middleware/authorization';
 
 function ensureSemestersTable() {
   const db = getDatabase();
@@ -14,7 +15,9 @@ function ensureSemestersTable() {
   )`);
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   ensureSemestersTable();
   const db = getDatabase();
   const rows = db
@@ -31,6 +34,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   ensureSemestersTable();
   const body = (await req.json()) as Record<string, unknown>;
   const name = String(body.name ?? '').trim();

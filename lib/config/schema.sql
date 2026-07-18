@@ -38,6 +38,14 @@ CREATE TABLE IF NOT EXISTS users (
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS password_reset_requests (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  token TEXT UNIQUE NOT NULL,
+  requested_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  used_at TEXT
+);
+
 CREATE TABLE IF NOT EXISTS user_roles (
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   role_id INTEGER NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
@@ -209,6 +217,7 @@ CREATE TABLE IF NOT EXISTS transcripts (
   student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
   transcript_type TEXT NOT NULL DEFAULT 'official',
   status TEXT NOT NULL DEFAULT 'pending',
+  request_id INTEGER REFERENCES transcript_requests(id) ON DELETE SET NULL,
   generated_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
   issued_at TEXT,
   file_path TEXT,

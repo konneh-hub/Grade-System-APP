@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/config/database';
+import { requireAuth, requireRoles, ensureOwnsUserOrRole } from '@/lib/middleware/authorization';
 
 type ParamsContext = { params: Promise<{ id: string }> };
 
@@ -18,6 +19,8 @@ function ensureCalendarTable() {
 }
 
 export async function PATCH(req: Request, context: ParamsContext) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   ensureCalendarTable();
   const { id } = await context.params;
   const eventId = Number(id);
@@ -50,7 +53,9 @@ export async function PATCH(req: Request, context: ParamsContext) {
   return NextResponse.json({ ok: true });
 }
 
-export async function DELETE(_req: Request, context: ParamsContext) {
+export async function DELETE(req: Request, context: ParamsContext) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   ensureCalendarTable();
   const { id } = await context.params;
   const eventId = Number(id);

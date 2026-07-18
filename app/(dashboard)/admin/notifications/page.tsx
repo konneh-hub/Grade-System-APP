@@ -35,9 +35,13 @@ export default function NotificationsPage() {
       const response = await fetch('/api/notifications', { cache: 'no-store' });
       const payload = (await response.json()) as { notifications?: NotificationRow[]; scheduled?: unknown; error?: string };
       if (!response.ok) throw new Error(payload.error || 'Failed to load notifications');
-      setRows(Array.isArray(payload.notifications) ? payload.notifications : []);
+      const notifications = Array.isArray(payload.notifications) ? payload.notifications : [];
+      setRows(notifications);
+      return notifications;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load notifications');
+      setRows([]);
+      return [];
     }
   }
 
@@ -94,7 +98,7 @@ export default function NotificationsPage() {
       <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="text-lg font-semibold text-slate-900">Recent notifications</h2>
         <div className="mt-4 space-y-2">
-          {rows.length === 0 ? <p className="text-sm text-slate-600">No notifications yet.</p> : rows.map((row) => (
+          {!Array.isArray(rows) || rows.length === 0 ? <p className="text-sm text-slate-600">No notifications yet.</p> : rows.map((row) => (
             <div key={row.id} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
               <p className="font-medium text-slate-900">{row.title} <span className="font-normal text-slate-500">({row.channel}/{row.is_read ? 'read' : 'unread'})</span></p>
               <p className="mt-1">{row.body}</p>

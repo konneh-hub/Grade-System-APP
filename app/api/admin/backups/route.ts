@@ -2,6 +2,7 @@ import { copyFileSync, existsSync, mkdirSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { NextResponse } from 'next/server';
 import { dbPath, getDatabase } from '@/lib/config/database';
+import { requireAuth, requireRoles, ensureOwnsUserOrRole } from '@/lib/middleware/authorization';
 
 function ensureBackupTable() {
   const db = getDatabase();
@@ -18,7 +19,9 @@ function ensureBackupTable() {
   )`);
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   ensureBackupTable();
   const db = getDatabase();
   const rows = db
@@ -32,6 +35,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   ensureBackupTable();
   const body = (await req.json()) as Record<string, unknown>;
   const backupType = String(body.backup_type ?? body.type ?? 'full').trim().toLowerCase();

@@ -43,16 +43,19 @@ export function createComplaint(payload: Partial<ComplaintRow>) {
 }
 
 export function updateComplaint(id: number, payload: Partial<ComplaintRow>) {
+  const existing = getComplaintById(id);
+  if (!existing) return null;
+
   prepare(
     `UPDATE complaints SET student_id = ?, title = ?, description = ?, category = ?, status = ?, priority = ?, assigned_to = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`
   ).run(
-    payload.student_id ?? 0,
-    payload.title ?? '',
-    payload.description ?? '',
-    payload.category ?? 'general',
-    payload.status ?? 'open',
-    payload.priority ?? 'medium',
-    payload.assigned_to ?? null,
+    payload.student_id ?? existing.student_id,
+    payload.title ?? existing.title,
+    payload.description ?? existing.description,
+    payload.category ?? existing.category,
+    payload.status ?? existing.status,
+    payload.priority ?? existing.priority,
+    payload.assigned_to ?? existing.assigned_to,
     id
   );
 
@@ -64,5 +67,17 @@ export function deleteComplaint(id: number) {
   return true;
 }
 
-const complaintService = { listComplaints, getComplaintById, createComplaint, updateComplaint, deleteComplaint };
+export function addComplaintUpdate(complaintId: number, updatedBy: number | null, message: string, status = 'comment') {
+  const result = prepare(
+    `INSERT INTO complaint_updates (complaint_id, updated_by, message, status, created_at) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)`
+  ).run(complaintId, updatedBy, message, status) as { lastInsertRowid: number };
+
+  return prepare('SELECT * FROM complaint_updates WHERE id = ?').get(Number(result.lastInsertRowid));
+}
+
+export function listComplaintUpdates(complaintId: number) {
+  return prepare('SELECT * FROM complaint_updates WHERE complaint_id = ? ORDER BY created_at DESC').all(complaintId);
+}
+
+const complaintService = { listComplaints, getComplaintById, createComplaint, updateComplaint, deleteComplaint, addComplaintUpdate, listComplaintUpdates };
 export default complaintService;

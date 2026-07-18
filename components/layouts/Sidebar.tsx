@@ -118,19 +118,22 @@ export default function Sidebar() {
     setMounted(true);
   }, []);
 
-  const effectivePathname = mounted ? pathname : '';
+  const effectivePathname = mounted ? pathname ?? '' : '';
 
-  const profile = useMemo(() => (effectivePathname.startsWith('/admin')
-    ? { title: 'Admin console', subtitle: 'University administration and operations.', sections: adminSections }
-    : effectivePathname.startsWith('/dean')
-      ? { title: 'Dean workspace', subtitle: 'Faculty-level academic leadership.', sections: deanSections }
-      : effectivePathname.startsWith('/hod')
-        ? { title: 'HOD workspace', subtitle: 'Department oversight and coordination.', sections: hodSections }
-        : effectivePathname.startsWith('/exam-officer')
-          ? { title: 'Exam operations', subtitle: 'Result publication and transcript workflows.', sections: examOfficerSections }
-          : effectivePathname.startsWith('/lecturer')
-            ? { title: 'Lecturer workspace', subtitle: 'Teaching, scoring, and reporting.', sections: lecturerSections }
-            : { title: 'Student portal', subtitle: 'Personal academic tools and records.', sections: studentSections }), [effectivePathname]);
+  const profile = useMemo(() => {
+    const path = effectivePathname;
+    return path.startsWith('/admin')
+      ? { title: 'Admin console', subtitle: 'University administration and operations.', sections: adminSections }
+      : path.startsWith('/dean')
+        ? { title: 'Dean workspace', subtitle: 'Faculty-level academic leadership.', sections: deanSections }
+        : path.startsWith('/hod')
+          ? { title: 'HOD workspace', subtitle: 'Department oversight and coordination.', sections: hodSections }
+          : path.startsWith('/exam-officer')
+            ? { title: 'Exam operations', subtitle: 'Result publication and transcript workflows.', sections: examOfficerSections }
+            : path.startsWith('/lecturer')
+              ? { title: 'Lecturer workspace', subtitle: 'Teaching, scoring, and reporting.', sections: lecturerSections }
+              : { title: 'Student portal', subtitle: 'Personal academic tools and records.', sections: studentSections };
+  }, [effectivePathname]);
 
   return (
     <aside className={`relative hidden shrink-0 border-r border-[#1E3A8A]/20 bg-gradient-to-b from-[#0F1F3D] via-[#1A3A6B] to-[#1E3A8A] p-4 text-slate-100 shadow-xl shadow-[#1E3A8A]/10 transition-all duration-500 ease-out lg:block ${collapsed ? 'w-[72px]' : 'w-[280px]'}`}>
@@ -165,7 +168,7 @@ export default function Sidebar() {
             {!collapsed ? <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">{section.title}</p> : null}
             <div className="space-y-1">
               {section.items.map((item) => {
-                const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+                const isActive = mounted && (pathname === item.href || pathname.startsWith(`${item.href}/`));
                 return (
                   <Link
                     key={item.href + item.label}

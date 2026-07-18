@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/config/database';
+import { requireAuth, requireRoles, ensureOwnsUserOrRole } from '@/lib/middleware/authorization';
 
 type ParamsContext = { params: Promise<{ id: string }> };
 
-export async function GET(_req: Request, context: ParamsContext) {
+export async function GET(req: Request, context: ParamsContext) {
+  const guard = requireAuth(req);
+  if ('error' in guard) return guard.error;
   const { id } = await context.params;
   const userId = Number(id);
   if (!Number.isFinite(userId)) return NextResponse.json({ error: 'Invalid user id' }, { status: 400 });
@@ -15,6 +18,8 @@ export async function GET(_req: Request, context: ParamsContext) {
 }
 
 export async function PUT(req: Request, context: ParamsContext) {
+  const guard = requireAuth(req);
+  if ('error' in guard) return guard.error;
   const { id } = await context.params;
   const userId = Number(id);
   if (!Number.isFinite(userId)) return NextResponse.json({ error: 'Invalid user id' }, { status: 400 });

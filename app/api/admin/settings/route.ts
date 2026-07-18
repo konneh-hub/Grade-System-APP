@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/config/database';
+import { requireAuth, requireRoles, ensureOwnsUserOrRole } from '@/lib/middleware/authorization';
 
 type SettingMap = Record<string, string>;
 
@@ -15,7 +16,9 @@ function ensureSettingsTable() {
   )`);
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   ensureSettingsTable();
   const db = getDatabase();
   const rows = db.prepare('SELECT category, key, value FROM system_settings ORDER BY category, key').all() as Array<{ category: string; key: string; value: string }>;
@@ -30,6 +33,8 @@ export async function GET() {
 }
 
 export async function PUT(req: Request) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   ensureSettingsTable();
   const body = (await req.json()) as Record<string, Record<string, string>>;
   const db = getDatabase();

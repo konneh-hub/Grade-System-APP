@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/config/database';
+import { requireAuth, requireRoles, ensureOwnsUserOrRole } from '@/lib/middleware/authorization';
 
 function ensureReportSchedulesTable() {
   const db = getDatabase();
@@ -14,7 +15,9 @@ function ensureReportSchedulesTable() {
   )`);
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   ensureReportSchedulesTable();
   const db = getDatabase();
   const templates = db.prepare('SELECT * FROM report_templates ORDER BY name ASC').all();
@@ -33,6 +36,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   ensureReportSchedulesTable();
   const body = (await req.json()) as Record<string, unknown>;
   const type = String(body.type ?? body.reportType ?? 'activity').trim().toLowerCase();

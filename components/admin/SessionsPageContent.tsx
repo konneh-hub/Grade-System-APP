@@ -22,6 +22,11 @@ interface Session {
 type SortField = "name" | "code" | "start_date" | "end_date" | "is_active";
 type SortDir = "asc" | "desc";
 
+function SortIcon({ field, sortField, sortDir }: { field: SortField; sortField: SortField; sortDir: SortDir }) {
+  if (sortField !== field) return <span className="ml-1 text-slate-300">&#8597;</span>;
+  return <span className="ml-1 text-[#1E3A8A]">{sortDir === "asc" ? "↑" : "↓"}</span>;
+}
+
 const CHART_COLORS = ["#1E3A8A", "#7C3AED", "#0891B2", "#059669", "#D97706", "#DC2626", "#EA580C", "#0284C7"];
 
 function getSortValue(s: Session, field: SortField): string | number {
@@ -46,7 +51,6 @@ export default function SessionsPageContent() {
   const [importOpen, setImportOpen] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
     fetch("/api/academic-sessions")
       .then((r) => r.json())
       .then((payload: { data: Session[] }) => { setSessions(payload.data); })
@@ -76,11 +80,6 @@ export default function SessionsPageContent() {
   function toggleSort(field: SortField) {
     if (sortField === field) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
     else { setSortField(field); setSortDir("asc"); }
-  }
-
-  function SortIcon({ field }: { field: SortField }) {
-    if (sortField !== field) return <span className="ml-1 text-slate-300">&#8597;</span>;
-    return <span className="ml-1 text-[#1E3A8A]">{sortDir === "asc" ? "\u2191" : "\u2193"}</span>;
   }
 
   function toggleSelect(id: number) {
@@ -355,12 +354,12 @@ export default function SessionsPageContent() {
       </Modal>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 animate-fade-in-up [animation-delay:0.1s]">
         {[
-          { label: "Total Sessions", value: totalSessions, icon: "calendar_month", color: "#1E3A8A", bg: "bg-blue-50" },
-          { label: "Active Session", value: activeName, icon: "check_circle", color: "#059669", bg: "bg-emerald-50" },
-          { label: "Avg Duration", value: `${avgDuration} days`, icon: "schedule", color: "#7C3AED", bg: "bg-purple-50" },
-          { label: "This Year", value: thisYearCount, icon: "today", color: "#D97706", bg: "bg-amber-50" },
+          { label: "Total Sessions", value: totalSessions, icon: "calendar_month", iconClassName: "text-[#1E3A8A]", bg: "bg-blue-50" },
+          { label: "Active Session", value: activeName, icon: "check_circle", iconClassName: "text-[#059669]", bg: "bg-emerald-50" },
+          { label: "Avg Duration", value: `${avgDuration} days`, icon: "schedule", iconClassName: "text-[#7C3AED]", bg: "bg-purple-50" },
+          { label: "This Year", value: thisYearCount, icon: "today", iconClassName: "text-[#D97706]", bg: "bg-amber-50" },
         ].map((card) => (
           <div key={card.label} className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
             <div className="flex items-start justify-between">
@@ -369,7 +368,7 @@ export default function SessionsPageContent() {
                 <p className="mt-1 text-2xl font-bold text-slate-900 truncate">{card.label === "Active Session" && card.value === "None" ? <span className="text-slate-400 italic text-lg font-medium">None</span> : card.value}</p>
               </div>
               <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${card.bg}`}>
-                <span className="material-symbols-outlined text-xl" style={{ color: card.color }}>{card.icon}</span>
+                <span className={`material-symbols-outlined text-xl ${card.iconClassName}`}>{card.icon}</span>
               </div>
             </div>
             <div className="mt-3 h-8">
@@ -385,7 +384,7 @@ export default function SessionsPageContent() {
       </div>
 
       {/* Charts Row */}
-      <div className="grid gap-6 lg:grid-cols-3 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+      <div className="grid gap-6 lg:grid-cols-3 animate-fade-in-up [animation-delay:0.2s]">
         {/* Sessions by Year */}
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:shadow-md">
           <h3 className="mb-1 text-sm font-semibold text-slate-900">Sessions by Year</h3>
@@ -445,7 +444,7 @@ export default function SessionsPageContent() {
       </div>
 
       {/* Toolbar */}
-      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
+      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm animate-fade-in-up [animation-delay:0.3s]">
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative min-w-[220px] flex-1">
             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-lg text-slate-400">search</span>
@@ -470,7 +469,7 @@ export default function SessionsPageContent() {
       </section>
 
       {/* Table */}
-      <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm animate-fade-in-up" style={{ animationDelay: "0.35s" }}>
+      <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm animate-fade-in-up [animation-delay:0.35s]">
         {sorted.length === 0 ? (
           <div className="flex flex-col items-center py-16">
             <span className="material-symbols-outlined text-5xl text-slate-300">calendar_month</span>
@@ -482,19 +481,25 @@ export default function SessionsPageContent() {
             <table className="min-w-full divide-y divide-slate-200 text-sm">
               <thead className="bg-slate-50">
                 <tr>
-                  <th className="w-10 px-3 py-3"><input type="checkbox" checked={selectedIds.size === sorted.length && sorted.length > 0} onChange={toggleSelectAll} className="h-4 w-4 rounded border-slate-300 text-[#1E3A8A] focus:ring-[#1E3A8A]" /></th>
-                  <Th onClick={() => toggleSort("name")} active={sortField === "name"} sortDir={sortDir}>Name <SortIcon field="name" /></Th>
-                  <Th onClick={() => toggleSort("code")} active={sortField === "code"} sortDir={sortDir}>Code <SortIcon field="code" /></Th>
-                  <Th onClick={() => toggleSort("start_date")} active={sortField === "start_date"} sortDir={sortDir}>Start <SortIcon field="start_date" /></Th>
-                  <Th onClick={() => toggleSort("end_date")} active={sortField === "end_date"} sortDir={sortDir}>End <SortIcon field="end_date" /></Th>
-                  <Th onClick={() => toggleSort("is_active")} active={sortField === "is_active"} sortDir={sortDir}>Status <SortIcon field="is_active" /></Th>
+                  <th className="w-10 px-3 py-3">
+                    <label htmlFor="select-all-sessions" className="sr-only">Select all sessions</label>
+                    <input id="select-all-sessions" aria-label="Select all sessions" type="checkbox" checked={selectedIds.size === sorted.length && sorted.length > 0} onChange={toggleSelectAll} className="h-4 w-4 rounded border-slate-300 text-[#1E3A8A] focus:ring-[#1E3A8A]" />
+                  </th>
+                  <Th onClick={() => toggleSort("name")} active={sortField === "name"} sortDir={sortDir}>Name <SortIcon field="name" sortField={sortField} sortDir={sortDir} /></Th>
+                  <Th onClick={() => toggleSort("code")} active={sortField === "code"} sortDir={sortDir}>Code <SortIcon field="code" sortField={sortField} sortDir={sortDir} /></Th>
+                  <Th onClick={() => toggleSort("start_date")} active={sortField === "start_date"} sortDir={sortDir}>Start <SortIcon field="start_date" sortField={sortField} sortDir={sortDir} /></Th>
+                  <Th onClick={() => toggleSort("end_date")} active={sortField === "end_date"} sortDir={sortDir}>End <SortIcon field="end_date" sortField={sortField} sortDir={sortDir} /></Th>
+                  <Th onClick={() => toggleSort("is_active")} active={sortField === "is_active"} sortDir={sortDir}>Status <SortIcon field="is_active" sortField={sortField} sortDir={sortDir} /></Th>
                   <Th>Actions</Th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {sorted.map((sess) => (
                   <tr key={sess.id} className={`transition-all duration-200 hover:bg-slate-50 ${selectedIds.has(sess.id) ? "bg-blue-50/40" : ""}`}>
-                    <td className="px-3 py-3"><input type="checkbox" checked={selectedIds.has(sess.id)} onChange={() => toggleSelect(sess.id)} className="h-4 w-4 rounded border-slate-300 text-[#1E3A8A] focus:ring-[#1E3A8A]" /></td>
+                    <td className="px-3 py-3">
+                      <label htmlFor={`select-session-${sess.id}`} className="sr-only">Select {sess.name}</label>
+                      <input id={`select-session-${sess.id}`} aria-label={`Select session ${sess.name}`} type="checkbox" checked={selectedIds.has(sess.id)} onChange={() => toggleSelect(sess.id)} className="h-4 w-4 rounded border-slate-300 text-[#1E3A8A] focus:ring-[#1E3A8A]" />
+                    </td>
                     <td className="whitespace-nowrap px-3 py-3">
                       <div className="flex items-center gap-2">
                         <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#1E3A8A] text-xs font-bold text-white">{sess.name.charAt(0).toUpperCase()}</div>
@@ -605,7 +610,7 @@ function SessionImportModal({ open, onClose }: { open: boolean; onClose: () => v
             <span className="material-symbols-outlined text-4xl text-slate-400">upload_file</span>
             <p className="mt-3 text-sm font-medium text-slate-700">Drop an Excel file here, or click to browse</p>
             <p className="mt-1 text-xs text-slate-500">Columns: name, code, start_date, end_date, is_active</p>
-            <input id="sess-import-input" type="file" accept=".xlsx,.xls,.csv" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }} />
+            <input id="sess-import-input" aria-label="Upload academic sessions file" type="file" accept=".xlsx,.xls,.csv" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }} />
           </div>
         )}
         {rows.length > 0 && !result && (
@@ -650,7 +655,7 @@ function SessionImportModal({ open, onClose }: { open: boolean; onClose: () => v
   );
 }
 
-function Th({ children, onClick, active }: { children: React.ReactNode; onClick?: () => void; active?: boolean; sortDir?: SortDir }) {
+function Th({ children, onClick, active }: { children: React.ReactNode; onClick?: () => void; active?: boolean }) {
   return (
     <th onClick={onClick} className={`px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider ${onClick ? "cursor-pointer select-none hover:text-[#1E3A8A]" : ""} ${active ? "text-[#1E3A8A]" : "text-slate-600"}`}>
       {children}

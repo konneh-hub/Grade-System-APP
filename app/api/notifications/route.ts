@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/config/database';
+import { requireAuth, requireRoles, ensureOwnsUserOrRole } from '@/lib/middleware/authorization';
 
 function ensureNotificationScheduleTable() {
   const db = getDatabase();
@@ -15,7 +16,9 @@ function ensureNotificationScheduleTable() {
   )`);
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   ensureNotificationScheduleTable();
   const db = getDatabase();
   const rows = db
@@ -29,10 +32,15 @@ export async function GET() {
     .all();
   const scheduled = db.prepare('SELECT id, title, body, channel, target_audience, scheduled_for, status, created_at FROM notification_schedules WHERE status = ? ORDER BY datetime(scheduled_for) ASC').all('scheduled');
 
-  return NextResponse.json({ notifications: rows, scheduled });
+  const notifications = Array.isArray(rows) ? rows : rows ? [rows] : [];
+  const scheduledList = Array.isArray(scheduled) ? scheduled : scheduled ? [scheduled] : [];
+
+  return NextResponse.json({ notifications, scheduled: scheduledList });
 }
 
 export async function POST(req: Request) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   ensureNotificationScheduleTable();
   const body = (await req.json()) as Record<string, unknown>;
   const title = String(body.title ?? '').trim();
@@ -82,6 +90,8 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   ensureNotificationScheduleTable();
   const { searchParams } = new URL(req.url);
   const scheduledId = Number(searchParams.get('scheduled_id') ?? 0);

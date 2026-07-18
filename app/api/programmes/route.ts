@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/config/database';
+import { requireAuth, requireRoles, ensureOwnsUserOrRole } from '@/lib/middleware/authorization';
 
 function ensureProgramColumns() {
   const db = getDatabase();
@@ -14,6 +15,8 @@ function ensureProgramColumns() {
 }
 
 export async function GET(req: Request) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   ensureProgramColumns();
   const { searchParams } = new URL(req.url);
   const query = String(searchParams.get('q') ?? '').trim().toLowerCase();
@@ -54,6 +57,8 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   ensureProgramColumns();
   const body = (await req.json()) as Record<string, unknown>;
   const name = String(body.name ?? '').trim();

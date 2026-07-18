@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/config/database';
+import { requireAuth, requireRoles, ensureOwnsUserOrRole } from '@/lib/middleware/authorization';
 
 function normalizeCourseLevel(value: unknown): number {
   const raw = String(value ?? 'year1').trim().toLowerCase();
@@ -25,6 +26,8 @@ function normalizeCourseLevel(value: unknown): number {
 }
 
 export async function GET(req: Request) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   const { searchParams } = new URL(req.url);
   const query = String(searchParams.get('q') ?? '').trim().toLowerCase();
   const departmentId = Number(searchParams.get('department_id') ?? 0);
@@ -92,6 +95,8 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   const body = await req.json();
   const db = getDatabase();
   const code = String(body.code ?? '').trim().toUpperCase();

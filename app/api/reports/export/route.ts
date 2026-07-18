@@ -1,11 +1,14 @@
 import { NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/config/database';
+import { requireAuth, requireRoles, ensureOwnsUserOrRole } from '@/lib/middleware/authorization';
 
 function csvEscape(value: unknown): string {
   return `"${String(value ?? '').replace(/"/g, '""')}"`;
 }
 
 export async function GET(req: Request) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   const { searchParams } = new URL(req.url);
   const type = String(searchParams.get('type') ?? 'all').trim().toLowerCase();
   const format = String(searchParams.get('format') ?? 'csv').trim().toLowerCase();

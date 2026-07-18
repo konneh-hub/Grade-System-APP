@@ -1,11 +1,14 @@
 import { NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/config/database';
+import { requireAuth, requireRoles, ensureOwnsUserOrRole } from '@/lib/middleware/authorization';
 
 function dateOnly(value: string): string {
   return value.length >= 10 ? value.slice(0, 10) : value;
 }
 
 export async function GET(req: Request) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   const db = getDatabase();
   const { searchParams } = new URL(req.url);
   const exportFormat = String(searchParams.get('export') ?? '').trim().toLowerCase();

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/config/database';
+import { requireAuth, requireRoles, ensureOwnsUserOrRole } from '@/lib/middleware/authorization';
 
 function normalizeCourseLevel(value: unknown): number {
   const raw = String(value ?? 'year1').trim().toLowerCase();
@@ -49,6 +50,8 @@ function normalizeStatus(value: unknown): number {
 }
 
 export async function POST(req: Request) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   const body = await req.json();
   const rows = Array.isArray(body) ? body : [];
   const db = getDatabase();

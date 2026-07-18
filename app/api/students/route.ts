@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/config/database';
+import { requireAuth, requireRoles, ensureOwnsUserOrRole } from '@/lib/middleware/authorization';
 
-export async function GET() {
+export async function GET(req: Request) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   const db = getDatabase();
   const rows = db
     .prepare(
@@ -13,6 +16,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   const body = await req.json();
   const db = getDatabase();
   // Generate matric_number internally to avoid accepting it from clients

@@ -1,8 +1,14 @@
 import { NextResponse } from 'next/server';
 import { getUserFromRequest } from '@/lib/middleware/auth';
 import { getStudentByUserId } from '@/lib/services/student.service';
-import { getTranscriptRequestsByStudent, createTranscriptRequest } from '@/lib/services/transcript.service';
-import { sendTemplatedEmail } from '@/lib/email/send';
+import {
+  getTranscriptByRequestId,
+  getTranscriptRequestsByStudent,
+  createTranscriptRequest,
+  TranscriptRequest,
+} from '@/lib/services/transcript.service';
+import { mapTranscriptRequestToResponse } from '@/lib/services/transcript-mapping.js';
+// email disabled - skipping transcript emails
 
 export async function GET(req: Request) {
   try {
@@ -12,7 +18,9 @@ export async function GET(req: Request) {
     const student = getStudentByUserId(auth.user.id);
     if (!student) return NextResponse.json({ error: 'student_not_found' }, { status: 404 });
 
-    const requests = getTranscriptRequestsByStudent(student.id);
+    const requests = getTranscriptRequestsByStudent(student.id).map((request) =>
+      mapTranscriptRequestToResponse(request, getTranscriptByRequestId(request.id))
+    );
     return NextResponse.json(requests);
   } catch (error) {
     console.error(error);
@@ -37,24 +45,16 @@ export async function POST(req: Request) {
       notes: data.notes,
     });
 
-    try {
-      sendTemplatedEmail({
-        to: auth.user.email,
-        type: 'transcript_notification',
-        subject: 'Transcript request submitted',
-        data: {
-          firstName: auth.user.first_name,
-          transcriptId: request?.id,
-          status: request?.status,
-          link: `${process.env.APP_URL ?? 'http://localhost:3000'}/student/transcripts`,
-        },
-        maxAttempts: 2,
-      }).catch((e) => console.error('Transcript notification failed:', e));
-    } catch (e) {
-      console.error('Failed to trigger transcript notification:', e);
-    }
+    // email disabled: skip notification
 
-    return NextResponse.json(request);
+    return NextResponse.json({
+      id: request?.id,
+      status: request?.status,
+      requested_at: request?.requested_at,
+      completed_at: request?.processed_at ?? null,
+      purpose: request?.request_type ?? 'official',
+      download_url: null,
+    });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: 'Failed to submit transcript request.' }, { status: 500 });

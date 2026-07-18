@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import LoginForm from '@/components/auth/LoginForm';
 import AuthModal from '@/components/auth/AuthModal';
 import { useRouter } from 'next/navigation';
@@ -8,14 +9,15 @@ import { getDashboardPath } from '@/lib/utils/rolePaths';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [userEmail, setUserEmail] = useState('');
   const [pendingRoles, setPendingRoles] = useState<string[]>([]);
 
   const handleSuccess = useCallback((data: { roles?: string[]; user?: { email?: string } }) => {
     setUserEmail(data?.user?.email || '');
-    setPendingRoles(data?.roles || []);
+    const roles = data?.roles || [];
+    setPendingRoles(roles);
     setShowSuccessModal(true);
   }, []);
 
@@ -24,14 +26,14 @@ export default function LoginPage() {
     router.push(getDashboardPath(pendingRoles));
   }
 
-  function handleError(_message: string) {
+  function handleError(message: string) {
     setShowErrorModal(true);
   }
 
   return (
     <div className="grid w-full max-w-7xl gap-10 lg:grid-cols-[1.2fr_1fr]">
       <section className="relative hidden items-center justify-center lg:flex">
-        <img src="/slughublogo.png" alt="Slughub" className="h-auto w-full max-w-[600px] animate-float object-contain" />
+        <Image src="/slughublogo.png" alt="Slughub" width={600} height={600} className="h-auto w-full max-w-[600px] animate-float object-contain" unoptimized priority />
       </section>
 
       <section className="mx-auto w-full max-w-[420px] animate-fade-in-up">
@@ -40,7 +42,7 @@ export default function LoginPage() {
           <div className="relative z-10">
             <div className="flex flex-col items-center text-center">
               <div className="animate-float">
-                <img src="/slughublogo.png" alt="Slughub" className="h-16 w-16 object-contain" />
+                <Image src="/slughublogo.png" alt="Slughub" width={64} height={64} className="h-16 w-16 object-contain" unoptimized priority />
               </div>
               <h1 className="mt-5 text-2xl font-bold leading-tight text-[#0F172A]">
                 Sierra Leone University<br />
@@ -58,6 +60,7 @@ export default function LoginPage() {
         </div>
       </section>
 
+      
       <AuthModal
         open={showSuccessModal}
         onClose={closeSuccessAndRedirect}

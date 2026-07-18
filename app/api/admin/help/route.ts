@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import packageJson from '@/package.json';
+import { requireAuth, requireRoles, ensureOwnsUserOrRole } from '@/lib/middleware/authorization';
 
-export async function GET() {
+export async function GET(req: Request) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   return NextResponse.json({
     version: packageJson.version,
     docs: [
@@ -25,6 +28,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   const body = (await req.json()) as { subject?: string; message?: string; email?: string };
   const subject = String(body.subject ?? '').trim();
   const message = String(body.message ?? '').trim();

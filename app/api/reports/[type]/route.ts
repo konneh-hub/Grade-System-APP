@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/config/database';
+import { requireAuth, requireRoles, ensureOwnsUserOrRole } from '@/lib/middleware/authorization';
 
 type ParamsContext = { params: Promise<{ type: string }> };
 
-export async function GET(_req: Request, context: ParamsContext) {
+export async function GET(req: Request, context: ParamsContext) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   const { type } = await context.params;
   const reportType = String(type ?? '').trim().toLowerCase();
   if (!reportType) {
@@ -30,6 +33,8 @@ export async function GET(_req: Request, context: ParamsContext) {
 }
 
 export async function POST(req: Request, context: ParamsContext) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   const { type } = await context.params;
   const reportType = String(type ?? '').trim().toLowerCase();
   if (!reportType) {
@@ -82,6 +87,8 @@ export async function POST(req: Request, context: ParamsContext) {
 }
 
 export async function DELETE(req: Request, context: ParamsContext) {
+  const guard = requireRoles(req, ['admin','system_admin']);
+  if ('error' in guard) return guard.error;
   const { type } = await context.params;
   const reportType = String(type ?? '').trim().toLowerCase();
   const { searchParams } = new URL(req.url);
