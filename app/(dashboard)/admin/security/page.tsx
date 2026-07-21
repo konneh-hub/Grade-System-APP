@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 type SecurityPayload = {
   metrics: {
@@ -18,11 +18,7 @@ export default function SecurityPage() {
   const [actionUserId, setActionUserId] = useState('');
   const [actionMessage, setActionMessage] = useState('');
 
-  useEffect(() => {
-    void loadSecurity();
-  }, []);
-
-  async function loadSecurity() {
+  const loadSecurity = useCallback(async () => {
     try {
       const response = await fetch('/api/admin/security', { cache: 'no-store' });
       const payload = (await response.json()) as SecurityPayload | { error?: string };
@@ -31,7 +27,11 @@ export default function SecurityPage() {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load security metrics');
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    void loadSecurity();
+  }, [loadSecurity]);
 
   async function runSecurityAction(action: 'unblock' | 'suspend' | 'force_logout' | 'force_password_reset') {
     setActionMessage('');

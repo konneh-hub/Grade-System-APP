@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { FormEvent, useEffect, useState } from 'react';
+import { useCallback, FormEvent, useEffect, useState } from 'react';
 
 type ReportRow = {
   id: number;
@@ -20,11 +20,7 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    void fetchReports();
-  }, []);
-
-  async function fetchReports() {
+  const fetchReports = useCallback(async () => {
     try {
       const response = await fetch('/api/reports', { cache: 'no-store' });
       const payload = (await response.json()) as { generated?: ReportRow[]; error?: string };
@@ -33,7 +29,11 @@ export default function Page() {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load reports');
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    void fetchReports();
+  }, [fetchReports]);
 
   async function onGenerate(event: FormEvent) {
     event.preventDefault();

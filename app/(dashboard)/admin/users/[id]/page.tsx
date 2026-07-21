@@ -27,25 +27,24 @@ export default function Page() {
   const [user, setUser] = useState<UserDetail | null>(null);
 
   useEffect(() => {
+    async function loadUser() {
+      if (!userId) return;
+      setLoading(true);
+      setError('');
+
+      try {
+        const response = await fetch(`/api/users/${userId}`, { cache: 'no-store' });
+        const payload = (await response.json()) as UserDetail | { error?: string };
+        if (!response.ok) throw new Error((payload as { error?: string }).error || 'Failed to load user');
+        setUser(payload as UserDetail);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load user');
+      } finally {
+        setLoading(false);
+      }
+    }
     void loadUser();
   }, [userId]);
-
-  async function loadUser() {
-    if (!userId) return;
-    setLoading(true);
-    setError('');
-
-    try {
-      const response = await fetch(`/api/users/${userId}`, { cache: 'no-store' });
-      const payload = (await response.json()) as UserDetail | { error?: string };
-      if (!response.ok) throw new Error((payload as { error?: string }).error || 'Failed to load user');
-      setUser(payload as UserDetail);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load user');
-    } finally {
-      setLoading(false);
-    }
-  }
 
   async function onDelete() {
     if (!userId) return;

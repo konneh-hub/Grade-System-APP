@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'next/navigation';
 
 type GeneratedReport = {
@@ -34,11 +34,7 @@ export default function Page() {
   const [message, setMessage] = useState('');
   const [data, setData] = useState<ReportTypePayload | null>(null);
 
-  useEffect(() => {
-    void loadReports();
-  }, [type]);
-
-  async function loadReports() {
+  const loadReports = useCallback(async () => {
     if (!type) return;
     setLoading(true);
     setError('');
@@ -53,7 +49,11 @@ export default function Page() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [type]);
+
+  useEffect(() => {
+    void loadReports();
+  }, [loadReports]);
 
   async function onGenerate() {
     if (!type) return;

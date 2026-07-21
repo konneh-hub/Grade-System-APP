@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from 'react';
+import { useCallback, FormEvent, useEffect, useState } from 'react';
 
 type NotificationRow = {
   id: number;
@@ -26,11 +26,7 @@ export default function NotificationsPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  useEffect(() => {
-    void fetchNotifications();
-  }, []);
-
-  async function fetchNotifications() {
+  const fetchNotifications = useCallback(async () => {
     try {
       const response = await fetch('/api/notifications', { cache: 'no-store' });
       const payload = (await response.json()) as NotificationRow[] | { error?: string };
@@ -39,7 +35,11 @@ export default function NotificationsPage() {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load notifications');
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    void fetchNotifications();
+  }, [fetchNotifications]);
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();

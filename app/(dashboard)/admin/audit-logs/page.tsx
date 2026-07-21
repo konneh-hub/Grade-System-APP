@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useEffect, useState } from 'react';
+import { useCallback, FormEvent, useEffect, useState } from 'react';
 
 type AuditLog = {
   id: number;
@@ -21,7 +21,7 @@ export default function Page() {
   const [error, setError] = useState('');
   const [logs, setLogs] = useState<AuditLog[]>([]);
 
-  async function fetchLogs(activeFilters = filters) {
+  const fetchLogs = useCallback(async (activeFilters = filters) => {
     setLoading(true);
     setError('');
     try {
@@ -44,11 +44,11 @@ export default function Page() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [filters]);
 
   useEffect(() => {
     void fetchLogs();
-  }, []);
+  }, [fetchLogs]);
 
   function onFilter(event: FormEvent) {
     event.preventDefault();

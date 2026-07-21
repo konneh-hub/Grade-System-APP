@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { FormEvent, useEffect, useState } from 'react';
+import { useCallback, FormEvent, useEffect, useState } from 'react';
 
 type DepartmentOption = { id: number; name: string; code: string };
 type SessionOption = { id: number; name: string };
@@ -33,11 +33,7 @@ export default function Page() {
     examWeight: '0.6',
   });
 
-  useEffect(() => {
-    void loadAll();
-  }, []);
-
-  async function loadAll() {
+  const loadAll = useCallback(async () => {
     setError('');
     try {
       const [deptRes, sessionsRes, configRes] = await Promise.all([
@@ -60,7 +56,11 @@ export default function Page() {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load grading configuration data');
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    void loadAll();
+  }, [loadAll]);
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();

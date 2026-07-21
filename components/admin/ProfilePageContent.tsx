@@ -1,5 +1,5 @@
 "use client";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { useCallback, FormEvent, useEffect, useMemo, useState } from "react";
 import {
   ResponsiveContainer, AreaChart, Area, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip, Cell,
@@ -38,16 +38,16 @@ export default function ProfilePageContent() {
   const [passwordForm, setPasswordForm] = useState({ oldPassword: "", newPassword: "" });
   const [changingPassword, setChangingPassword] = useState(false);
 
-  useEffect(() => { loadProfile(); }, []);
-
-  async function loadProfile() {
+  const loadProfile = useCallback(async () => {
     try {
       const res = await fetch("/api/admin/profile", { cache: "no-store" });
       const payload = await res.json() as AdminProfile | { error?: string };
       if (!res.ok) throw new Error((payload as { error?: string }).error || "Failed to load profile");
       setProfile(payload as AdminProfile);
     } catch (err) { setError(err instanceof Error ? err.message : "Failed to load profile"); }
-  }
+  }, []);
+
+  useEffect(() => { loadProfile(); }, [loadProfile]);
 
   async function onSaveProfile(e: FormEvent) {
     e.preventDefault();

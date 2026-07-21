@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useEffect, useState } from 'react';
+import { useCallback, FormEvent, useEffect, useState } from 'react';
 
 export default function Page() {
   const [history, setHistory] = useState<Array<{ id: number; backup_type: string; include_logs: number; status: string; file_name: string; size_bytes: number; created_at: string }>>([]);
@@ -9,7 +9,7 @@ export default function Page() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  async function fetchHistory() {
+  const fetchHistory = useCallback(async () => {
     try {
       const response = await fetch('/api/admin/backups', { cache: 'no-store' });
       const payload = (await response.json()) as Array<{ id: number; backup_type: string; include_logs: number; status: string; file_name: string; size_bytes: number; created_at: string }> | { error?: string };
@@ -18,11 +18,11 @@ export default function Page() {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load backup history');
     }
-  }
+  }, []);
 
   useEffect(() => {
     void fetchHistory();
-  }, []);
+  }, [fetchHistory]);
 
   async function onBackup(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

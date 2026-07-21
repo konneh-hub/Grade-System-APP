@@ -37,43 +37,42 @@ export default function Page() {
     departmentId: '',
   });
 
-  async function loadData() {
-    if (!courseId) return;
-    setLoading(true);
-    setError('');
-
-    try {
-      const [courseRes, deptRes] = await Promise.all([
-        fetch(`/api/courses/${courseId}`, { cache: 'no-store' }),
-        fetch('/api/departments', { cache: 'no-store' }),
-      ]);
-
-      const coursePayload = (await courseRes.json()) as CoursePayload | { error?: string };
-      const departmentsPayload = (await deptRes.json()) as DepartmentOption[] | { error?: string };
-
-      if (!courseRes.ok) throw new Error((coursePayload as { error?: string }).error || 'Failed to load course');
-      if (!deptRes.ok) throw new Error((departmentsPayload as { error?: string }).error || 'Failed to load departments');
-
-      const course = coursePayload as CoursePayload;
-      const allDepartments = departmentsPayload as DepartmentOption[];
-
-      setDepartments(allDepartments);
-      setForm({
-        code: course.code || '',
-        title: course.title || '',
-        creditUnits: String(course.credit_units ?? 3),
-        level: String(course.level ?? '100'),
-        semester: String(course.semester ?? 'first'),
-        departmentId: course.department_id != null ? String(course.department_id) : '',
-      });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load course');
-    } finally {
-      setLoading(false);
-    }
-  }
-
   useEffect(() => {
+    async function loadData() {
+      if (!courseId) return;
+      setLoading(true);
+      setError('');
+
+      try {
+        const [courseRes, deptRes] = await Promise.all([
+          fetch(`/api/courses/${courseId}`, { cache: 'no-store' }),
+          fetch('/api/departments', { cache: 'no-store' }),
+        ]);
+
+        const coursePayload = (await courseRes.json()) as CoursePayload | { error?: string };
+        const departmentsPayload = (await deptRes.json()) as DepartmentOption[] | { error?: string };
+
+        if (!courseRes.ok) throw new Error((coursePayload as { error?: string }).error || 'Failed to load course');
+        if (!deptRes.ok) throw new Error((departmentsPayload as { error?: string }).error || 'Failed to load departments');
+
+        const course = coursePayload as CoursePayload;
+        const allDepartments = departmentsPayload as DepartmentOption[];
+
+        setDepartments(allDepartments);
+        setForm({
+          code: course.code || '',
+          title: course.title || '',
+          creditUnits: String(course.credit_units ?? 3),
+          level: String(course.level ?? '100'),
+          semester: String(course.semester ?? 'first'),
+          departmentId: course.department_id != null ? String(course.department_id) : '',
+        });
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load course');
+      } finally {
+        setLoading(false);
+      }
+    }
     void loadData();
   }, [courseId]);
 

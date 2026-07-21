@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -53,7 +53,7 @@ export default function UsersPageContent() {
   const [importOpen, setImportOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
 
-  async function fetchUsers() {
+  const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch("/api/users");
@@ -62,9 +62,9 @@ export default function UsersPageContent() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
-  useEffect(() => { fetchUsers(); }, []);
+  useEffect(() => { fetchUsers(); }, [fetchUsers]);
 
   const uniqueRoles = useMemo(() => {
     const set = new Set<string>();

@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useEffect, useState } from 'react';
+import { useCallback, FormEvent, useEffect, useState } from 'react';
 
 type UserRow = { id: number; first_name: string; last_name: string; email: string; roles: string[] };
 type Role = { id: number; name: string };
@@ -13,11 +13,7 @@ export default function AdminUserRolesPage() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    void loadData();
-  }, []);
-
-  async function loadData() {
+  const loadData = useCallback(async () => {
     try {
       const [usersRes, rolesRes] = await Promise.all([
         fetch('/api/users', { cache: 'no-store' }),
@@ -49,23 +45,26 @@ export default function AdminUserRolesPage() {
         { id: 6, name: 'student' },
       ]);
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    void loadData();
+  }, [loadData]);
 
   async function onAssign(event: FormEvent) {
     event.preventDefault();
-    if (!userId) return;
-
     setError('');
     setMessage('');
+
     try {
       const response = await fetch(`/api/users/${userId}/roles`, {
-        method: 'PUT',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ roles: [role] }),
+        body: JSON.stringify({ role }),
       });
-      const payload = (await response.json()) as { error?: string };
+      const payload = (await response.json()) as { error?: string; message?: string };
       if (!response.ok) throw new Error(payload.error || 'Failed to assign role');
-      setMessage('Role assigned successfully.');
+      setMessage(payload.message || 'Role assigned successfully.');
       await loadData();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to assign role');
@@ -76,35 +75,65 @@ export default function AdminUserRolesPage() {
     <div className="space-y-6">
       <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h1 className="text-2xl font-semibold text-slate-900">User Roles</h1>
-        <p className="mt-2 text-sm text-slate-600">Assign and review user role memberships.</p>
+        <p className="mt-2 text-sm text-slate-600">Assign and manage user roles.</p>
       </section>
 
-      <form onSubmit={onAssign} className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:grid-cols-3">
-        <select className="rounded-lg border border-slate-300 px-3 py-2 text-sm" value={userId} onChange={(event) => setUserId(event.target.value)}>
-          <option value="">Select user</option>
-          {rows.map((item) => (
-            <option key={item.id} value={item.id}>{item.first_name} {item.last_name} ({item.email})</option>
-          ))}
-        </select>
-        <select title="Role" aria-label="Role" className="rounded-lg border border-slate-300 px-3 py-2 text-sm" value={role} onChange={(e) => setRole(e.target.value)}>
-          {roles.map((item) => <option key={item.id} value={item.name}>{item.name}</option>)}
-        </select>
-        <button type="submit" className="rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white">Assign Role</button>
-        {error ? <p className="md:col-span-3 text-sm text-rose-700">{error}</p> : null}
-        {message ? <p className="md:col-span-3 text-sm text-emerald-700">{message}</p> : null}
+      <form onSubmit={onAssign} className="flex flex-wrap items-end gap-3 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div>
+          <label className="block text-xs font-medium text-slate-700">User ID</label>
+          <input
+            type="number"
+            className="mt-1 rounded-lg border border-slate-300 px-3 py-2 text-sm w-28"
+            value={userId}
+            onChange={(e) => setUserId(e.target.value)}
+            placeholder="e.g. 1"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-slate-700">Role</label>
+          <select
+            className="mt-1 rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+          >
+            {roles.map((r) => (
+              <option key={r.id} value={r.name}>{r.name}</option>
+            ))}
+          </select>
+        </div>
+        <button type="submit" className="rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white">Assign</button>
       </form>
 
+      {error ? <p className="text-sm text-rose-700">{error}</p> : null}
+      {message ? <p className="text-sm text-emerald-700">{message}</p> : null}
+
       <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-slate-900">Current assignments</h2>
-        <div className="mt-3 space-y-2">
-          {rows.length === 0 ? <p className="text-sm text-slate-600">No assignments available.</p> : rows.map((item) => (
-            <div key={item.id} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
-              {item.first_name} {item.last_name} ({item.email}) - {(item.roles || []).join(', ') || 'none'}
-            </div>
-          ))}
+        <h2 className="text-lg font-semibold text-slate-900">Users &amp; Roles</h2>
+        <div className="mt-3 overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead>
+              <tr className="border-b text-xs font-medium text-slate-500 uppercase">
+                <th className="py-2 pr-4">ID</th>
+                <th className="py-2 pr-4">Name</th>
+                <th className="py-2 pr-4">Email</th>
+                <th className="py-2 pr-4">Roles</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.id} className="border-b last:border-b-0">
+                  <td className="py-2 pr-4 text-slate-700">{row.id}</td>
+                  <td className="py-2 pr-4 text-slate-700">{row.first_name} {row.last_name}</td>
+                  <td className="py-2 pr-4 text-slate-700">{row.email}</td>
+                  <td className="py-2 pr-4 text-slate-700">{(row.roles || []).join(', ')}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
     </div>
   );
 }
+
 

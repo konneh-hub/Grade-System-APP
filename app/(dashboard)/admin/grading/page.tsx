@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useEffect, useState } from 'react';
+import { useCallback, FormEvent, useEffect, useState } from 'react';
 
 type GradeRow = { min: string; max: string; grade: string; point: string; remark: string };
 
@@ -11,11 +11,7 @@ export default function Page() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    void loadConfig();
-  }, []);
-
-  async function loadConfig() {
+  const loadConfig = useCallback(async () => {
     try {
       const response = await fetch('/api/grading', { cache: 'no-store' });
       const payload = (await response.json()) as Array<Record<string, unknown>> | { error?: string };
@@ -31,7 +27,11 @@ export default function Page() {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load grading config');
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    void loadConfig();
+  }, [loadConfig]);
 
   function addRow(event: FormEvent) {
     event.preventDefault();

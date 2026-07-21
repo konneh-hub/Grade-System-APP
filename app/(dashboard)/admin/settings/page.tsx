@@ -16,19 +16,18 @@ export default function SystemSettingsPage() {
   });
 
   useEffect(() => {
+    async function loadSettings() {
+      try {
+        const response = await fetch('/api/admin/settings', { cache: 'no-store' });
+        const payload = (await response.json()) as SettingsPayload | { error?: string };
+        if (!response.ok) throw new Error((payload as { error?: string }).error || 'Failed to load settings');
+        setSettings((prev) => ({ ...prev, ...(payload as SettingsPayload) }));
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load settings');
+      }
+    }
     void loadSettings();
   }, []);
-
-  async function loadSettings() {
-    try {
-      const response = await fetch('/api/admin/settings', { cache: 'no-store' });
-      const payload = (await response.json()) as SettingsPayload | { error?: string };
-      if (!response.ok) throw new Error((payload as { error?: string }).error || 'Failed to load settings');
-      setSettings((prev) => ({ ...prev, ...(payload as SettingsPayload) }));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load settings');
-    }
-  }
 
   function update(category: string, key: string, value: string) {
     setSettings((prev) => ({

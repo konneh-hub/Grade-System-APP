@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 type UserRow = {
   id: number;
@@ -17,11 +17,7 @@ export default function AdminUserStatusPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    void loadUsers();
-  }, []);
-
-  async function loadUsers() {
+  const loadUsers = useCallback(async () => {
     try {
       const response = await fetch('/api/users', { cache: 'no-store' });
       const payload = (await response.json()) as UserRow[] | { error?: string };
@@ -30,7 +26,11 @@ export default function AdminUserStatusPage() {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load users');
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    void loadUsers();
+  }, [loadUsers]);
 
   const filtered = useMemo(() => {
     return rows.filter((row) => {

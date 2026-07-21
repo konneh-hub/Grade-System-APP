@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { FormEvent, useEffect, useState } from 'react';
+import { useCallback, FormEvent, useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 
 type FacultyPayload = {
@@ -25,11 +25,7 @@ export default function Page() {
   const [departmentsCount, setDepartmentsCount] = useState(0);
   const [form, setForm] = useState({ name: '', code: '', description: '' });
 
-  useEffect(() => {
-    void loadFaculty();
-  }, [facultyId]);
-
-  async function loadFaculty() {
+  const loadFaculty = useCallback(async () => {
     if (!facultyId) return;
     setLoading(true);
     setError('');
@@ -51,7 +47,11 @@ export default function Page() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [facultyId]);
+
+  useEffect(() => {
+    void loadFaculty();
+  }, [loadFaculty]);
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();

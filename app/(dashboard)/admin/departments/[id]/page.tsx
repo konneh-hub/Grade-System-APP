@@ -28,40 +28,39 @@ export default function Page() {
   const [form, setForm] = useState({ name: '', code: '', description: '', facultyId: '' });
 
   useEffect(() => {
+    async function loadData() {
+      if (!departmentId) return;
+      setLoading(true);
+      setError('');
+
+      try {
+        const [departmentRes, facultiesRes] = await Promise.all([
+          fetch(`/api/departments/${departmentId}`, { cache: 'no-store' }),
+          fetch('/api/faculties', { cache: 'no-store' }),
+        ]);
+
+        const departmentPayload = (await departmentRes.json()) as DepartmentPayload | { error?: string };
+        const facultiesPayload = (await facultiesRes.json()) as FacultyOption[] | { error?: string };
+
+        if (!departmentRes.ok) throw new Error((departmentPayload as { error?: string }).error || 'Failed to load department');
+        if (!facultiesRes.ok) throw new Error((facultiesPayload as { error?: string }).error || 'Failed to load faculties');
+
+        const department = departmentPayload as DepartmentPayload;
+        setFaculties(facultiesPayload as FacultyOption[]);
+        setForm({
+          name: department.name || '',
+          code: department.code || '',
+          description: department.description || '',
+          facultyId: String(department.faculty_id || ''),
+        });
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load department');
+      } finally {
+        setLoading(false);
+      }
+    }
     void loadData();
   }, [departmentId]);
-
-  async function loadData() {
-    if (!departmentId) return;
-    setLoading(true);
-    setError('');
-
-    try {
-      const [departmentRes, facultiesRes] = await Promise.all([
-        fetch(`/api/departments/${departmentId}`, { cache: 'no-store' }),
-        fetch('/api/faculties', { cache: 'no-store' }),
-      ]);
-
-      const departmentPayload = (await departmentRes.json()) as DepartmentPayload | { error?: string };
-      const facultiesPayload = (await facultiesRes.json()) as FacultyOption[] | { error?: string };
-
-      if (!departmentRes.ok) throw new Error((departmentPayload as { error?: string }).error || 'Failed to load department');
-      if (!facultiesRes.ok) throw new Error((facultiesPayload as { error?: string }).error || 'Failed to load faculties');
-
-      const department = departmentPayload as DepartmentPayload;
-      setFaculties(facultiesPayload as FacultyOption[]);
-      setForm({
-        name: department.name || '',
-        code: department.code || '',
-        description: department.description || '',
-        facultyId: String(department.faculty_id || ''),
-      });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load department');
-    } finally {
-      setLoading(false);
-    }
-  }
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();

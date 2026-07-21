@@ -17,19 +17,18 @@ export default function HelpSupportPage() {
   const [issueFeedback, setIssueFeedback] = useState('');
 
   useEffect(() => {
+    async function loadHelp() {
+      try {
+        const response = await fetch('/api/admin/help', { cache: 'no-store' });
+        const payload = (await response.json()) as HelpPayload | { error?: string };
+        if (!response.ok) throw new Error((payload as { error?: string }).error || 'Failed to load help resources');
+        setData(payload as HelpPayload);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load help resources');
+      }
+    }
     void loadHelp();
   }, []);
-
-  async function loadHelp() {
-    try {
-      const response = await fetch('/api/admin/help', { cache: 'no-store' });
-      const payload = (await response.json()) as HelpPayload | { error?: string };
-      if (!response.ok) throw new Error((payload as { error?: string }).error || 'Failed to load help resources');
-      setData(payload as HelpPayload);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load help resources');
-    }
-  }
 
   async function submitIssue() {
     setIssueFeedback('');
