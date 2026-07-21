@@ -21,10 +21,6 @@ export default function Page() {
   const [error, setError] = useState('');
   const [logs, setLogs] = useState<AuditLog[]>([]);
 
-  useEffect(() => {
-    void fetchLogs();
-  }, []);
-
   async function fetchLogs(activeFilters = filters) {
     setLoading(true);
     setError('');
@@ -49,6 +45,10 @@ export default function Page() {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    void fetchLogs();
+  }, []);
 
   function onFilter(event: FormEvent) {
     event.preventDefault();

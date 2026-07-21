@@ -9,10 +9,6 @@ export default function Page() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  useEffect(() => {
-    void fetchHistory();
-  }, []);
-
   async function fetchHistory() {
     try {
       const response = await fetch('/api/admin/backups', { cache: 'no-store' });
@@ -23,6 +19,10 @@ export default function Page() {
       setError(err instanceof Error ? err.message : 'Failed to load backup history');
     }
   }
+
+  useEffect(() => {
+    void fetchHistory();
+  }, []);
 
   async function onBackup(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

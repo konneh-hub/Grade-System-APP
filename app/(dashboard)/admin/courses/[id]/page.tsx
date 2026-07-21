@@ -37,10 +37,6 @@ export default function Page() {
     departmentId: '',
   });
 
-  useEffect(() => {
-    void loadData();
-  }, [courseId]);
-
   async function loadData() {
     if (!courseId) return;
     setLoading(true);
@@ -76,6 +72,10 @@ export default function Page() {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    void loadData();
+  }, [courseId]);
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
