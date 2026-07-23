@@ -1,42 +1,26 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { getUserFromRequest } from './lib/middleware/auth';
+import { applySecurityHeaders, enforceCsrfProtection } from './lib/middleware/security-edge';
 
 export async function middleware(request: NextRequest) {
-  // Enforce authentication for API routes (except auth endpoints)
+  // Edge Runtime-safe middleware: only security headers and CSRF checks
   try {
     const url = request.nextUrl.clone();
-    // Allow API routes to be handled by their own route-level guards.
+
+    // For API routes: check CSRF and apply security headers
     if (url.pathname.startsWith('/api/')) {
-      return NextResponse.next();
+      const csrfError = enforceCsrfProtection(request as unknown as Request);
+      if (csrfError) return csrfError;
+
+      const response = NextResponse.next();
+      return applySecurityHeaders(response);
     }
+
+    // For page routes: only apply security headers
+    const response = NextResponse.next();
+    return applySecurityHeaders(response);
   } catch (e) {
-    // on error, continue to other middleware
-  }
-
-  // Run basic role redirect / dashboard protection for pages
-  try {
-    const { middleware: dashboard } = await import('./lib/middleware/dashboardRedirect');
-    const { middleware: protect } = await import('./lib/middleware/protectDashboard');
-
-    // Block non-public pages for unauthenticated users
-    const publicPaths = ['/login', '/register', '/forgot-password', '/reset-password', '/api/auth', '/favicon.ico', '/robots.txt', '/sitemap.xml'];
-    const path = request.nextUrl.pathname;
-    const isPublic = publicPaths.some((p) => path === p || path.startsWith(p));
-    if (!isPublic && !path.startsWith('/_next') && !path.startsWith('/public') && !path.startsWith('/api')) {
-      const info = getUserFromRequest(request as unknown as Request);
-      if (!info) {
-        const url = request.nextUrl.clone();
-        url.pathname = '/login';
-        return NextResponse.redirect(url);
-      }
-    }
-
-    // run protect first, then dashboard redirect
-    const p = protect(request);
-    if (p) return p;
-    return dashboard(request);
-  } catch {
+    // on error, pass through
     return NextResponse.next();
   }
 }

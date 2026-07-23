@@ -68,18 +68,6 @@ export default function CreateUserModal({ open, onClose }: { open: boolean; onCl
       .finally(() => setLoadingFaculties(false));
   }, [open]);
 
-  useEffect(() => {
-    if (!selectedDepartmentId) {
-      setProgrammes([]);
-      return;
-    }
-    setLoadingProgrammes(true);
-    fetch(`/api/programmes?department_id=${selectedDepartmentId}`)
-      .then((r) => r.json())
-      .then((data) => setProgrammes(data))
-      .finally(() => setLoadingProgrammes(false));
-  }, [selectedDepartmentId]);
-
   const filteredDepartments = useMemo(
     () => (selectedFacultyId ? departments.filter((d) => d.faculty_id === selectedFacultyId) : []),
     [departments, selectedFacultyId]
@@ -131,6 +119,13 @@ export default function CreateUserModal({ open, onClose }: { open: boolean; onCl
     setProgrammes([]);
     const dept = departments.find((d) => d.id === deptId);
     setForm((prev) => ({ ...prev, department: dept?.name ?? "", programme: "" }));
+
+    if (!deptId) return;
+    setLoadingProgrammes(true);
+    fetch(`/api/programmes?department_id=${deptId}`)
+      .then((r) => r.json())
+      .then((data) => setProgrammes(data))
+      .finally(() => setLoadingProgrammes(false));
   }
 
   function handleProgrammeChange(progId: number | "") {

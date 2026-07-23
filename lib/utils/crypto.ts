@@ -12,13 +12,13 @@ export async function verifyPassword(password: string, hash: string) {
   return bcrypt.compare(password, hash);
 }
 
-export function signToken(payload: object, expiresIn = '7d') {
-  return jwt.sign(payload, config.JWT_SECRET, { expiresIn });
+export function signToken(payload: object, expiresIn: string | number = '7d') {
+  return jwt.sign(payload, config.JWT_SECRET, { expiresIn, algorithm: 'HS256' });
 }
 
 export function verifyToken(token: string) {
   try {
-    return jwt.verify(token, config.JWT_SECRET);
+    return jwt.verify(token, config.JWT_SECRET, { algorithms: ['HS256'] });
   } catch {
     return null;
   }

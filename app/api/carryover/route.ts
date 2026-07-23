@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getDatabase } from '@/lib/config/database';
 import { requireRoles } from '@/lib/middleware/authorization';
 
+type CountRow = { count: number | string | null };
+
 export async function GET(req: Request) {
   const guard = requireRoles(req, ['admin','system_admin']);
   if ('error' in guard) return guard.error;
@@ -47,10 +49,10 @@ export async function GET(req: Request) {
     .all(...params) as Array<Record<string, unknown>>;
 
   const summary = {
-    total: Number(db.prepare('SELECT COUNT(*) AS count FROM carryover_requests').get()?.count ?? 0),
-    pending: Number(db.prepare("SELECT COUNT(*) AS count FROM carryover_requests WHERE LOWER(status) = 'pending'").get()?.count ?? 0),
-    approved: Number(db.prepare("SELECT COUNT(*) AS count FROM carryover_requests WHERE LOWER(status) = 'approved'").get()?.count ?? 0),
-    rejected: Number(db.prepare("SELECT COUNT(*) AS count FROM carryover_requests WHERE LOWER(status) = 'rejected'").get()?.count ?? 0),
+    total: Number((db.prepare('SELECT COUNT(*) AS count FROM carryover_requests').get() as CountRow | undefined)?.count ?? 0),
+    pending: Number((db.prepare("SELECT COUNT(*) AS count FROM carryover_requests WHERE LOWER(status) = 'pending'").get() as CountRow | undefined)?.count ?? 0),
+    approved: Number((db.prepare("SELECT COUNT(*) AS count FROM carryover_requests WHERE LOWER(status) = 'approved'").get() as CountRow | undefined)?.count ?? 0),
+    rejected: Number((db.prepare("SELECT COUNT(*) AS count FROM carryover_requests WHERE LOWER(status) = 'rejected'").get() as CountRow | undefined)?.count ?? 0),
   };
 
   return NextResponse.json({ summary, requests });

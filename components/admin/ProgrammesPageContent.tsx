@@ -65,7 +65,6 @@ export default function ProgrammesPageContent() {
   const [importOpen, setImportOpen] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
     Promise.all([
       fetch("/api/programmes").then((r) => r.json()),
       fetch("/api/departments").then((r) => r.json()),

@@ -22,6 +22,26 @@ export function listNotifications(recipientId: number) {
   return prepare('SELECT * FROM notifications WHERE recipient_id = ? ORDER BY created_at DESC').all(recipientId) as NotificationRow[];
 }
 
-const notificationService = { createNotification, listNotifications };
+export function getNotificationById(id: number): NotificationRow | null {
+  return prepare('SELECT * FROM notifications WHERE id = ?').get(id) as NotificationRow | null;
+}
+
+export function markAsRead(id: number) {
+  prepare('UPDATE notifications SET is_read = 1 WHERE id = ?').run(id);
+  return getNotificationById(id);
+}
+
+export function markMultipleAsRead(ids: number[]) {
+  if (ids.length === 0) return;
+  const placeholders = ids.map(() => '?').join(',');
+  prepare(`UPDATE notifications SET is_read = 1 WHERE id IN (${placeholders})`).run(...ids);
+}
+
+export function getUnreadCount(recipientId: number) {
+  const result = prepare('SELECT COUNT(*) as count FROM notifications WHERE recipient_id = ? AND is_read = 0').get(recipientId) as { count: number };
+  return result?.count ?? 0;
+}
+
+const notificationService = { createNotification, listNotifications, getNotificationById, markAsRead, markMultipleAsRead, getUnreadCount };
 
 export default notificationService;

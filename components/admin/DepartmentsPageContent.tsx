@@ -35,6 +35,11 @@ function getSortValue(d: Department, field: SortField): string | number {
   return String(d[field] ?? "");
 }
 
+function SortIcon({ field, sortField, sortDir }: { field: SortField; sortField: SortField; sortDir: SortDir }) {
+  if (sortField !== field) return <span className="ml-1 text-slate-300">&#8597;</span>;
+  return <span className="ml-1 text-[#1E3A8A]">{sortDir === "asc" ? "↑" : "↓"}</span>;
+}
+
 export default function DepartmentsPageContent() {
   const [departments, setDepartments] = useState<Department[]>([]);
   const [faculties, setFaculties] = useState<Faculty[]>([]);
@@ -54,7 +59,6 @@ export default function DepartmentsPageContent() {
   const [importOpen, setImportOpen] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
     Promise.all([
       fetch("/api/departments").then((r) => r.json()),
       fetch("/api/faculties").then((r) => r.json()),
@@ -92,11 +96,6 @@ export default function DepartmentsPageContent() {
   function toggleSort(field: SortField) {
     if (sortField === field) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
     else { setSortField(field); setSortDir("asc"); }
-  }
-
-  function SortIcon({ field }: { field: SortField }) {
-    if (sortField !== field) return <span className="ml-1 text-slate-300">&#8597;</span>;
-    return <span className="ml-1 text-[#1E3A8A]">{sortDir === "asc" ? "↑" : "↓"}</span>;
   }
 
   function toggleSelect(id: number) {
@@ -465,10 +464,10 @@ export default function DepartmentsPageContent() {
               <thead className="bg-slate-50">
                 <tr>
                   <th className="w-10 px-3 py-3"><input type="checkbox" checked={selectedIds.size === sorted.length && sorted.length > 0} onChange={toggleSelectAll} className="h-4 w-4 rounded border-slate-300 text-[#1E3A8A] focus:ring-[#1E3A8A]" /></th>
-                  <Th onClick={() => toggleSort("name")} active={sortField === "name"} sortDir={sortDir}>Name <SortIcon field="name" /></Th>
-                  <Th onClick={() => toggleSort("code")} active={sortField === "code"} sortDir={sortDir}>Code <SortIcon field="code" /></Th>
-                  <Th onClick={() => toggleSort("faculty_name")} active={sortField === "faculty_name"} sortDir={sortDir}>Faculty <SortIcon field="faculty_name" /></Th>
-                  <Th onClick={() => toggleSort("description")} active={sortField === "description"} sortDir={sortDir}>Description <SortIcon field="description" /></Th>
+                  <Th onClick={() => toggleSort("name")} active={sortField === "name"} sortDir={sortDir}>Name <SortIcon field="name" sortField={sortField} sortDir={sortDir} /></Th>
+                  <Th onClick={() => toggleSort("code")} active={sortField === "code"} sortDir={sortDir}>Code <SortIcon field="code" sortField={sortField} sortDir={sortDir} /></Th>
+                  <Th onClick={() => toggleSort("faculty_name")} active={sortField === "faculty_name"} sortDir={sortDir}>Faculty <SortIcon field="faculty_name" sortField={sortField} sortDir={sortDir} /></Th>
+                  <Th onClick={() => toggleSort("description")} active={sortField === "description"} sortDir={sortDir}>Description <SortIcon field="description" sortField={sortField} sortDir={sortDir} /></Th>
                   <Th>Actions</Th>
                 </tr>
               </thead>

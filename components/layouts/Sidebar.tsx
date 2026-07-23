@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -112,13 +112,7 @@ const studentSections = [
 export default function Sidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const effectivePathname = mounted ? pathname ?? '' : '';
+  const effectivePathname = pathname ?? '';
 
   const profile = useMemo(() => {
     const path = effectivePathname;
@@ -168,7 +162,7 @@ export default function Sidebar() {
             {!collapsed ? <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">{section.title}</p> : null}
             <div className="space-y-1">
               {section.items.map((item) => {
-                const isActive = mounted && (pathname === item.href || pathname.startsWith(`${item.href}/`));
+                const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
                 return (
                   <Link
                     key={item.href + item.label}

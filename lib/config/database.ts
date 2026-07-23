@@ -1,6 +1,7 @@
 import { mkdirSync } from 'node:fs';
 import path from 'node:path';
 import sqlite from 'node:sqlite';
+import { ensureDatabaseReady } from '@/lib/config/database-migrations';
 
 type SqliteStatement = {
   run(...params: readonly unknown[]): unknown;
@@ -31,11 +32,13 @@ export function getDatabase(): SqliteDatabase {
   if (!dbInstance) {
     const sqliteModule = sqlite as unknown as SqliteModule;
     dbInstance = new sqliteModule.DatabaseSync(dbPath);
+    dbInstance.exec('PRAGMA foreign_keys = ON');
     dbInstance.exec('PRAGMA journal_mode=WAL');
     dbInstance.exec('PRAGMA synchronous=NORMAL');
     dbInstance.exec('PRAGMA cache_size=-8000');
     dbInstance.exec('PRAGMA temp_store=MEMORY');
     dbInstance.exec('PRAGMA mmap_size=30000000');
+    ensureDatabaseReady();
   }
   return dbInstance;
 }

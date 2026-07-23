@@ -39,6 +39,11 @@ function getSortValue(s: Semester, field: SortField): string | number {
   return String(s[field] ?? "");
 }
 
+function SortIcon({ field, sortField, sortDir }: { field: SortField; sortField: SortField; sortDir: SortDir }) {
+  if (sortField !== field) return <span className="ml-1 text-slate-300">&#8597;</span>;
+  return <span className="ml-1 text-[#1E3A8A]">{sortDir === "asc" ? "\u2191" : "\u2193"}</span>;
+}
+
 export default function SemestersPageContent() {
   const [semesters, setSemesters] = useState<Semester[]>([]);
   const [sessions, setSessions] = useState<AcademicSession[]>([]);
@@ -56,7 +61,6 @@ export default function SemestersPageContent() {
   const [importOpen, setImportOpen] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
     Promise.all([
       fetch("/api/semesters").then((r) => r.json()),
       fetch("/api/academic-sessions").then((r) => r.json()),
@@ -91,11 +95,6 @@ export default function SemestersPageContent() {
   function toggleSort(field: SortField) {
     if (sortField === field) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
     else { setSortField(field); setSortDir("asc"); }
-  }
-
-  function SortIcon({ field }: { field: SortField }) {
-    if (sortField !== field) return <span className="ml-1 text-slate-300">&#8597;</span>;
-    return <span className="ml-1 text-[#1E3A8A]">{sortDir === "asc" ? "\u2191" : "\u2193"}</span>;
   }
 
   function toggleSelect(id: number) {
@@ -508,11 +507,11 @@ export default function SemestersPageContent() {
               <thead className="bg-slate-50">
                 <tr>
                   <th className="w-10 px-3 py-3"><input type="checkbox" checked={selectedIds.size === sorted.length && sorted.length > 0} onChange={toggleSelectAll} className="h-4 w-4 rounded border-slate-300 text-[#1E3A8A] focus:ring-[#1E3A8A]" /></th>
-                  <Th onClick={() => toggleSort("name")} active={sortField === "name"} sortDir={sortDir}>Name <SortIcon field="name" /></Th>
-                  <Th onClick={() => toggleSort("academic_session_name")} active={sortField === "academic_session_name"} sortDir={sortDir}>Session <SortIcon field="academic_session_name" /></Th>
-                  <Th onClick={() => toggleSort("start_date")} active={sortField === "start_date"} sortDir={sortDir}>Start <SortIcon field="start_date" /></Th>
-                  <Th onClick={() => toggleSort("end_date")} active={sortField === "end_date"} sortDir={sortDir}>End <SortIcon field="end_date" /></Th>
-                  <Th onClick={() => toggleSort("status")} active={sortField === "status"} sortDir={sortDir}>Status <SortIcon field="status" /></Th>
+                  <Th onClick={() => toggleSort("name")} active={sortField === "name"} sortDir={sortDir}>Name <SortIcon field="name" sortField={sortField} sortDir={sortDir} /></Th>
+                  <Th onClick={() => toggleSort("academic_session_name")} active={sortField === "academic_session_name"} sortDir={sortDir}>Session <SortIcon field="academic_session_name" sortField={sortField} sortDir={sortDir} /></Th>
+                  <Th onClick={() => toggleSort("start_date")} active={sortField === "start_date"} sortDir={sortDir}>Start <SortIcon field="start_date" sortField={sortField} sortDir={sortDir} /></Th>
+                  <Th onClick={() => toggleSort("end_date")} active={sortField === "end_date"} sortDir={sortDir}>End <SortIcon field="end_date" sortField={sortField} sortDir={sortDir} /></Th>
+                  <Th onClick={() => toggleSort("status")} active={sortField === "status"} sortDir={sortDir}>Status <SortIcon field="status" sortField={sortField} sortDir={sortDir} /></Th>
                   <Th>Actions</Th>
                 </tr>
               </thead>

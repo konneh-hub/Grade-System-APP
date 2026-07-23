@@ -37,6 +37,11 @@ function getSortValue(role: Role, field: SortField): string | number {
   return String(role[field] ?? "");
 }
 
+function SortIcon({ field, sortField, sortDir }: { field: SortField; sortField: SortField; sortDir: SortDir }) {
+  if (sortField !== field) return <span className="ml-1 text-slate-300">&#8597;</span>;
+  return <span className="ml-1 text-[#1E3A8A]">{sortDir === "asc" ? "↑" : "↓"}</span>;
+}
+
 export default function RolesPageContent() {
   const [roles, setRoles] = useState<Role[]>([]);
   const [loading, setLoading] = useState(true);
@@ -53,7 +58,6 @@ export default function RolesPageContent() {
   const [users, setUsers] = useState<{ id: number; email: string; first_name: string; last_name: string }[]>([]);
 
   useEffect(() => {
-    setLoading(true);
     Promise.all([
       fetch("/api/roles").then((r) => r.json()),
       fetch("/api/users").then((r) => r.json()),
@@ -118,11 +122,6 @@ export default function RolesPageContent() {
   function toggleSort(field: SortField) {
     if (sortField === field) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
     else { setSortField(field); setSortDir("asc"); }
-  }
-
-  function SortIcon({ field }: { field: SortField }) {
-    if (sortField !== field) return <span className="ml-1 text-slate-300">&#8597;</span>;
-    return <span className="ml-1 text-[#1E3A8A]">{sortDir === "asc" ? "↑" : "↓"}</span>;
   }
 
   function toggleSelect(id: number) {
@@ -542,16 +541,16 @@ export default function RolesPageContent() {
                     />
                   </th>
                   <Th onClick={() => toggleSort("name")} active={sortField === "name"} sortDir={sortDir}>
-                    Role <SortIcon field="name" />
+                    Role <SortIcon field="name" sortField={sortField} sortDir={sortDir} />
                   </Th>
                   <Th onClick={() => toggleSort("description")} active={sortField === "description"} sortDir={sortDir}>
-                    Description <SortIcon field="description" />
+                    Description <SortIcon field="description" sortField={sortField} sortDir={sortDir} />
                   </Th>
                   <Th onClick={() => toggleSort("user_count")} active={sortField === "user_count"} sortDir={sortDir}>
-                    Users <SortIcon field="user_count" />
+                    Users <SortIcon field="user_count" sortField={sortField} sortDir={sortDir} />
                   </Th>
                   <Th onClick={() => toggleSort("permissions")} active={sortField === "permissions"} sortDir={sortDir}>
-                    Permissions <SortIcon field="permissions" />
+                    Permissions <SortIcon field="permissions" sortField={sortField} sortDir={sortDir} />
                   </Th>
                   <Th>Actions</Th>
                 </tr>

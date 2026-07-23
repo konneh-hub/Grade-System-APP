@@ -356,10 +356,10 @@ export default function SessionsPageContent() {
       {/* Stats Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 animate-fade-in-up [animation-delay:0.1s]">
         {[
-          { label: "Total Sessions", value: totalSessions, icon: "calendar_month", iconClassName: "text-[#1E3A8A]", bg: "bg-blue-50" },
-          { label: "Active Session", value: activeName, icon: "check_circle", iconClassName: "text-[#059669]", bg: "bg-emerald-50" },
-          { label: "Avg Duration", value: `${avgDuration} days`, icon: "schedule", iconClassName: "text-[#7C3AED]", bg: "bg-purple-50" },
-          { label: "This Year", value: thisYearCount, icon: "today", iconClassName: "text-[#D97706]", bg: "bg-amber-50" },
+          { label: "Total Sessions", value: totalSessions, icon: "calendar_month", iconClassName: "text-[#1E3A8A]", bg: "bg-blue-50", color: "#1E3A8A" },
+          { label: "Active Session", value: activeName, icon: "check_circle", iconClassName: "text-[#059669]", bg: "bg-emerald-50", color: "#059669" },
+          { label: "Avg Duration", value: `${avgDuration} days`, icon: "schedule", iconClassName: "text-[#7C3AED]", bg: "bg-purple-50", color: "#7C3AED" },
+          { label: "This Year", value: thisYearCount, icon: "today", iconClassName: "text-[#D97706]", bg: "bg-amber-50", color: "#D97706" },
         ].map((card) => (
           <div key={card.label} className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
             <div className="flex items-start justify-between">
@@ -655,7 +655,7 @@ function SessionImportModal({ open, onClose }: { open: boolean; onClose: () => v
   );
 }
 
-function Th({ children, onClick, active }: { children: React.ReactNode; onClick?: () => void; active?: boolean }) {
+function Th({ children, onClick, active, sortDir }: { children: React.ReactNode; onClick?: () => void; active?: boolean; sortDir?: SortDir }) {
   return (
     <th onClick={onClick} className={`px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider ${onClick ? "cursor-pointer select-none hover:text-[#1E3A8A]" : ""} ${active ? "text-[#1E3A8A]" : "text-slate-600"}`}>
       {children}

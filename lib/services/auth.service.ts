@@ -1,7 +1,8 @@
-import { getUserByEmail, getUserById, getUserRoles, createUser, type UserRow } from '@/lib/services/user.service';
+import { getUserByEmail, getUserById, getUserRoles, createUser, assignRoleToUser, getRoleIdByName, type UserRow } from '@/lib/services/user.service';
 import { verifyPassword, signToken, hashPassword } from '@/lib/utils/crypto';
 import { prepare } from '@/lib/config/database';
 import { config } from '@/lib/config/env';
+import { validateRegistrationPayload } from '@/lib/services/auth.validation.mjs';
 
 export interface RegisterPayload {
   email: string;
@@ -33,28 +34,33 @@ export function createSessionToken(user: UserRow, roles: string[], rememberMe = 
 }
 
 export async function registerUser(payload: RegisterPayload) {
-  const existing = getUserByEmail(payload.email);
+  const validated = validateRegistrationPayload(payload);
+  const existing = getUserByEmail(validated.email);
 
-  if (!existing) {
-    // Open registration: create a new active user using provided details.
-    const full = String(payload.full_name ?? payload.email.split('@')[0]).trim();
-    const parts = full.split(/\s+/);
-    const first = parts.shift() ?? '';
-    const last = parts.join(' ') ?? '';
-    const user = await createUser({ email: String(payload.email), password: String(payload.password), first_name: first, last_name: last });
-    const roles = getUserRoles(user!.id);
-    const token = createSessionToken(user as UserRow, roles, false);
-    return { user, roles, token };
+  if (existing) {
+    throw new Error('An account with this email address already exists.');
   }
 
-  // Existing account: allow setting/updating password and activate account.
-  const password_hash = await hashPassword(payload.password);
-  prepare('UPDATE users SET password_hash = ?, status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(password_hash, 'active', existing.id);
-  const user = getUserById(existing.id);
-  if (!user) throw new Error('Failed to load registered user');
-  const updatedRoles = getUserRoles(existing.id);
-  const token = createSessionToken(user, updatedRoles, false);
-  return { user, roles: updatedRoles, token };
+  const full = String(payload.full_name ?? validated.email.split('@')[0]).trim();
+  const parts = full.split(/\s+/);
+  const first = parts.shift() ?? '';
+  const last = parts.join(' ') ?? '';
+
+  const user = await createUser({
+    email: validated.email,
+    password: validated.password,
+    first_name: first,
+    last_name: last,
+  });
+
+  const defaultRoleId = getRoleIdByName('student');
+  if (defaultRoleId) {
+    assignRoleToUser(user.id, defaultRoleId);
+  }
+
+  const roles = getUserRoles(user.id);
+  const token = createSessionToken(user, roles, false);
+  return { user, roles, token };
 }
 
 export async function loginUser(email: string, password: string, rememberMe = false) {

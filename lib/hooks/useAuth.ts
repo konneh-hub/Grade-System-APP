@@ -15,7 +15,7 @@ export function useAuth() {
   useEffect(() => {
     async function fetchUser() {
       try {
-        const res = await fetch('/api/auth/me');
+        const res = await fetch('/api/auth/me', { credentials: 'include' });
         if (res.ok) {
           const json = await res.json();
           setUser(json.user || null);

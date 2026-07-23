@@ -61,12 +61,23 @@ export function assignRoleToUser(userId: number, roleId: number) {
   prepare('INSERT OR IGNORE INTO user_roles (user_id, role_id) VALUES (?, ?)').run(userId, roleId);
 }
 
-export async function createUser(payload: CreateUserPayload) {
+export async function createUser(payload: CreateUserPayload): Promise<UserRow> {
   const password_hash = await hashPassword(payload.password);
-  prepare(
-    `INSERT INTO users (email, password_hash, first_name, last_name, phone, status, registered_at, updated_at) VALUES (?, ?, ?, ?, ?, 'active', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`
-  ).run(payload.email, password_hash, payload.first_name, payload.last_name, payload.phone || null);
-  return getUserByEmail(payload.email);
+  try {
+    prepare(
+      `INSERT INTO users (email, password_hash, first_name, last_name, phone, status, registered_at, updated_at) VALUES (?, ?, ?, ?, ?, 'active', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`
+    ).run(payload.email, password_hash, payload.first_name, payload.last_name, payload.phone || null);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (/unique|constraint/i.test(message)) {
+      throw new Error('An account with this email address already exists.');
+    }
+    throw error;
+  }
+
+  const user = getUserByEmail(payload.email);
+  if (!user) throw new Error('Failed to create user');
+  return user;
 }
 
 export function getUserRoles(userId: number) {

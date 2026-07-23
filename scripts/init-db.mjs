@@ -1,19 +1,11 @@
-import { mkdirSync, readFileSync } from 'node:fs';
+import { mkdirSync } from 'node:fs';
 import path from 'node:path';
-import { DatabaseSync } from 'node:sqlite';
+import { execFileSync } from 'node:child_process';
 
 const rootDir = path.resolve(process.cwd());
 const dbDir = path.join(rootDir, 'db');
 const dbPath = path.join(dbDir, 'slughub.db');
-const schemaPath = path.join(rootDir, 'lib/config/schema.sql');
 
 mkdirSync(dbDir, { recursive: true });
-
-const schemaSql = readFileSync(schemaPath, 'utf8');
-const db = new DatabaseSync(dbPath);
-
-db.exec('PRAGMA foreign_keys = ON;');
-db.exec(schemaSql);
-db.close();
-
+execFileSync(process.execPath, ['scripts/migrate-db.mjs'], { cwd: rootDir, stdio: 'inherit' });
 console.log(`Database initialized at ${dbPath}`);

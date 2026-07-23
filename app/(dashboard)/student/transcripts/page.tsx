@@ -19,7 +19,6 @@ export default function Page() {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    setHydrated(true);
     let mounted = true;
 
     async function loadTranscripts() {
